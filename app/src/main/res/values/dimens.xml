@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="margin_left_right_size">16dp</dimen>
-    <dimen name="margin_top_bottom_size">3dp</dimen>
-    <dimen name="text_size">22sp</dimen>
+    <dimen name="margin_top_bottom_size">4dp</dimen>
+    <dimen name="text_size">24sp</dimen>
     <dimen name="unit_text_size">16sp</dimen>
     <dimen name="radius">16dp</dimen>
     <dimen name="header_height">56dp</dimen>
-    <dimen name="unit_height">61dp</dimen>
+    <dimen name="unit_height">60dp</dimen>
 </resources>
