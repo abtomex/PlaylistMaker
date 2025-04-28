@@ -7,4 +7,6 @@
     <color name="bkg_color">#3772E7</color>
     <color name="button_text_color">#1A1B22</color>
     <color name="button_back_color">#1A1B22</color>
+    <color name="icons_color_main">#1A1B22</color>
+    <color name="icons_color_settings">#AEAFB4</color>
 </resources>
