@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_size">16dp</dimen>
+    <dimen name="padding_size">16dp</dimen>
+    <dimen name="text_size">24sp</dimen>
+    <dimen name="unit_text_size">16sp</dimen>
+    <dimen name="radius">16dp</dimen>
+    <dimen name="header_height">56dp</dimen>
+    <dimen name="unit_height">60dp</dimen>
+</resources>

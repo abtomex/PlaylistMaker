@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "dom.dima.practicum.playlistmaker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "dom.dima.practicum.playlistmaker"
