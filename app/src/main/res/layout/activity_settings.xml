@@ -1,65 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    style="@style/parent_linear_layout_style">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/settings_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/header_height"
-        app:navigationIcon="@drawable/back"
-        app:title="@string/settings" />
+        style="@style/header_style"
+        android:layout_marginStart="0dp"
+        app:navigationIcon="@drawable/back">
+
+        <TextView
+            style="@style/header_text_style"
+            android:text="@string/settings" />
+
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/night_theme_switch"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/unit_height"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/padding_size"
-        android:paddingEnd="@dimen/padding_size"
+        style="@style/settings_items_style"
         android:text="@string/dark_theme"
         android:thumb="@drawable/custom_thumb"
-        android:textSize="@dimen/text_size"
         app:thumbTint="@color/switch_thumb_color"
-        app:trackTint="@color/switch_track_color"
-        />
+        app:trackTint="@color/switch_track_color" />
 
     <TextView
-        android:id="@+id/shareText"
+        android:id="@+id/share_text"
+        style="@style/settings_items_style"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/unit_height"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/padding_size"
-        android:paddingEnd="@dimen/padding_size"
         android:text="@string/share_app"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size"
-        app:drawableEndCompat="@drawable/share"
-        android:fontFamily="@font/ysdisplayfont" />
+        app:drawableEndCompat="@drawable/share" />
+
     <TextView
-        android:id="@+id/helpdeskText"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/unit_height"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/padding_size"
-        android:paddingEnd="@dimen/padding_size"
+        android:id="@+id/helpdesk_text"
+        style="@style/settings_items_style"
         android:text="@string/support"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size"
         app:drawableEndCompat="@drawable/support" />
 
     <TextView
-        android:id="@+id/agreementText"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/unit_height"
-        android:gravity="center_vertical"
-        android:paddingStart="@dimen/padding_size"
-        android:paddingEnd="@dimen/padding_size"
+        android:id="@+id/agreement_text"
+        style="@style/settings_items_style"
         android:text="@string/agreement"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size"
         app:drawableEndCompat="@drawable/next" />
 
 </LinearLayout>
