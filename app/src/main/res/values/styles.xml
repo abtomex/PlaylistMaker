@@ -55,7 +55,7 @@
         <item name="android:orientation">vertical</item>
     </style>
     <style name="main_linear_layout_style" parent="parent_linear_layout_style">
-        <item name="android:background">@color/bkg_color</item>
+        <item name="android:background">@color/bkg_main_menu_window_color</item>
     </style>
 
     <style name="edit_text_style">

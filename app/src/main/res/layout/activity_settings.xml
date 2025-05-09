@@ -7,7 +7,9 @@
         android:id="@+id/settings_layout"
         style="@style/header_style"
         android:layout_marginStart="0dp"
-        app:navigationIcon="@drawable/back">
+        app:navigationIcon="@drawable/back"
+        android:layout_marginBottom="@dimen/settings_margin_bottom"
+        >
 
         <TextView
             style="@style/header_text_style"

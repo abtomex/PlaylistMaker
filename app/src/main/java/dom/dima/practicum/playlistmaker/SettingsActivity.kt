@@ -1,21 +1,14 @@
 package dom.dima.practicum.playlistmaker
 
 import android.annotation.SuppressLint
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.net.toUri
-import androidx.core.content.edit
 
 class SettingsActivity : AbstractButtonBackActivity() {
-
-    companion object {
-        const val SETTINGS = "settings"
-        const val DARK_MODE = "dark_mode"
-    }
 
     override fun buttonBackId(): Int {
         return R.id.settings_layout
@@ -34,15 +27,6 @@ class SettingsActivity : AbstractButtonBackActivity() {
         AppCompatDelegate.setDefaultNightMode(
             if (isDark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         )
-
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit() { putBoolean(DARK_MODE, isChecked) }
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-            )
-            restartWithTheme()
-        }
-
 
         val buttonShare = findViewById<TextView>(R.id.share_text)
         buttonShare.setOnClickListener {
@@ -78,13 +62,10 @@ class SettingsActivity : AbstractButtonBackActivity() {
         }
     }
 
-    private fun restartWithTheme() {
-        val intent = intent
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-        val options = ActivityOptions.makeCustomAnimation(this, 0, 0)
-        startActivity(intent, options.toBundle())
-        finish()
-    }
 
+    companion object {
+        const val SETTINGS = "settings"
+        const val DARK_MODE = "dark_mode"
+    }
 
 }

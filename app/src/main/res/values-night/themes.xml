@@ -1,4 +1,6 @@
 <resources>
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/bkg_window_color</item>
     </style>
+
 </resources>

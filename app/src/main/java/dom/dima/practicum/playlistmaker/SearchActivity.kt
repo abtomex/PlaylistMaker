@@ -11,12 +11,7 @@ import android.widget.ImageView
 
 class SearchActivity : AbstractButtonBackActivity() {
 
-    var inputSearchText: String = DEFAULT_STR
-
-    companion object {
-        const val SAVED_TEXT = "SAVED_TEXT"
-        const val DEFAULT_STR = ""
-    }
+    private var inputSearchText: String = DEFAULT_STR
 
 
     override fun buttonBackId(): Int {
@@ -64,4 +59,10 @@ class SearchActivity : AbstractButtonBackActivity() {
         inputSearchText = savedInstanceState.getString(SAVED_TEXT, DEFAULT_STR)
         findViewById<EditText>(R.id.searchEditText).setText(inputSearchText)
     }
+
+    companion object {
+        const val SAVED_TEXT = "SAVED_TEXT"
+        const val DEFAULT_STR = ""
+    }
+
 }
