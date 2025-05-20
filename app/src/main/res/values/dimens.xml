@@ -9,4 +9,6 @@
     <dimen name="header_height">56dp</dimen>
     <dimen name="unit_height">60dp</dimen>
     <dimen name="settings_margin_bottom">24dp</dimen>
+    <dimen name="track_text_size">16sp</dimen>
+    <dimen name="track_additions_text_size">11sp</dimen>
 </resources>
