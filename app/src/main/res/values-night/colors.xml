@@ -6,4 +6,8 @@
     <color name="icons_color_clear">#1A1B22</color>
     <color name="icons_color_settings">#FFFFFF</color>
 
+    <color name="track_text_color">#FFFFFF</color>
+    <color name="track_text_artist_color">#FFFFFF</color>
+
+
 </resources>

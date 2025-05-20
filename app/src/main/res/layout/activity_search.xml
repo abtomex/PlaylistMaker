@@ -35,6 +35,8 @@
             android:maxLines="1"
             android:paddingHorizontal="16dp"
             android:background="@drawable/edittext_bkg"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             />
 
         <ImageButton
@@ -48,6 +50,13 @@
             android:visibility="gone" />
 
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trackRecyclerView"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 
 </LinearLayout>
