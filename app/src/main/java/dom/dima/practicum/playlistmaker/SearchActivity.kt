@@ -74,8 +74,8 @@ class SearchActivity : AbstractButtonBackActivity() {
     }
 
     companion object {
-        const val SAVED_TEXT = "SAVED_TEXT"
-        const val DEFAULT_STR = ""
+        private const val SAVED_TEXT = "SAVED_TEXT"
+        private const val DEFAULT_STR = ""
 
         val tracks = listOf(
             Track(
