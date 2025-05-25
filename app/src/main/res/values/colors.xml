@@ -24,4 +24,7 @@
     <color name="gray">#AEAFB4</color>
     <color name="light_gray">#E6E8EB</color>
 
+    <color name="track_text_color">#000000</color>
+    <color name="track_text_artist_color">#AEAFB4</color>
+
 </resources>
