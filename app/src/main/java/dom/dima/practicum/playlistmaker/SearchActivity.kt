@@ -81,7 +81,7 @@ class SearchActivity : AbstractButtonBackActivity() {
 
         searchEditText.setOnEditorActionListener { fieldSearch, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTrack = fieldSearch.text.toString()
+                searchTrack = fieldSearch.text.toString().trim()
                 trackApiService.search(searchTrack).enqueue(apiCallback)
             }
             false
