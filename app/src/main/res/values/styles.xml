@@ -2,6 +2,7 @@
 <resources>
 
     <style name="main_activity_buttons_style" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+<!--    <style name="main_activity_buttons_style">-->
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
@@ -63,6 +64,41 @@
         <item name="android:drawableTint">@color/gray</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/gray</item>
+
+    </style>
+
+    <style name="errors_text_style">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginLeft">24dp</item>
+        <item name="android:layout_marginRight">24dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/errors_text_color</item>
+        <item name="android:textSize">@dimen/errors_text_size</item>
+
+    </style>
+
+    <style name="errors_ic_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">102dp</item>
+        <item name="android:contentDescription">@string/todo</item>
+
+    </style>
+
+    <style name="btn_reload_style" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/reload_text_size</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:backgroundTint">@color/btn_reload</item>
+        <item name="android:textColor">@color/btn_reload_text</item>
+        <item name="cornerRadius">54dp</item>
 
     </style>
 
