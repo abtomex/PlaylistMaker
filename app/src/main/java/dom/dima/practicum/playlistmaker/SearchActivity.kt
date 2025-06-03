@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -7,15 +8,15 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.api.SearchTrackApi
-import dom.dima.practicum.playlistmaker.rvcomponents.TrackAdapter
 import dom.dima.practicum.playlistmaker.data.Track
 import dom.dima.practicum.playlistmaker.data.TracksResponse
+import dom.dima.practicum.playlistmaker.rvcomponents.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,6 +36,7 @@ class SearchActivity : AbstractButtonBackActivity() {
 
     private val trackApiService = retrofit.create(SearchTrackApi::class.java)
     private var trackAdapter: TrackAdapter = TrackAdapter(tracks)
+    private var searchTrack: String = ""
 
     override fun buttonBackId(): Int {
         return R.id.search_layout
@@ -52,6 +54,7 @@ class SearchActivity : AbstractButtonBackActivity() {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
+
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -69,51 +72,65 @@ class SearchActivity : AbstractButtonBackActivity() {
             }
 
         })
-        val recyclerView = initSongsRecyclerView()
 
+        val recyclerView = initSongsRecyclerView()
         val noContentView = findViewById<LinearLayout>(R.id.no_content)
         val noConnectView = findViewById<LinearLayout>(R.id.no_connect)
 
+        val apiCallback = initApiCallback(recyclerView, noConnectView, noContentView)
+
         searchEditText.setOnEditorActionListener { fieldSearch, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                trackApiService.search(fieldSearch.text.toString()).enqueue(object : Callback<TracksResponse> {
-                    override fun onResponse(
-                        call: Call<TracksResponse>,
-                        response: Response<TracksResponse>
-                    ) {
-                        if (response.code() == 200) {
-                            tracks.clear()
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                recyclerView.visibility = View.VISIBLE
-                                noConnectView.visibility = View.GONE
-                                noContentView.visibility = View.GONE
-
-                                tracks.addAll(response.body()?.results!!)
-                                trackAdapter.notifyDataSetChanged()
-                            } else {
-                                noContentView.visibility = View.VISIBLE
-                                noConnectView.visibility = View.GONE
-                                recyclerView.visibility = View.GONE
-
-                            }
-                        } else {
-                            noContentView.visibility = View.GONE
-                            noConnectView.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
-                        }
-                    }
-
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                        noContentView.visibility = View.GONE
-                        noConnectView.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                    }
-                })
+                searchTrack = fieldSearch.text.toString()
+                trackApiService.search(searchTrack).enqueue(apiCallback)
             }
             false
         }
+        val buttonReload = findViewById<Button>(R.id.btn_reload)
+        buttonReload.setOnClickListener {
+            trackApiService.search(searchTrack).enqueue(apiCallback)
+        }
+    }
 
+    private fun initApiCallback(
+        recyclerView: RecyclerView,
+        noConnectView: LinearLayout,
+        noContentView: LinearLayout
+    ): Callback<TracksResponse> {
+        return (object : Callback<TracksResponse> {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onResponse(
+                call: Call<TracksResponse>,
+                response: Response<TracksResponse>
+            ) {
+                if (response.code() == 200) {
+                    tracks.clear()
+                    if (response.body()?.results?.isNotEmpty() == true) {
+                        recyclerView.visibility = View.VISIBLE
+                        noConnectView.visibility = View.GONE
+                        noContentView.visibility = View.GONE
+
+                        tracks.addAll(response.body()?.results!!)
+                        trackAdapter.notifyDataSetChanged()
+                    } else {
+                        noContentView.visibility = View.VISIBLE
+                        noConnectView.visibility = View.GONE
+                        recyclerView.visibility = View.GONE
+
+                    }
+                } else {
+                    noContentView.visibility = View.GONE
+                    noConnectView.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                }
+            }
+
+            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                noContentView.visibility = View.GONE
+                noConnectView.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+            }
+        })
     }
 
     private fun initSongsRecyclerView() : RecyclerView {
