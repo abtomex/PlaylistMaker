@@ -3,6 +3,8 @@
     <color name="text_color">#FFFFFFFF</color>
     <color name="button_back_color">#FFFFFFFF</color>
     <color name="bkg_window_color" tools:ignore="MissingDefaultResource">#1A1B22</color>
+    <color name="bkg_main_menu_window_color">#1A1B22</color>
+
     <color name="icons_color_clear">#1A1B22</color>
     <color name="icons_color_settings">#FFFFFF</color>
 

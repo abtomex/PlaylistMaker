@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.net.toUri
+import com.google.android.material.switchmaterial.SwitchMaterial
 
-class SettingsActivity : AbstractButtonBackActivity() {
+class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
 
     override fun buttonBackId(): Int {
         return R.id.settings_layout
@@ -18,16 +17,14 @@ class SettingsActivity : AbstractButtonBackActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        val sharedPrefs = getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE)
 
-        val switch = findViewById<SwitchCompat>(R.id.night_theme_switch)
-        val prefs = getSharedPreferences(SETTINGS, MODE_PRIVATE)
-        val isDark = prefs.getBoolean(DARK_MODE, false)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.isChecked = sharedPrefs.getBoolean(DARK_THEME_KEY, (applicationContext as App).darkTheme)
 
-        switch.isChecked = isDark
-        AppCompatDelegate.setDefaultNightMode(
-            if (isDark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        )
-
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
         val buttonShare = findViewById<TextView>(R.id.share_text)
         buttonShare.setOnClickListener {
 
@@ -60,12 +57,6 @@ class SettingsActivity : AbstractButtonBackActivity() {
 
             startActivity(offerIntent)
         }
-    }
-
-
-    companion object {
-        const val SETTINGS = "settings"
-        const val DARK_MODE = "dark_mode"
     }
 
 }
