@@ -14,7 +14,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
 import dom.dima.practicum.playlistmaker.api.SearchTrackApi
 import dom.dima.practicum.playlistmaker.data.Track
 import dom.dima.practicum.playlistmaker.data.TracksResponse
@@ -43,6 +42,12 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var trackAdapter: TrackAdapter? = null
     private var searchHistoryService: SearchHistoryService? = null
 
+    private var recyclerView: RecyclerView? = null
+    private var noContentView: LinearLayout? = null
+    private var noConnectView: LinearLayout? = null
+    private var clearHistoryButton: Button? = null
+    private var youSearchTitle: TextView? = null
+
     override fun buttonBackId(): Int {
         return R.id.search_layout
     }
@@ -52,16 +57,16 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val recyclerView = initSongsRecyclerView()
-        val noContentView = findViewById<LinearLayout>(R.id.no_content)
-        val noConnectView = findViewById<LinearLayout>(R.id.no_connect)
+        recyclerView = initSongsRecyclerView()
+        noContentView = findViewById(R.id.no_content)
+        noConnectView = findViewById(R.id.no_connect)
+        clearHistoryButton = findViewById(R.id.clear_history)
+        youSearchTitle = findViewById(R.id.search_history_text)
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val clearHistoryButton = findViewById<Button>(R.id.clear_history)
-        val youSearchTitle = findViewById<TextView>(R.id.search_history_text)
 
-        clearHistoryButton.setOnClickListener {
+        this.clearHistoryButton!!.setOnClickListener {
             tracks.clear()
             searchHistoryService?.clearHistory()
         }
@@ -75,8 +80,8 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             tracks.clear()
             tracks.addAll(searchHistoryService!!.tracks)
             trackAdapter!!.notifyDataSetChanged()
-            allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
-            recyclerView.visibility = View.VISIBLE
+            allGone()
+            recyclerView?.visibility = View.VISIBLE
         }
 
         searchEditText.setOnFocusChangeListener{ _, onFocus ->
@@ -84,8 +89,8 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
                 tracks.clear()
                 tracks.addAll(searchHistoryService!!.tracks)
                 trackAdapter?.notifyDataSetChanged()
-                clearHistoryButton.visibility = View.VISIBLE
-                youSearchTitle.visibility = View.VISIBLE
+                clearHistoryButton?.visibility = View.VISIBLE
+                youSearchTitle?.visibility = View.VISIBLE
 
             }
         }
@@ -107,7 +112,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
         })
 
-        val apiCallback = initApiCallback(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
+        val apiCallback = initApiCallback()
 
         searchEditText.setOnEditorActionListener { fieldSearch, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -122,28 +127,15 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         }
     }
 
-    private fun allGone(
-        recyclerView: RecyclerView,
-        noConnectView: LinearLayout,
-        noContentView: LinearLayout,
-        clearHistoryButton: Button,
-        youSearchTitle: TextView
-    ) {
-        recyclerView.visibility = View.GONE
-        noConnectView.visibility = View.GONE
-        noContentView.visibility = View.GONE
-        clearHistoryButton.visibility = View.GONE
-        youSearchTitle.visibility = View.GONE
+    private fun allGone() {
+        recyclerView?.visibility = View.GONE
+        noContentView?.visibility = View.GONE
+        noConnectView?.visibility = View.GONE
+        clearHistoryButton?.visibility = View.GONE
+        youSearchTitle?.visibility = View.GONE
     }
 
-    private fun initApiCallback(
-        recyclerView: RecyclerView,
-        noConnectView: LinearLayout,
-        noContentView: LinearLayout,
-        clearHistoryButton: Button,
-        youSearchTitle: TextView
-
-    ): Callback<TracksResponse> {
+    private fun initApiCallback(): Callback<TracksResponse> {
         return (object : Callback<TracksResponse> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
@@ -153,25 +145,25 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
                 if (response.code() == 200) {
                     tracks.clear()
                     if (response.body()?.results?.isNotEmpty() == true) {
-                        allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
-                        recyclerView.visibility = View.VISIBLE
+                        allGone()
+                        recyclerView?.visibility = View.VISIBLE
 
                         tracks.addAll(response.body()?.results!!)
                         trackAdapter!!.notifyDataSetChanged()
                     } else {
-                        allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
-                        noContentView.visibility = View.VISIBLE
+                        allGone()
+                        noContentView?.visibility = View.VISIBLE
 
                     }
                 } else {
-                    allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
-                    noContentView.visibility = View.GONE
+                    allGone()
+                    noContentView?.visibility = View.GONE
                 }
             }
 
             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
-                noConnectView.visibility = View.VISIBLE
+                allGone()
+                noConnectView?.visibility = View.VISIBLE
             }
         })
     }
@@ -188,7 +180,10 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             if (TRACK_HISTORY == key) {
                 tracks.clear()
                 tracks.addAll(searchHistoryService!!.tracks)
+                allGone()
                 trackRecyclerView.visibility = View.VISIBLE
+                youSearchTitle?.visibility = View.VISIBLE
+                clearHistoryButton?.visibility = View.VISIBLE
                 trackAdapter!!.notifyDataSetChanged()
             }
         }

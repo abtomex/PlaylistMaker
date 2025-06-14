@@ -6,9 +6,9 @@ import com.google.gson.reflect.TypeToken
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.data.Track
 
-class SearchHistoryService(private val sharedPreferences: SharedPreferences) :
-    ApplicationConstants {
+class SearchHistoryService(private val sharedPreferences: SharedPreferences) : ApplicationConstants {
 
+    private val MAX_HISTORY_SIZE = 10
     val tracks = ArrayList<Track>()
 
     init {
@@ -22,6 +22,10 @@ class SearchHistoryService(private val sharedPreferences: SharedPreferences) :
             tracks.remove(track)
         }
         tracks.add(0, track)
+
+        while (tracks.size > MAX_HISTORY_SIZE) {
+            tracks.removeAt(MAX_HISTORY_SIZE)
+        }
         reloadSharedPreferences()
 
     }
