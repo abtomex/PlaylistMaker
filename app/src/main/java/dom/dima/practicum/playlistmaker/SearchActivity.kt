@@ -12,7 +12,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import dom.dima.practicum.playlistmaker.api.SearchTrackApi
 import dom.dima.practicum.playlistmaker.data.Track
 import dom.dima.practicum.playlistmaker.data.TracksResponse
@@ -39,6 +41,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var searchTrack: String = ""
     private val tracks = ArrayList<Track>()
     private var trackAdapter: TrackAdapter? = null
+    private var searchHistoryService: SearchHistoryService? = null
 
     override fun buttonBackId(): Int {
         return R.id.search_layout
@@ -55,6 +58,13 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
+        val clearHistoryButton = findViewById<Button>(R.id.clear_history)
+        val youSearchTitle = findViewById<TextView>(R.id.search_history_text)
+
+        clearHistoryButton.setOnClickListener {
+            tracks.clear()
+            searchHistoryService?.clearHistory()
+        }
 
         clearButton.setOnClickListener {
 
@@ -63,10 +73,22 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(searchEditText.windowToken, 0)
             tracks.clear()
+            tracks.addAll(searchHistoryService!!.tracks)
             trackAdapter!!.notifyDataSetChanged()
-            allGone(recyclerView, noConnectView, noContentView)
+            allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
+            recyclerView.visibility = View.VISIBLE
         }
 
+        searchEditText.setOnFocusChangeListener{ _, onFocus ->
+            if(onFocus) {
+                tracks.clear()
+                tracks.addAll(searchHistoryService!!.tracks)
+                trackAdapter?.notifyDataSetChanged()
+                clearHistoryButton.visibility = View.VISIBLE
+                youSearchTitle.visibility = View.VISIBLE
+
+            }
+        }
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -85,7 +107,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
         })
 
-        val apiCallback = initApiCallback(recyclerView, noConnectView, noContentView)
+        val apiCallback = initApiCallback(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
 
         searchEditText.setOnEditorActionListener { fieldSearch, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -103,17 +125,24 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private fun allGone(
         recyclerView: RecyclerView,
         noConnectView: LinearLayout,
-        noContentView: LinearLayout
+        noContentView: LinearLayout,
+        clearHistoryButton: Button,
+        youSearchTitle: TextView
     ) {
         recyclerView.visibility = View.GONE
         noConnectView.visibility = View.GONE
         noContentView.visibility = View.GONE
+        clearHistoryButton.visibility = View.GONE
+        youSearchTitle.visibility = View.GONE
     }
 
     private fun initApiCallback(
         recyclerView: RecyclerView,
         noConnectView: LinearLayout,
-        noContentView: LinearLayout
+        noContentView: LinearLayout,
+        clearHistoryButton: Button,
+        youSearchTitle: TextView
+
     ): Callback<TracksResponse> {
         return (object : Callback<TracksResponse> {
             @SuppressLint("NotifyDataSetChanged")
@@ -124,35 +153,46 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
                 if (response.code() == 200) {
                     tracks.clear()
                     if (response.body()?.results?.isNotEmpty() == true) {
-                        allGone(recyclerView, noConnectView, noContentView)
+                        allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
                         recyclerView.visibility = View.VISIBLE
 
                         tracks.addAll(response.body()?.results!!)
                         trackAdapter!!.notifyDataSetChanged()
                     } else {
-                        allGone(recyclerView, noConnectView, noContentView)
+                        allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
                         noContentView.visibility = View.VISIBLE
 
                     }
                 } else {
-                    allGone(recyclerView, noConnectView, noContentView)
+                    allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
                     noContentView.visibility = View.GONE
                 }
             }
 
             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                allGone(recyclerView, noConnectView, noContentView)
+                allGone(recyclerView, noConnectView, noContentView, clearHistoryButton, youSearchTitle)
                 noConnectView.visibility = View.VISIBLE
             }
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initSongsRecyclerView() : RecyclerView {
-        val searchHistoryService = SearchHistoryService(getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE))
-        tracks.addAll(searchHistoryService.getHistory())
-
         val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
-        trackAdapter = TrackAdapter(tracks, searchHistoryService)
+
+        val sharedPreferences = getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE)
+        searchHistoryService = SearchHistoryService(sharedPreferences)
+
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            if (TRACK_HISTORY == key) {
+                tracks.clear()
+                tracks.addAll(searchHistoryService!!.tracks)
+                trackRecyclerView.visibility = View.VISIBLE
+                trackAdapter!!.notifyDataSetChanged()
+            }
+        }
+        trackAdapter = TrackAdapter(tracks, searchHistoryService!!)
         trackRecyclerView.adapter = trackAdapter
         trackRecyclerView.adapter
         return trackRecyclerView
@@ -173,7 +213,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         private const val SAVED_TEXT = "SAVED_TEXT"
         private const val DEFAULT_STR = ""
 
-//        val tracks = ArrayList<Track>()
     }
 
 }

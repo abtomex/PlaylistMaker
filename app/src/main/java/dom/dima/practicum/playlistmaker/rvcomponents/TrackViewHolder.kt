@@ -35,7 +35,6 @@ class TrackViewHolder(
             if (position != RecyclerView.NO_POSITION) {
                 val clickedItem = trackList[position]
                 searchHistoryService.addToHistory(clickedItem)
-                Toast.makeText(itemView.context, "Clicked: ${clickedItem.trackName}", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -12,8 +12,8 @@
     <color name="track_text_artist_color">#FFFFFF</color>
 
     <color name="no_content_and_no_connect_color">#FFFFFF</color>
-    <color name="errors_text_color">#FFFFFF</color>
-    <color name="btn_reload">#FFFFFF</color>
+    <color name="activity_search_infos_text_color">#FFFFFF</color>
+    <color name="btn_activity_search_color">#FFFFFF</color>
     <color name="btn_reload_text">#1A1B22</color>
 
 </resources>
