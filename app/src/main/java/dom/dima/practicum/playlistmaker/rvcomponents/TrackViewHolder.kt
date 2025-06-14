@@ -6,15 +6,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.data.Track
+import dom.dima.practicum.playlistmaker.service.SearchHistoryService
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+class TrackViewHolder(
+    parent: ViewGroup,
+    trackList: List<Track>,
+    private val searchHistoryService: SearchHistoryService
+    ) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.view_track, parent, false)
 ) {
 
@@ -23,9 +29,20 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     private val trackArtistName: TextView = itemView.findViewById(R.id.trackArtistName)
     private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
 
+    init {
+        itemView.setOnClickListener {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val clickedItem = trackList[position]
+                searchHistoryService.addToHistory(clickedItem)
+                Toast.makeText(itemView.context, "Clicked: ${clickedItem.trackName}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     fun bind(model : Track) {
         trackName.text = model.trackName
-        trackArtistName.setText("")
+        trackArtistName.text = ""
         trackArtistName.text = model.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
 
@@ -42,4 +59,5 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             dp,
             context.resources.displayMetrics).toInt()
     }
+
 }

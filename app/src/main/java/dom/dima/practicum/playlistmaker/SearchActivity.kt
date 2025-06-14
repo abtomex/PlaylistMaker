@@ -17,13 +17,14 @@ import dom.dima.practicum.playlistmaker.api.SearchTrackApi
 import dom.dima.practicum.playlistmaker.data.Track
 import dom.dima.practicum.playlistmaker.data.TracksResponse
 import dom.dima.practicum.playlistmaker.rvcomponents.TrackAdapter
+import dom.dima.practicum.playlistmaker.service.SearchHistoryService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchActivity : AbstractButtonBackActivity() {
+class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
     private var inputSearchText: String = DEFAULT_STR
 
@@ -35,8 +36,9 @@ class SearchActivity : AbstractButtonBackActivity() {
         .build()
 
     private val trackApiService = retrofit.create(SearchTrackApi::class.java)
-    private var trackAdapter: TrackAdapter = TrackAdapter(tracks)
     private var searchTrack: String = ""
+    private val tracks = ArrayList<Track>()
+    private var trackAdapter: TrackAdapter? = null
 
     override fun buttonBackId(): Int {
         return R.id.search_layout
@@ -61,7 +63,7 @@ class SearchActivity : AbstractButtonBackActivity() {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(searchEditText.windowToken, 0)
             tracks.clear()
-            trackAdapter.notifyDataSetChanged()
+            trackAdapter!!.notifyDataSetChanged()
             allGone(recyclerView, noConnectView, noContentView)
         }
 
@@ -126,7 +128,7 @@ class SearchActivity : AbstractButtonBackActivity() {
                         recyclerView.visibility = View.VISIBLE
 
                         tracks.addAll(response.body()?.results!!)
-                        trackAdapter.notifyDataSetChanged()
+                        trackAdapter!!.notifyDataSetChanged()
                     } else {
                         allGone(recyclerView, noConnectView, noContentView)
                         noContentView.visibility = View.VISIBLE
@@ -146,9 +148,13 @@ class SearchActivity : AbstractButtonBackActivity() {
     }
 
     private fun initSongsRecyclerView() : RecyclerView {
-        val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
+        val searchHistoryService = SearchHistoryService(getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE))
+        tracks.addAll(searchHistoryService.getHistory())
 
+        val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
+        trackAdapter = TrackAdapter(tracks, searchHistoryService)
         trackRecyclerView.adapter = trackAdapter
+        trackRecyclerView.adapter
         return trackRecyclerView
     }
 
@@ -167,7 +173,7 @@ class SearchActivity : AbstractButtonBackActivity() {
         private const val SAVED_TEXT = "SAVED_TEXT"
         private const val DEFAULT_STR = ""
 
-        val tracks = ArrayList<Track>()
+//        val tracks = ArrayList<Track>()
     }
 
 }
