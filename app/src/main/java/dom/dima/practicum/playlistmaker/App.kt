@@ -7,7 +7,8 @@ import androidx.core.content.edit
 
 class App : Application(), ApplicationConstants {
 
-    var darkTheme: Boolean = false
+    private var darkTheme: Boolean = false
+
     private var sharedPrefs : SharedPreferences? = null
 
     override fun onCreate() {
@@ -27,7 +28,7 @@ class App : Application(), ApplicationConstants {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
-        sharedPrefs!!.edit {
+        sharedPrefs?.edit {
             putBoolean(DARK_THEME_KEY, darkTheme)
         }
     }

@@ -10,11 +10,12 @@ class SearchHistoryService(private val sharedPreferences: SharedPreferences) : A
 
     private val MAX_HISTORY_SIZE = 10
     val tracks = ArrayList<Track>()
+    private val gson: Gson = Gson()
 
     init {
         val json = sharedPreferences.getString(TRACK_HISTORY, ArrayList<Track>().toString())
         val type = object : TypeToken<List<Track>>() {}.type
-        tracks.addAll(Gson().fromJson(json, type))
+        tracks.addAll(gson.fromJson(json, type))
     }
 
     fun addToHistory(track: Track) {
@@ -31,7 +32,7 @@ class SearchHistoryService(private val sharedPreferences: SharedPreferences) : A
     }
 
     private fun reloadSharedPreferences() {
-        val json = Gson().toJson(tracks)
+        val json = gson.toJson(tracks)
         sharedPreferences.edit()
             .putString(TRACK_HISTORY, json)
             .apply()

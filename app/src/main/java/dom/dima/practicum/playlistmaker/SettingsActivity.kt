@@ -20,7 +20,7 @@ class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
         val sharedPrefs = getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE)
 
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        themeSwitcher.isChecked = sharedPrefs.getBoolean(DARK_THEME_KEY, (applicationContext as App).darkTheme)
+        themeSwitcher.isChecked = sharedPrefs.getBoolean(DARK_THEME_KEY, false)
 
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)

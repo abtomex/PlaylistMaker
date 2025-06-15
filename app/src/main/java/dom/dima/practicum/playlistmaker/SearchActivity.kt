@@ -66,9 +66,10 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
 
-        this.clearHistoryButton!!.setOnClickListener {
+        this.clearHistoryButton?.setOnClickListener {
             tracks.clear()
             searchHistoryService?.clearHistory()
+            allGone()
         }
 
         clearButton.setOnClickListener {
@@ -78,17 +79,23 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(searchEditText.windowToken, 0)
             tracks.clear()
-            tracks.addAll(searchHistoryService!!.tracks)
+            if(searchHistoryService?.tracks?.isNotEmpty() == true) {
+                tracks.addAll(searchHistoryService!!.tracks)
+                allGone()
+                youSearchTitle?.visibility = View.VISIBLE
+                recyclerView?.visibility = View.VISIBLE
+                clearHistoryButton?.visibility = View.VISIBLE
+            }
             trackAdapter!!.notifyDataSetChanged()
-            allGone()
-            recyclerView?.visibility = View.VISIBLE
         }
 
         searchEditText.setOnFocusChangeListener{ _, onFocus ->
-            if(onFocus) {
+            allGone()
+            if(onFocus && searchHistoryService?.tracks?.isNotEmpty() == true) {
                 tracks.clear()
                 tracks.addAll(searchHistoryService!!.tracks)
                 trackAdapter?.notifyDataSetChanged()
+                recyclerView?.visibility = View.VISIBLE
                 clearHistoryButton?.visibility = View.VISIBLE
                 youSearchTitle?.visibility = View.VISIBLE
 
