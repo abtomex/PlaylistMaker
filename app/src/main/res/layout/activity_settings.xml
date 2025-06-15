@@ -18,8 +18,8 @@
 
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/night_theme_switch"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwitcher"
         style="@style/settings_items_style"
         android:text="@string/dark_theme"
         android:thumb="@drawable/custom_thumb"

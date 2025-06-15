@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/parent_linear_layout_style"
     android:orientation="vertical"
+    android:nestedScrollingEnabled="true"
     >
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -20,7 +21,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="52dp">
 
         <EditText
             android:id="@+id/searchEditText"
@@ -56,13 +57,40 @@
 
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/trackRecyclerView"
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <TextView
+        android:id="@+id/search_history_text"
+        style="@style/activity_search_infos_text_style"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="0dp"
+        android:paddingBottom="0dp"
+        android:text="@string/search_history"
         android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trackRecyclerView"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        <Button
+            android:id="@+id/clear_history"
+            style="@style/btn_4_activity_search_style"
+            android:text="@string/clear_history"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/no_content"
@@ -78,7 +106,7 @@
             android:src="@drawable/ic_no_content"
             />
         <TextView
-            style="@style/errors_text_style"
+            style="@style/activity_search_infos_text_style"
             android:text="@string/nothing_to_find"
             />
 
@@ -98,16 +126,17 @@
             android:src="@drawable/ic_no_connect"
             />
         <TextView
-            style="@style/errors_text_style"
+            style="@style/activity_search_infos_text_style"
             android:text="@string/no_connect"
             />
 
         <Button
             android:id="@+id/btn_reload"
-            style="@style/btn_reload_style"
+            style="@style/btn_4_activity_search_style"
             android:text="@string/reload"
             />
     </LinearLayout>
+
 
 
 </LinearLayout>
