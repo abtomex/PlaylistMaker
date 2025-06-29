@@ -67,7 +67,7 @@
 
     </style>
 
-    <style name="errors_text_style">
+    <style name="activity_search_infos_text_style">
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:layout_marginLeft">24dp</item>
         <item name="android:layout_marginRight">24dp</item>
@@ -75,8 +75,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textColor">@color/errors_text_color</item>
-        <item name="android:textSize">@dimen/errors_text_size</item>
+        <item name="android:textColor">@color/activity_search_infos_text_color</item>
+        <item name="android:textSize">@dimen/activity_search_infos_text_size</item>
 
     </style>
 
@@ -88,15 +88,15 @@
 
     </style>
 
-    <style name="btn_reload_style" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="btn_4_activity_search_style" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textSize">@dimen/reload_text_size</item>
+        <item name="android:textSize">@dimen/btn_activity_search_text_size</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:layout_marginTop">24dp</item>
-        <item name="android:backgroundTint">@color/btn_reload</item>
+        <item name="android:backgroundTint">@color/btn_activity_search_color</item>
         <item name="android:textColor">@color/btn_reload_text</item>
         <item name="cornerRadius">54dp</item>
 
