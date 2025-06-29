@@ -196,7 +196,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         }
         trackAdapter = TrackAdapter(tracks, searchHistoryService!!)
         trackRecyclerView.adapter = trackAdapter
-        trackRecyclerView.adapter
         return trackRecyclerView
     }
 

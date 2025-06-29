@@ -15,5 +15,7 @@
     <color name="activity_search_infos_text_color">#FFFFFF</color>
     <color name="btn_activity_search_color">#FFFFFF</color>
     <color name="btn_reload_text">#1A1B22</color>
+    <color name="color_theme">#1A1B22</color>
+    <color name="mediaplayer_button_bkg">#ffffff</color>
 
 </resources>
