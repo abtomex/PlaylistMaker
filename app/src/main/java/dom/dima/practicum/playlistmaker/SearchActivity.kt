@@ -73,20 +73,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         }
 
         clearButton.setOnClickListener {
-
-            searchEditText.text.clear()
-            searchEditText.clearFocus()
-            (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                .hideSoftInputFromWindow(searchEditText.windowToken, 0)
-            tracks.clear()
-            if(searchHistoryService?.tracks?.isNotEmpty() == true) {
-                tracks.addAll(searchHistoryService!!.tracks)
-                allGone()
-                youSearchTitle?.visibility = View.VISIBLE
-                recyclerView?.visibility = View.VISIBLE
-                clearHistoryButton?.visibility = View.VISIBLE
-            }
-            trackAdapter!!.notifyDataSetChanged()
+            showHistoryIfItsNeeded(searchEditText)
         }
 
         searchEditText.setOnFocusChangeListener{ _, onFocus ->
@@ -110,6 +97,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
                     clearButton.visibility = View.VISIBLE
                 } else {
                     clearButton.visibility = View.GONE
+                    showHistoryIfItsNeeded(searchEditText)
                 }
             }
 
@@ -132,6 +120,24 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         buttonReload.setOnClickListener {
             trackApiService.search(searchTrack).enqueue(apiCallback)
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showHistoryIfItsNeeded(searchEditText: EditText) {
+        searchEditText.text.clear()
+        searchEditText.clearFocus()
+        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+            .hideSoftInputFromWindow(searchEditText.windowToken, 0)
+        tracks.clear()
+        if(searchHistoryService?.tracks?.isNotEmpty() == true) {
+            tracks.addAll(searchHistoryService!!.tracks)
+            allGone()
+            youSearchTitle?.visibility = View.VISIBLE
+            recyclerView?.visibility = View.VISIBLE
+            clearHistoryButton?.visibility = View.VISIBLE
+        }
+        trackAdapter!!.notifyDataSetChanged()
+
     }
 
     private fun allGone() {
