@@ -31,4 +31,7 @@
     <color name="activity_search_infos_text_color">#1A1B22</color>
     <color name="btn_activity_search_color">#1A1B22</color>
     <color name="btn_reload_text">#FFFFFF</color>
+    <color name="text_no_active_color">#AEAFB4</color>
+    <color name="color_theme">#FFFFFF</color>
+    <color name="mediaplayer_button_bkg">#1A1B22</color>
 </resources>

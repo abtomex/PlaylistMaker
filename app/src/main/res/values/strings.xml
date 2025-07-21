@@ -23,5 +23,13 @@
     <string name="reload">Обновить</string>
     <string name="clear_history">Очистить историю</string>
     <string name="search_history">Вы искали</string>
+    <string name="album_image">картинка альбома</string>
+    <string name="track_name">Track Name</string>
+    <string name="artist_name">Artist Name</string>
+    <string name="durability">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
 
 </resources>
