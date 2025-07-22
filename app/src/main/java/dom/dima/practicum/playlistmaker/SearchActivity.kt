@@ -3,6 +3,8 @@ package dom.dima.practicum.playlistmaker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.api.SearchTrackApi
@@ -47,9 +50,23 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var noConnectView: LinearLayout? = null
     private var clearHistoryButton: Button? = null
     private var youSearchTitle: TextView? = null
+    private var progressBar: ProgressBar? = null
+
+    private var apiCallback = initApiCallback()
+
+    private val searchRunnable = Runnable {
+        doSearch()
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun buttonBackId(): Int {
         return R.id.search_layout
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -62,6 +79,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         noConnectView = findViewById(R.id.no_connect)
         clearHistoryButton = findViewById(R.id.clear_history)
         youSearchTitle = findViewById(R.id.search_history_text)
+        progressBar = findViewById(R.id.progress_bar)
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
@@ -76,9 +94,9 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             showHistoryIfItsNeeded(searchEditText)
         }
 
-        searchEditText.setOnFocusChangeListener{ _, onFocus ->
+        searchEditText.setOnFocusChangeListener { _, onFocus ->
             allGone()
-            if(onFocus && searchHistoryService?.tracks?.isNotEmpty() == true) {
+            if (onFocus && searchHistoryService?.tracks?.isNotEmpty() == true) {
                 tracks.clear()
                 tracks.addAll(searchHistoryService!!.tracks)
                 trackAdapter?.notifyDataSetChanged()
@@ -93,7 +111,9 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchTrack = s.toString().trim()
                 if (!s.isNullOrEmpty()) {
+                    searchDebounce()
                     clearButton.visibility = View.VISIBLE
                 } else {
                     clearButton.visibility = View.GONE
@@ -107,12 +127,10 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
         })
 
-        val apiCallback = initApiCallback()
-
-        searchEditText.setOnEditorActionListener { fieldSearch, actionId, _ ->
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTrack = fieldSearch.text.toString().trim()
-                trackApiService.search(searchTrack).enqueue(apiCallback)
+                handler.removeCallbacks(searchRunnable)
+                doSearch()
             }
             false
         }
@@ -129,7 +147,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
             .hideSoftInputFromWindow(searchEditText.windowToken, 0)
         tracks.clear()
-        if(searchHistoryService?.tracks?.isNotEmpty() == true) {
+        if (searchHistoryService?.tracks?.isNotEmpty() == true) {
             tracks.addAll(searchHistoryService!!.tracks)
             allGone()
             youSearchTitle?.visibility = View.VISIBLE
@@ -155,6 +173,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
                 call: Call<TracksResponse>,
                 response: Response<TracksResponse>
             ) {
+                progressBar?.visibility = View.GONE
                 if (response.code() == 200) {
                     tracks.clear()
                     if (response.body()?.results?.isNotEmpty() == true) {
@@ -175,6 +194,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             }
 
             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                progressBar?.visibility = View.GONE
                 allGone()
                 noConnectView?.visibility = View.VISIBLE
             }
@@ -182,7 +202,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun initSongsRecyclerView() : RecyclerView {
+    private fun initSongsRecyclerView(): RecyclerView {
         val trackRecyclerView = findViewById<RecyclerView>(R.id.trackRecyclerView)
 
         val sharedPreferences = getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE)
@@ -216,10 +236,17 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         findViewById<EditText>(R.id.searchEditText).setText(inputSearchText)
     }
 
+    private fun doSearch() {
+        allGone()
+        progressBar?.visibility = View.VISIBLE
+        trackApiService.search(searchTrack).enqueue(apiCallback)
+
+    }
+
     companion object {
         private const val SAVED_TEXT = "SAVED_TEXT"
         private const val DEFAULT_STR = ""
-
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
 }

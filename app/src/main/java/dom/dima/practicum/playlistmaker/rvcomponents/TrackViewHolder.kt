@@ -12,12 +12,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.AudioplayerActivity
+import dom.dima.practicum.playlistmaker.AudioPlayerActivity
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.data.Track
 import dom.dima.practicum.playlistmaker.service.SearchHistoryService
 import java.text.SimpleDateFormat
 import java.util.Locale
+import android.os.Handler
+import android.os.Looper
+
 
 class TrackViewHolder(
     parent: ViewGroup,
@@ -35,10 +38,13 @@ class TrackViewHolder(
     private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
     private val gson: Gson = Gson()
 
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+
     init {
         itemView.setOnClickListener {
             val position = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
+            if (position != RecyclerView.NO_POSITION && clickDebounce()) {
                 val clickedItem = trackList[position]
                 showPlayerActivity(itemView.context, clickedItem)
                 searchHistoryService.addToHistory(clickedItem)
@@ -47,7 +53,7 @@ class TrackViewHolder(
     }
 
     private fun showPlayerActivity(context: Context?, clickedItem: Track) {
-        val playerIntent = Intent(context, AudioplayerActivity::class.java)
+        val playerIntent = Intent(context, AudioPlayerActivity::class.java)
             .putExtra(CLICKED_TRACK_CONTENT, gson.toJson(clickedItem))
 
         context?.startActivity(playerIntent)
@@ -73,4 +79,16 @@ class TrackViewHolder(
             context.resources.displayMetrics).toInt()
     }
 
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 }
