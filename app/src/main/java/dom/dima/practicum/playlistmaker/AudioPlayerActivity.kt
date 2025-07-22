@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
-import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -77,7 +77,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
             playbackControl()
         }
         mediaPlayer.setOnCompletionListener {
-            handler.removeCallbacks(progressRunnable)
+            pausePlayer()
             setText("00:00", null, findViewById(R.id.progress))
         }
 
@@ -86,8 +86,8 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private fun setText(text: String, key: TextView?, view: TextView?) {
         view?.text = text
         if (Objects.isNull(text) || text.isEmpty()) {
-            view?.visibility = View.GONE
-            key?.visibility = View.GONE
+            view?.isVisible = false
+            key?.isVisible = false
         }
     }
 
