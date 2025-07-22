@@ -76,10 +76,6 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
         commonButton.setOnClickListener {
             playbackControl()
         }
-        mediaPlayer.setOnCompletionListener {
-            pausePlayer()
-            setText("00:00", null, findViewById(R.id.progress))
-        }
 
     }
 
@@ -107,9 +103,13 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
             playerState = STATE_PREPARED
         }
         mediaPlayer.setOnCompletionListener {
+            handler.removeCallbacks(progressRunnable)
+            isStarted = false
             commonButton.setImageResource(R.drawable.button_play)
             playerState = STATE_PREPARED
+            setText("00:00", null, findViewById(R.id.progress))
         }
+
     }
 
     private var isStarted: Boolean = false
