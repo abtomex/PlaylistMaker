@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.rvcomponents
+package dom.dima.practicum.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -11,15 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.AudioPlayerActivity
-import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.data.Track
-import dom.dima.practicum.playlistmaker.service.SearchHistoryService
 import java.text.SimpleDateFormat
 import java.util.Locale
 import android.os.Handler
 import android.os.Looper
+import dom.dima.practicum.playlistmaker.ApplicationConstants
+import dom.dima.practicum.playlistmaker.ui.audiopleer.AudioPlayerActivity
+import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.domain.models.Track
 
 
 class TrackViewHolder(

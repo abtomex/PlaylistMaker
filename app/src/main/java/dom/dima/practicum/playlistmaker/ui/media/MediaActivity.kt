@@ -1,7 +1,8 @@
-package dom.dima.practicum.playlistmaker
+package dom.dima.practicum.playlistmaker.ui.media
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import dom.dima.practicum.playlistmaker.R
 
 class MediaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

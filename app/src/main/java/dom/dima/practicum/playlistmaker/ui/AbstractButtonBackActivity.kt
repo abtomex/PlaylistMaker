@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker
+package dom.dima.practicum.playlistmaker.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar

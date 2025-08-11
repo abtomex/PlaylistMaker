@@ -10,7 +10,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".AudioPlayerActivity">
+        tools:context=".ui.audiopleer.AudioPlayerActivity">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/leftBorder"

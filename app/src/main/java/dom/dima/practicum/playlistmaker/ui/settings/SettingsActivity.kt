@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker
+package dom.dima.practicum.playlistmaker.ui.settings
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.core.net.toUri
 import com.google.android.material.switchmaterial.SwitchMaterial
+import dom.dima.practicum.playlistmaker.App
+import dom.dima.practicum.playlistmaker.ApplicationConstants
+import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
 
 class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
 

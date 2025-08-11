@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker
+package dom.dima.practicum.playlistmaker.ui.audiopleer
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -13,7 +13,10 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import dom.dima.practicum.playlistmaker.data.Track
+import dom.dima.practicum.playlistmaker.ApplicationConstants
+import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.domain.models.Track
+import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Objects

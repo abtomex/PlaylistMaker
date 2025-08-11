@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.data
+package dom.dima.practicum.playlistmaker.domain.models
 
 data class Track (
     val trackId: Int,
