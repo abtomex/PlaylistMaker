@@ -42,7 +42,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
         val trackIcon = findViewById<ImageView>(R.id.cover)
         Glide.with(this)
-            .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+            .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
             .fitCenter()
             .placeholder(R.drawable.ic_no_image_placeholder_45)
             .transform(RoundedCorners(dpToPx(8.0f, this)))
@@ -59,7 +59,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
         try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-            val date = inputFormat.parse(track.releaseDate)
+            val date = track.releaseDate?.let { inputFormat.parse(it) }
             val outputFormat = SimpleDateFormat("yyyy", Locale.getDefault())
             setText(
                 outputFormat.format(date!!),
@@ -82,9 +82,9 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
     }
 
-    private fun setText(text: String, key: TextView?, view: TextView?) {
+    private fun setText(text: String?, key: TextView?, view: TextView?) {
         view?.text = text
-        if (Objects.isNull(text) || text.isEmpty()) {
+        if (Objects.isNull(text) || text.isNullOrEmpty()) {
             view?.isVisible = false
             key?.isVisible = false
         }
@@ -98,7 +98,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
         ).toInt()
     }
 
-    private fun preparePlayer(url: String) {
+    private fun preparePlayer(url: String?) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {

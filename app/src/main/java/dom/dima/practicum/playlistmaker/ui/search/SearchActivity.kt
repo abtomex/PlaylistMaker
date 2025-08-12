@@ -40,19 +40,17 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var youSearchTitle: TextView? = null
     private var progressBar: ProgressBar? = null
 
-    private var searchRunnable = Runnable {
-        doSearch()
-    }
+    @Volatile
+    private var searchIsScheduled = false
+    @Volatile
+    private var searchInProgress = false
+
+    private var searchRunnable : Runnable = initSearchRunnable(emptyList())
 
     private val handler = Handler(Looper.getMainLooper())
 
     override fun buttonBackId(): Int {
         return R.id.search_layout
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -92,6 +90,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
             }
         }
+
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -99,7 +98,15 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchTrack = s.toString().trim()
                 if (!s.isNullOrEmpty()) {
-                    searchDebounce()
+                    println("!!!___кнопочки, thread=${Thread.currentThread().name}")
+                    handler.removeCallbacks(searchRunnable)
+                    if (!searchIsScheduled) {
+                        searchIsScheduled = true
+                        handler.postDelayed(
+                            { doSearch() },
+                            SEARCH_DEBOUNCE_DELAY
+                        )
+                    }
                     clearButton.visibility = View.VISIBLE
                 } else {
                     clearButton.visibility = View.GONE
@@ -190,6 +197,14 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     }
 
     private fun doSearch() {
+        println("!!!___$searchTrack, thread=${Thread.currentThread().name}")
+        if (searchTrack.isEmpty()) {
+            searchIsScheduled = false
+            return
+        }
+        if (searchInProgress) return
+        searchInProgress = true
+
         allGone()
         progressBar?.visibility = View.VISIBLE
         tracksInteractor.searchTracks(
@@ -197,28 +212,14 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             consumer = object : TracksInteractor.TracksConsumer {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun consume(foundTracks: List<Track>) {
-
+                    println("!!!___ответ, thread=${Thread.currentThread().name}")
                     val currentRunnable = searchRunnable
                     handler.removeCallbacks(currentRunnable)
-
-                    val newSearchRunnable = Runnable {
-                        progressBar?.visibility = View.GONE
-                        if (foundTracks.isNotEmpty()) {
-                            tracks.clear()
-                            allGone()
-                            recyclerView?.visibility = View.VISIBLE
-
-                            tracks.addAll(foundTracks)
-                            trackAdapter!!.notifyDataSetChanged()
-                        } else {
-                            allGone()
-                            noContentView?.visibility = View.VISIBLE
-
-                        }
-                    }
+                    val newSearchRunnable : Runnable = initSearchRunnable(foundTracks)
                     searchRunnable = newSearchRunnable
                     handler.post(newSearchRunnable)
-
+                    searchIsScheduled = false
+                    searchInProgress = false
                 }
 
             }
@@ -226,42 +227,61 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
     }
 
-/*
-    private val tracksConsumer: TracksInteractor.TracksConsumer = object : TracksInteractor.TracksConsumer {
-        @SuppressLint("NotifyDataSetChanged")
-        override fun consume(foundTracks: List<Track>) {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initSearchRunnable(foundTracks: List<Track>): Runnable {
+        return Runnable {
+            progressBar?.visibility = View.GONE
+            if (foundTracks.isNotEmpty()) {
+                tracks.clear()
+                allGone()
+                recyclerView?.visibility = View.VISIBLE
 
-            val currentRunnable = searchRunnable
-            handler.removeCallbacks(currentRunnable)
+                tracks.addAll(foundTracks)
+                trackAdapter!!.notifyDataSetChanged()
+            } else {
+                allGone()
+                noContentView?.visibility = View.VISIBLE
 
-            val newSearchRunnable = Runnable {
-                progressBar?.visibility = View.GONE
-                if (foundTracks.isNotEmpty()) {
-                    tracks.clear()
-                    allGone()
-                    recyclerView?.visibility = View.VISIBLE
-
-                    tracks.addAll(foundTracks)
-                    trackAdapter!!.notifyDataSetChanged()
-                } else {
-                    allGone()
-                    noContentView?.visibility = View.VISIBLE
-
-                }
             }
-            searchRunnable = newSearchRunnable
-            handler.post(newSearchRunnable)
+        }
+    }
+
+    /*
+        private val tracksConsumer: TracksInteractor.TracksConsumer = object : TracksInteractor.TracksConsumer {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun consume(foundTracks: List<Track>) {
+
+                val currentRunnable = searchRunnable
+                handler.removeCallbacks(currentRunnable)
+
+                val newSearchRunnable = Runnable {
+                    progressBar?.visibility = View.GONE
+                    if (foundTracks.isNotEmpty()) {
+                        tracks.clear()
+                        allGone()
+                        recyclerView?.visibility = View.VISIBLE
+
+                        tracks.addAll(foundTracks)
+                        trackAdapter!!.notifyDataSetChanged()
+                    } else {
+                        allGone()
+                        noContentView?.visibility = View.VISIBLE
+
+                    }
+                }
+                searchRunnable = newSearchRunnable
+                handler.post(newSearchRunnable)
+
+            }
 
         }
-
-    }
-*/
+    */
 
 
     companion object {
         private const val SAVED_TEXT = "SAVED_TEXT"
         private const val DEFAULT_STR = ""
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_DEBOUNCE_DELAY = 4000L
     }
 
 }

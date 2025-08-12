@@ -9,7 +9,6 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
     private val executor = Executors.newCachedThreadPool()
 
     override fun searchTracks(searchStr: String, consumer: TracksInteractor.TracksConsumer) {
-
         executor.execute {
             consumer.consume(repository.searchTracks(searchStr))
         }
