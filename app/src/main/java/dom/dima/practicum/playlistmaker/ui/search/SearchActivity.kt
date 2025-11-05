@@ -98,7 +98,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchTrack = s.toString().trim()
                 if (!s.isNullOrEmpty()) {
-                    println("!!!___кнопочки, thread=${Thread.currentThread().name}")
                     handler.removeCallbacks(searchRunnable)
                     if (!searchIsScheduled) {
                         searchIsScheduled = true
@@ -245,37 +244,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             }
         }
     }
-
-    /*
-        private val tracksConsumer: TracksInteractor.TracksConsumer = object : TracksInteractor.TracksConsumer {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun consume(foundTracks: List<Track>) {
-
-                val currentRunnable = searchRunnable
-                handler.removeCallbacks(currentRunnable)
-
-                val newSearchRunnable = Runnable {
-                    progressBar?.visibility = View.GONE
-                    if (foundTracks.isNotEmpty()) {
-                        tracks.clear()
-                        allGone()
-                        recyclerView?.visibility = View.VISIBLE
-
-                        tracks.addAll(foundTracks)
-                        trackAdapter!!.notifyDataSetChanged()
-                    } else {
-                        allGone()
-                        noContentView?.visibility = View.VISIBLE
-
-                    }
-                }
-                searchRunnable = newSearchRunnable
-                handler.post(newSearchRunnable)
-
-            }
-
-        }
-    */
 
 
     companion object {
