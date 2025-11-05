@@ -1,12 +1,13 @@
-package dom.dima.practicum.playlistmaker.service
+package dom.dima.practicum.playlistmaker.ui.search
 
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.data.Track
+import dom.dima.practicum.playlistmaker.domain.models.Track
 
-class SearchHistoryService(private val sharedPreferences: SharedPreferences) : ApplicationConstants {
+class SearchHistoryService(private val sharedPreferences: SharedPreferences) :
+    ApplicationConstants {
 
     private val MAX_HISTORY_SIZE = 10
     val tracks = ArrayList<Track>()

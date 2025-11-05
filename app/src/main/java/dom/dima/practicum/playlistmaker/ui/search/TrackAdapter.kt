@@ -1,9 +1,8 @@
-package dom.dima.practicum.playlistmaker.rvcomponents
+package dom.dima.practicum.playlistmaker.ui.search
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dom.dima.practicum.playlistmaker.data.Track
-import dom.dima.practicum.playlistmaker.service.SearchHistoryService
+import dom.dima.practicum.playlistmaker.domain.models.Track
 
 class TrackAdapter(
     private val trackList: List<Track>,

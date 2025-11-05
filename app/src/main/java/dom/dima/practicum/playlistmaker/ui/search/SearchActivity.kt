@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker
+package dom.dima.practicum.playlistmaker.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,29 +17,17 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import dom.dima.practicum.playlistmaker.api.SearchTrackApi
-import dom.dima.practicum.playlistmaker.data.Track
-import dom.dima.practicum.playlistmaker.data.TracksResponse
-import dom.dima.practicum.playlistmaker.rvcomponents.TrackAdapter
-import dom.dima.practicum.playlistmaker.service.SearchHistoryService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
+import dom.dima.practicum.playlistmaker.ApplicationConstants
+import dom.dima.practicum.playlistmaker.Creator
+import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.domain.api.TracksInteractor
+import dom.dima.practicum.playlistmaker.domain.models.Track
 
 class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
     private var inputSearchText: String = DEFAULT_STR
 
-    private val imdbBaseUrl = "https://itunes.apple.com"
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(imdbBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val trackApiService = retrofit.create(SearchTrackApi::class.java)
     private var searchTrack: String = ""
     private val tracks = ArrayList<Track>()
     private var trackAdapter: TrackAdapter? = null
@@ -52,21 +40,17 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var youSearchTitle: TextView? = null
     private var progressBar: ProgressBar? = null
 
-    private var apiCallback = initApiCallback()
+    @Volatile
+    private var searchIsScheduled = false
+    @Volatile
+    private var searchInProgress = false
 
-    private val searchRunnable = Runnable {
-        doSearch()
-    }
+    private var searchRunnable : Runnable = initSearchRunnable(emptyList())
 
     private val handler = Handler(Looper.getMainLooper())
 
     override fun buttonBackId(): Int {
         return R.id.search_layout
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -106,6 +90,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
             }
         }
+
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -113,7 +98,14 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchTrack = s.toString().trim()
                 if (!s.isNullOrEmpty()) {
-                    searchDebounce()
+                    handler.removeCallbacks(searchRunnable)
+                    if (!searchIsScheduled) {
+                        searchIsScheduled = true
+                        handler.postDelayed(
+                            { doSearch() },
+                            SEARCH_DEBOUNCE_DELAY
+                        )
+                    }
                     clearButton.visibility = View.VISIBLE
                 } else {
                     clearButton.visibility = View.GONE
@@ -136,9 +128,11 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         }
         val buttonReload = findViewById<Button>(R.id.btn_reload)
         buttonReload.setOnClickListener {
-            trackApiService.search(searchTrack).enqueue(apiCallback)
+            doSearch()
         }
     }
+
+    private val tracksInteractor = Creator.provideTracksInteractor()
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showHistoryIfItsNeeded(searchEditText: EditText) {
@@ -164,41 +158,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         noConnectView?.visibility = View.GONE
         clearHistoryButton?.visibility = View.GONE
         youSearchTitle?.visibility = View.GONE
-    }
-
-    private fun initApiCallback(): Callback<TracksResponse> {
-        return (object : Callback<TracksResponse> {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onResponse(
-                call: Call<TracksResponse>,
-                response: Response<TracksResponse>
-            ) {
-                progressBar?.visibility = View.GONE
-                if (response.code() == 200) {
-                    tracks.clear()
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        allGone()
-                        recyclerView?.visibility = View.VISIBLE
-
-                        tracks.addAll(response.body()?.results!!)
-                        trackAdapter!!.notifyDataSetChanged()
-                    } else {
-                        allGone()
-                        noContentView?.visibility = View.VISIBLE
-
-                    }
-                } else {
-                    allGone()
-                    noContentView?.visibility = View.GONE
-                }
-            }
-
-            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                progressBar?.visibility = View.GONE
-                allGone()
-                noConnectView?.visibility = View.VISIBLE
-            }
-        })
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -237,16 +196,60 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     }
 
     private fun doSearch() {
+        println("!!!___$searchTrack, thread=${Thread.currentThread().name}")
+        if (searchTrack.isEmpty()) {
+            searchIsScheduled = false
+            return
+        }
+        if (searchInProgress) return
+        searchInProgress = true
+
         allGone()
         progressBar?.visibility = View.VISIBLE
-        trackApiService.search(searchTrack).enqueue(apiCallback)
+        tracksInteractor.searchTracks(
+            searchStr = searchTrack,
+            consumer = object : TracksInteractor.TracksConsumer {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun consume(foundTracks: List<Track>) {
+                    println("!!!___ответ, thread=${Thread.currentThread().name}")
+                    val currentRunnable = searchRunnable
+                    handler.removeCallbacks(currentRunnable)
+                    val newSearchRunnable : Runnable = initSearchRunnable(foundTracks)
+                    searchRunnable = newSearchRunnable
+                    handler.post(newSearchRunnable)
+                    searchIsScheduled = false
+                    searchInProgress = false
+                }
+
+            }
+        )
 
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initSearchRunnable(foundTracks: List<Track>): Runnable {
+        return Runnable {
+            progressBar?.visibility = View.GONE
+            if (foundTracks.isNotEmpty()) {
+                tracks.clear()
+                allGone()
+                recyclerView?.visibility = View.VISIBLE
+
+                tracks.addAll(foundTracks)
+                trackAdapter!!.notifyDataSetChanged()
+            } else {
+                allGone()
+                noContentView?.visibility = View.VISIBLE
+
+            }
+        }
+    }
+
 
     companion object {
         private const val SAVED_TEXT = "SAVED_TEXT"
         private const val DEFAULT_STR = ""
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_DEBOUNCE_DELAY = 4000L
     }
 
 }
