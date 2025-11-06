@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.ui.settings
+package dom.dima.practicum.playlistmaker.ui.settings.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent

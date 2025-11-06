@@ -7,7 +7,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import dom.dima.practicum.playlistmaker.ui.media.MediaActivity
 import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.ui.settings.SettingsActivity
+import dom.dima.practicum.playlistmaker.ui.settings.activity.SettingsActivity
 import dom.dima.practicum.playlistmaker.ui.search.SearchActivity
 
 class MainActivity : AppCompatActivity() {

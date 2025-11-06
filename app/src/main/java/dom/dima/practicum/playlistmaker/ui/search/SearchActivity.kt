@@ -19,7 +19,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
 import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.Creator
+import dom.dima.practicum.playlistmaker.creator.Creator
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.domain.api.TracksInteractor
 import dom.dima.practicum.playlistmaker.domain.models.Track
@@ -196,7 +196,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     }
 
     private fun doSearch() {
-        println("!!!___$searchTrack, thread=${Thread.currentThread().name}")
         if (searchTrack.isEmpty()) {
             searchIsScheduled = false
             return
@@ -211,7 +210,6 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
             consumer = object : TracksInteractor.TracksConsumer {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun consume(foundTracks: List<Track>) {
-                    println("!!!___ответ, thread=${Thread.currentThread().name}")
                     val currentRunnable = searchRunnable
                     handler.removeCallbacks(currentRunnable)
                     val newSearchRunnable : Runnable = initSearchRunnable(foundTracks)

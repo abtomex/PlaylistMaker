@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker
+package dom.dima.practicum.playlistmaker.creator
 
 import dom.dima.practicum.playlistmaker.data.TracksRepositoryImpl
 import dom.dima.practicum.playlistmaker.data.network.RetrofitNetworkClient
