@@ -16,13 +16,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
 import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.creator.Creator
 import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.domain.api.TracksInteractor
 import dom.dima.practicum.playlistmaker.domain.models.Track
+import dom.dima.practicum.playlistmaker.presentation.state.SearchState
+import dom.dima.practicum.playlistmaker.presentation.view_model.SearchViewModel
+import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
 
 class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
@@ -40,6 +42,8 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var youSearchTitle: TextView? = null
     private var progressBar: ProgressBar? = null
 
+    private val viewModel: SearchViewModel by viewModels <SearchViewModel>()
+
     @Volatile
     private var searchIsScheduled = false
     @Volatile
@@ -53,9 +57,11 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         return R.id.search_layout
     }
 
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_search)
 
         recyclerView = initSongsRecyclerView()
@@ -130,9 +136,43 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         buttonReload.setOnClickListener {
             doSearch()
         }
+
+        viewModel.getState().observe(this) { state ->
+            render(state)
+        }
+
     }
 
-    private val tracksInteractor = Creator.provideTracksInteractor()
+    private fun render(state: SearchState) {
+        when (state) {
+            is SearchState.Loading -> showLoading()
+            is SearchState.Error -> showError(state.message)
+            is SearchState.Content -> showFound(state.data)
+        }
+    }
+
+    private fun showLoading() {
+        progressBar?.visibility = View.VISIBLE
+    }
+
+    private fun showFound(foundTracks: List<Track>) {
+
+        val currentRunnable = searchRunnable
+        handler.removeCallbacks(currentRunnable)
+        val newSearchRunnable : Runnable = initSearchRunnable(foundTracks)
+        searchRunnable = newSearchRunnable
+        handler.post(newSearchRunnable)
+        searchIsScheduled = false
+        searchInProgress = false
+
+    }
+
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        onBackPressedDispatcher.onBackPressed()
+    }
+
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showHistoryIfItsNeeded(searchEditText: EditText) {
@@ -204,23 +244,8 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         searchInProgress = true
 
         allGone()
-        progressBar?.visibility = View.VISIBLE
-        tracksInteractor.searchTracks(
-            searchStr = searchTrack,
-            consumer = object : TracksInteractor.TracksConsumer {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun consume(foundTracks: List<Track>) {
-                    val currentRunnable = searchRunnable
-                    handler.removeCallbacks(currentRunnable)
-                    val newSearchRunnable : Runnable = initSearchRunnable(foundTracks)
-                    searchRunnable = newSearchRunnable
-                    handler.post(newSearchRunnable)
-                    searchIsScheduled = false
-                    searchInProgress = false
-                }
 
-            }
-        )
+        viewModel.loadData(searchTrack)
 
     }
 

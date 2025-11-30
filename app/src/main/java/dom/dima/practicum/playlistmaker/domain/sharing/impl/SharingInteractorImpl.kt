@@ -1,7 +1,7 @@
 package dom.dima.practicum.playlistmaker.domain.sharing.impl
 
+import dom.dima.practicum.playlistmaker.data.ExternalNavigator
 import dom.dima.practicum.playlistmaker.domain.sharing.SharingInteractor
-import dom.dima.practicum.playlistmaker.data.sharing.ExternalNavigator
 import dom.dima.practicum.playlistmaker.domain.sharing.model.EmailData
 
 class SharingInteractorImpl(
@@ -22,13 +22,16 @@ class SharingInteractorImpl(
 
     private fun getShareAppLink(): String {
         // Нужно реализовать
+        return ""
     }
 
     private fun getSupportEmailData(): EmailData {
         // Нужно реализовать
+        return EmailData()
     }
 
     private fun getTermsLink(): String {
         // Нужно реализовать
+        return ""
     }
 }
