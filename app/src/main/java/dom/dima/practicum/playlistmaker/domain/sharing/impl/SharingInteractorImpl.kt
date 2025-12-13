@@ -1,13 +1,15 @@
 package dom.dima.practicum.playlistmaker.domain.sharing.impl
 
-import dom.dima.practicum.playlistmaker.data.ExternalNavigator
+import android.content.Context
+import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.data.sharing.ExternalNavigator
 import dom.dima.practicum.playlistmaker.domain.sharing.SharingInteractor
 import dom.dima.practicum.playlistmaker.domain.sharing.model.EmailData
 
 class SharingInteractorImpl(
     private val externalNavigator: ExternalNavigator,
-
-    ) : SharingInteractor {
+    private val context: Context
+) : SharingInteractor {
     override fun shareApp() {
         externalNavigator.shareLink(getShareAppLink())
     }
@@ -21,17 +23,20 @@ class SharingInteractorImpl(
     }
 
     private fun getShareAppLink(): String {
-        // Нужно реализовать
-        return ""
+        return context.getString(R.string.android_course_url)
     }
 
     private fun getSupportEmailData(): EmailData {
-        // Нужно реализовать
-        return EmailData()
+
+        return EmailData(
+            arrayOf(context.getString(R.string.my_email)),
+            context.getString(R.string.email_subject),
+            context.getString(R.string.email_text)
+        )
+
     }
 
     private fun getTermsLink(): String {
-        // Нужно реализовать
-        return ""
+        return context.getString(R.string.practicum_offer)
     }
 }

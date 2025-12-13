@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.ui.search
+package dom.dima.practicum.playlistmaker.ui.search.activity
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

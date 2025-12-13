@@ -1,7 +1,9 @@
-package dom.dima.practicum.playlistmaker.ui.search
+package dom.dima.practicum.playlistmaker.ui.search.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,14 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import java.text.SimpleDateFormat
-import java.util.Locale
-import android.os.Handler
-import android.os.Looper
 import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.ui.audiopleer.AudioPlayerActivity
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.domain.models.Track
+import dom.dima.practicum.playlistmaker.ui.audiopleer.AudioPlayerActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class TrackViewHolder(

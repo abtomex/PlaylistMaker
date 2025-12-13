@@ -1,18 +1,15 @@
-package dom.dima.practicum.playlistmaker.presentation.view_model
+package dom.dima.practicum.playlistmaker.ui.search.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import dom.dima.practicum.playlistmaker.creator.Creator
 import dom.dima.practicum.playlistmaker.domain.api.TracksInteractor
-import dom.dima.practicum.playlistmaker.domain.models.Track
 import dom.dima.practicum.playlistmaker.domain.consumer.ConsumerData
-import dom.dima.practicum.playlistmaker.presentation.state.SearchState
+import dom.dima.practicum.playlistmaker.domain.models.Track
+import dom.dima.practicum.playlistmaker.ui.search.state.SearchState
 
-class SearchViewModel(): ViewModel () {
+class SearchViewModel : ViewModel () {
 
     private val tracksInteractor = Creator.provideTracksInteractor()
 

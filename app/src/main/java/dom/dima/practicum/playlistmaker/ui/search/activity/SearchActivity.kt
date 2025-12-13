@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.ui.search
+package dom.dima.practicum.playlistmaker.ui.search.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.domain.models.Track
-import dom.dima.practicum.playlistmaker.presentation.state.SearchState
-import dom.dima.practicum.playlistmaker.presentation.view_model.SearchViewModel
+import dom.dima.practicum.playlistmaker.ui.search.state.SearchState
+import dom.dima.practicum.playlistmaker.ui.search.view_model.SearchViewModel
 import dom.dima.practicum.playlistmaker.ui.AbstractButtonBackActivity
 
 class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {

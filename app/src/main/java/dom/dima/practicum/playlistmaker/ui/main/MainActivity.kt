@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import dom.dima.practicum.playlistmaker.ui.media.MediaActivity
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.ui.media.MediaActivity
+import dom.dima.practicum.playlistmaker.ui.search.activity.SearchActivity
 import dom.dima.practicum.playlistmaker.ui.settings.activity.SettingsActivity
-import dom.dima.practicum.playlistmaker.ui.search.SearchActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
