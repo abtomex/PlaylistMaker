@@ -8,11 +8,11 @@ class SettingsInteractorImpl (
     private val settingsRepository: SettingsRepository
 ) : SettingsInteractor {
     
-    override fun getThemeSettings(): dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings {
+    override fun getThemeSettings(): ThemeSettings {
         return settingsRepository.getThemeSettings()
     }
 
-    override fun updateThemeSetting(settings: dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings) {
+    override fun updateThemeSetting(settings: ThemeSettings) {
         settingsRepository.updateThemeSetting(settings)
     }
 }

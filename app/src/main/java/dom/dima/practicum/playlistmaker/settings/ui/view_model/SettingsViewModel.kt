@@ -23,7 +23,7 @@ class SettingsViewModel(
 
     fun changeTheme(checked: Boolean) {
         settingsInteractor.updateThemeSetting(
-            dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings(
+            ThemeSettings(
                 checked
             )
         )

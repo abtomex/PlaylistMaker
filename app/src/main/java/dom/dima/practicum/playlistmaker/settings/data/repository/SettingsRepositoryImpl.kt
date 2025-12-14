@@ -8,13 +8,13 @@ import dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings
 
 class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences) : SettingsRepository,
     ApplicationConstants {
-    override fun getThemeSettings(): dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings {
-        return dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings(
+    override fun getThemeSettings(): ThemeSettings {
+        return ThemeSettings(
             sharedPreferences.getBoolean(DARK_THEME_KEY, false)
         )
     }
 
-    override fun updateThemeSetting(settings: dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings) {
+    override fun updateThemeSetting(settings: ThemeSettings) {
         AppCompatDelegate.setDefaultNightMode(
             if (settings.isDarkTheme) {
                 AppCompatDelegate.MODE_NIGHT_YES
