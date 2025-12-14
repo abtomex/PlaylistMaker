@@ -2,18 +2,18 @@ package dom.dima.practicum.playlistmaker.creator
 
 import android.content.Context
 import android.content.SharedPreferences
-import dom.dima.practicum.playlistmaker.data.TracksRepositoryImpl
-import dom.dima.practicum.playlistmaker.data.network.RetrofitNetworkClient
-import dom.dima.practicum.playlistmaker.data.settings.SettingsRepository
-import dom.dima.practicum.playlistmaker.data.settings.SettingsRepositoryImpl
-import dom.dima.practicum.playlistmaker.data.sharing.ExternalNavigator
-import dom.dima.practicum.playlistmaker.domain.api.TracksInteractor
-import dom.dima.practicum.playlistmaker.domain.api.TracksRepository
-import dom.dima.practicum.playlistmaker.domain.impl.TracksInteractorImpl
-import dom.dima.practicum.playlistmaker.domain.settings.SettingsInteractor
-import dom.dima.practicum.playlistmaker.domain.settings.impl.SettingsInteractorImpl
-import dom.dima.practicum.playlistmaker.domain.sharing.SharingInteractor
-import dom.dima.practicum.playlistmaker.domain.sharing.impl.SharingInteractorImpl
+import dom.dima.practicum.playlistmaker.search.data.TracksRepositoryImpl
+import dom.dima.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
+import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepository
+import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepositoryImpl
+import dom.dima.practicum.playlistmaker.sharing.data.ExternalNavigator
+import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
+import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
+import dom.dima.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
+import dom.dima.practicum.playlistmaker.settings.domain.SettingsInteractor
+import dom.dima.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
+import dom.dima.practicum.playlistmaker.sharing.domain.SharingInteractor
+import dom.dima.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 
 object Creator {
     private fun getTracksRepository(): TracksRepository {
