@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.settings.ui.view_model
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -17,8 +18,8 @@ class SettingsViewModel(
         return settingsInteractor.getThemeSettings().isDarkTheme
     }
 
-    fun doShare() {
-        sharingInteractor.shareApp()
+    fun doShare(courseUrl: String) {
+        sharingInteractor.shareApp(courseUrl)
     }
 
     fun changeTheme(checked: Boolean) {
@@ -29,17 +30,24 @@ class SettingsViewModel(
         )
     }
 
-    fun doWrightTechSupport() {
-        sharingInteractor.openSupport()
+    fun doWrightTechSupport(email: Array<String>, emailSubject: String, emailText: String) {
+        sharingInteractor.openSupport(
+            email,
+            emailSubject,
+            emailText
+        )
     }
 
-    fun showAgreement() {
-        sharingInteractor.openTerms()
+    fun showAgreement(termsLink: String) {
+        sharingInteractor.openTerms(termsLink)
     }
 
 
     companion object {
-        fun getFactory(sharingInteractor: SharingInteractor, settingsInteractor: SettingsInteractor): ViewModelProvider.Factory = viewModelFactory {
+        fun getFactory(
+            sharingInteractor: SharingInteractor,
+            settingsInteractor: SettingsInteractor
+        ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 SettingsViewModel(sharingInteractor, settingsInteractor)
             }

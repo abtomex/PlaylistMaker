@@ -1,42 +1,33 @@
 package dom.dima.practicum.playlistmaker.sharing.domain.impl
 
-import android.content.Context
-import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.sharing.data.ExternalNavigator
+import dom.dima.practicum.playlistmaker.sharing.domain.ExternalNavigator
 import dom.dima.practicum.playlistmaker.sharing.domain.SharingInteractor
 import dom.dima.practicum.playlistmaker.sharing.models.EmailData
 
 class SharingInteractorImpl(
     private val externalNavigator: ExternalNavigator,
-    private val context: Context
 ) : SharingInteractor {
-    override fun shareApp() {
-        externalNavigator.shareLink(getShareAppLink())
+    override fun shareApp(shareAppLink: String) {
+        externalNavigator.shareLink(shareAppLink)
     }
 
-    override fun openTerms() {
-        externalNavigator.openLink(getTermsLink())
+    override fun openTerms(termsLink: String) {
+        externalNavigator.openLink(termsLink)
     }
 
-    override fun openSupport() {
-        externalNavigator.openEmail(getSupportEmailData())
+    override fun openSupport(email: Array<String>, emailSubject: String, emailText: String) {
+        externalNavigator.openEmail(getSupportEmailData(email, emailSubject, emailText))
     }
 
-    private fun getShareAppLink(): String {
-        return context.getString(R.string.android_course_url)
-    }
 
-    private fun getSupportEmailData(): EmailData {
+    private fun getSupportEmailData(email: Array<String>, emailSubject: String, emailText: String): EmailData {
 
         return EmailData(
-            arrayOf(context.getString(R.string.my_email)),
-            context.getString(R.string.email_subject),
-            context.getString(R.string.email_text)
+            email,
+            emailSubject,
+            emailText
         )
 
     }
 
-    private fun getTermsLink(): String {
-        return context.getString(R.string.practicum_offer)
-    }
 }

@@ -3,11 +3,12 @@ package dom.dima.practicum.playlistmaker.sharing.data
 import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
+import dom.dima.practicum.playlistmaker.sharing.domain.ExternalNavigator
 import dom.dima.practicum.playlistmaker.sharing.models.EmailData
 
-class ExternalNavigator(private val context: Context) {
+class ExternalNavigatorImpl(private val context: Context) : ExternalNavigator {
 
-    fun shareLink(shareAppLink: String) {
+    override fun shareLink(shareAppLink: String) {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             setType("text/plain")
             putExtra(Intent.EXTRA_TEXT, shareAppLink)
@@ -15,13 +16,13 @@ class ExternalNavigator(private val context: Context) {
         context.startActivity(shareIntent)
     }
 
-    fun openLink(termsLink: String) {
+    override fun openLink(termsLink: String) {
         val offerIntent = Intent(Intent.ACTION_VIEW)
         offerIntent.data = termsLink.toUri()
         context.startActivity(offerIntent)
     }
 
-    fun openEmail(supportEmailData: EmailData) {
+    override fun openEmail(supportEmailData: EmailData) {
         val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = "mailto:".toUri()
             putExtra(Intent.EXTRA_EMAIL, supportEmailData.email)

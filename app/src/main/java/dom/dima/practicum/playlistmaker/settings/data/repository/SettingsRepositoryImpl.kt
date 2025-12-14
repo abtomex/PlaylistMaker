@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import dom.dima.practicum.playlistmaker.ApplicationConstants
+import dom.dima.practicum.playlistmaker.settings.domain.SettingsRepository
 import dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings
 
 class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences) : SettingsRepository,

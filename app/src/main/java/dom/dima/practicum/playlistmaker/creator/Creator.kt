@@ -4,14 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import dom.dima.practicum.playlistmaker.search.data.TracksRepositoryImpl
 import dom.dima.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
-import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepository
-import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepositoryImpl
-import dom.dima.practicum.playlistmaker.sharing.data.ExternalNavigator
 import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
 import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
 import dom.dima.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
+import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepositoryImpl
 import dom.dima.practicum.playlistmaker.settings.domain.SettingsInteractor
+import dom.dima.practicum.playlistmaker.settings.domain.SettingsRepository
 import dom.dima.practicum.playlistmaker.settings.domain.impl.SettingsInteractorImpl
+import dom.dima.practicum.playlistmaker.sharing.data.ExternalNavigatorImpl
+import dom.dima.practicum.playlistmaker.sharing.domain.ExternalNavigator
 import dom.dima.practicum.playlistmaker.sharing.domain.SharingInteractor
 import dom.dima.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 
@@ -25,11 +26,11 @@ object Creator {
     }
 
     private fun getExternalNavigator(context: Context): ExternalNavigator {
-        return ExternalNavigator(context)
+        return ExternalNavigatorImpl(context)
     }
 
     fun provideSharingInteractor(context: Context) : SharingInteractor {
-        return SharingInteractorImpl(getExternalNavigator(context), context)
+        return SharingInteractorImpl(getExternalNavigator(context))
     }
 
     private fun getSettingsRepository(sharedPreferences: SharedPreferences) : SettingsRepository {

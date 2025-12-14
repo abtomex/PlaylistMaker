@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.settings.data.repository
+package dom.dima.practicum.playlistmaker.settings.domain
 
 import dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings
 

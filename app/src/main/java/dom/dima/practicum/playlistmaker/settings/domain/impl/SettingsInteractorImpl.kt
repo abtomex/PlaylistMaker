@@ -1,6 +1,6 @@
 package dom.dima.practicum.playlistmaker.settings.domain.impl
 
-import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepository
+import dom.dima.practicum.playlistmaker.settings.domain.SettingsRepository
 import dom.dima.practicum.playlistmaker.settings.domain.SettingsInteractor
 import dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings
 

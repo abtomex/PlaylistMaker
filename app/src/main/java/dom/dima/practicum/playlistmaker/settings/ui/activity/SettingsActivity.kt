@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
+import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.creator.Creator
-import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
 import dom.dima.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 
 class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
@@ -35,7 +35,7 @@ class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
                 )
 
             )
-        ).get(SettingsViewModel::class.java)
+        )[SettingsViewModel::class.java]
 
         setContentView(R.layout.activity_settings)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
@@ -48,15 +48,19 @@ class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
             viewModel.changeTheme(checked)
         }
         buttonShare.setOnClickListener {
-            viewModel.doShare()
+            viewModel.doShare(getString(R.string.android_course_url))
         }
 
         buttonCheckSupport.setOnClickListener {
-            viewModel.doWrightTechSupport()
+            viewModel.doWrightTechSupport(
+                arrayOf(getString(R.string.my_email)),
+                getString(R.string.email_subject),
+                getString(R.string.email_text)
+            )
         }
 
         buttonAgreement.setOnClickListener {
-            viewModel.showAgreement()
+            viewModel.showAgreement(getString(R.string.practicum_offer))
         }
 
     }

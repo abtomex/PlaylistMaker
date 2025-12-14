@@ -17,14 +17,15 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.creator.Creator
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
 import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
-import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
 
 class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
@@ -43,7 +44,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private var youSearchTitle: TextView? = null
     private var progressBar: ProgressBar? = null
 
-    private val viewModel: SearchViewModel by viewModels <SearchViewModel>()
+    private lateinit var viewModel: SearchViewModel
 
     @Volatile
     private var searchIsScheduled = false
@@ -62,6 +63,13 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(
+            this,
+            SearchViewModel.getFactory(
+                Creator.provideTracksInteractor()
+            )
+        )[SearchViewModel::class.java]
 
         setContentView(R.layout.activity_search)
 
