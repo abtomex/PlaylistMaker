@@ -1,14 +1,12 @@
 package dom.dima.practicum.playlistmaker.search.domain.impl
 
-import dom.dima.practicum.playlistmaker.settings.domain.api.ApiResponse
 import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
 import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
+import dom.dima.practicum.playlistmaker.settings.domain.api.ApiResponse
 import dom.dima.practicum.playlistmaker.settings.domain.consumer.ConsumerData
-import java.util.concurrent.Executors
+import java.util.concurrent.Executor
 
-class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
-
-    private val executor = Executors.newCachedThreadPool()
+class TracksInteractorImpl(private val repository: TracksRepository, private val executor: Executor ) : TracksInteractor {
 
     override fun searchTracks(searchStr: String, consumer: TracksInteractor.TracksConsumer) {
         executor.execute {

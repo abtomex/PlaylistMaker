@@ -1,10 +1,6 @@
 package dom.dima.practicum.playlistmaker.settings.ui.view_model
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import dom.dima.practicum.playlistmaker.settings.domain.SettingsInteractor
 import dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings
 import dom.dima.practicum.playlistmaker.sharing.domain.SharingInteractor
@@ -42,15 +38,4 @@ class SettingsViewModel(
         sharingInteractor.openTerms(termsLink)
     }
 
-
-    companion object {
-        fun getFactory(
-            sharingInteractor: SharingInteractor,
-            settingsInteractor: SettingsInteractor
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(sharingInteractor, settingsInteractor)
-            }
-        }
-    }
 }

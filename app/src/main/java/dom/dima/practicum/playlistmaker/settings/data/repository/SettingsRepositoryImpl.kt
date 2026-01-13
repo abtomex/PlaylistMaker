@@ -9,6 +9,7 @@ import dom.dima.practicum.playlistmaker.settings.domain.models.ThemeSettings
 
 class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences) : SettingsRepository,
     ApplicationConstants {
+
     override fun getThemeSettings(): ThemeSettings {
         return ThemeSettings(
             sharedPreferences.getBoolean(DARK_THEME_KEY, false)

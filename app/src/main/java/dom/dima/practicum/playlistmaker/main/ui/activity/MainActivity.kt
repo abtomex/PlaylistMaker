@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.main.ui
+package dom.dima.practicum.playlistmaker.main.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,10 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.media.ui.MediaActivity
 import dom.dima.practicum.playlistmaker.settings.ui.activity.SettingsActivity
+import dom.dima.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
+    val viewModel by viewModel<SettingsViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.changeTheme(viewModel.isDarkThemeOn())
         setContentView(R.layout.activity_main)
 
         val buttonSearch = findViewById<Button>(R.id.button_search)

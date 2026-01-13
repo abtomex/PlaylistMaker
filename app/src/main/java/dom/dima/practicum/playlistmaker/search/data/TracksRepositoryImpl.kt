@@ -9,6 +9,7 @@ import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
 import java.util.Objects
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+
     override fun searchTracks(searchStr: String): ApiResponse<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(searchStr))
         if (response.resultCode == 200) {

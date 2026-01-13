@@ -3,9 +3,6 @@ package dom.dima.practicum.playlistmaker.search.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
@@ -43,17 +40,6 @@ class SearchViewModel(
 
             }
         )
-
-    }
-
-    companion object {
-        fun getFactory(
-            tracksInteractor: TracksInteractor,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(tracksInteractor)
-            }
-        }
 
     }
 
