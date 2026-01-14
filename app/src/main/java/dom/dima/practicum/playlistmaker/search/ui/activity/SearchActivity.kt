@@ -208,7 +208,8 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         val sharedPreferences = getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE)
         searchHistoryService =
             SearchHistoryService(
-                sharedPreferences
+                sharedPreferences,
+                viewModel.gson()
             )
 
 
@@ -225,7 +226,8 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
         }
         trackAdapter = TrackAdapter(
             tracks,
-            searchHistoryService!!
+            searchHistoryService!!,
+            viewModel.gson()
         )
         trackRecyclerView.adapter = trackAdapter
         return trackRecyclerView

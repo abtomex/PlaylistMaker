@@ -1,7 +1,6 @@
 package dom.dima.practicum.playlistmaker.player.ui.activity
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,22 +11,25 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
+import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Objects
 
 class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
 
-    private val gson: Gson = Gson()
     private lateinit var commonButton: ImageButton
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
+
+    private var playerState = AudioPlayerViewModel.STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
+
+    private val viewModel by viewModel<AudioPlayerViewModel>()
 
     override fun buttonBackId(): Int {
         return R.id.header
@@ -38,7 +40,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
         setContentView(R.layout.activity_audioplayer)
 
         val trackJson = intent.getStringExtra(CLICKED_TRACK_CONTENT)
-        val track = gson.fromJson(trackJson, Track::class.java)
+        val track = viewModel.fromJson(trackJson, Track::class.java)
         val trackIcon = findViewById<ImageView>(R.id.cover)
         val durability = findViewById<TextView>(R.id.durability_val)
         commonButton = findViewById(R.id.common_button)
@@ -76,10 +78,42 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
             )
         }
 
-        preparePlayer(track.previewUrl)
+        viewModel.preparePlayer(track.previewUrl)
 
         commonButton.setOnClickListener {
             playbackControl()
+        }
+
+        viewModel.getState().observe(this) { state ->
+            playerState = state.stateData.playerState
+            when (state) {
+                is AudioPlayerState.Prepared -> {
+                    commonButton.isEnabled = true
+                }
+
+                is AudioPlayerState.Completion -> {
+                    handler.removeCallbacks(progressRunnable)
+                    isStarted = false
+                    commonButton.setImageResource(R.drawable.button_play)
+                    setText("00:00", null, findViewById(R.id.progress))
+                }
+
+                is AudioPlayerState.Start -> {
+                    commonButton.setImageResource(R.drawable.button_pause)
+                    isStarted = true
+                    handler.postDelayed(progressRunnable, DELAY)
+
+                }
+
+                is AudioPlayerState.Pause -> {
+                    handler.removeCallbacks(progressRunnable)
+                    isStarted = false
+                    commonButton.setImageResource(R.drawable.button_play)
+
+                }
+            }
+
+
         }
 
     }
@@ -100,23 +134,6 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
         ).toInt()
     }
 
-    private fun preparePlayer(url: String?) {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            commonButton.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            handler.removeCallbacks(progressRunnable)
-            isStarted = false
-            commonButton.setImageResource(R.drawable.button_play)
-            playerState = STATE_PREPARED
-            setText("00:00", null, findViewById(R.id.progress))
-        }
-
-    }
-
     private var isStarted: Boolean = false
 
 
@@ -126,61 +143,39 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
                 SimpleDateFormat(
                     "mm:ss",
                     Locale.getDefault()
-                ).format(mediaPlayer.currentPosition), null, findViewById(R.id.progress)
+                ).format(viewModel.currentPosition()), null, findViewById(R.id.progress)
             )
             handler.postDelayed(this, DELAY)
         }
 
     }
 
-    private fun startPlayer() {
-        mediaPlayer.start()
-        commonButton.setImageResource(R.drawable.button_pause)
-        playerState = STATE_PLAYING
-        isStarted = true
-
-        handler.postDelayed(progressRunnable, DELAY)
-    }
-
-    private fun pausePlayer() {
-        handler.removeCallbacks(progressRunnable)
-        isStarted = false
-        mediaPlayer.pause()
-        commonButton.setImageResource(R.drawable.button_play)
-        playerState = STATE_PAUSED
-    }
-
     private fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
+            AudioPlayerViewModel.STATE_PLAYING -> {
+                viewModel.pausePlayer()
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
+            AudioPlayerViewModel.STATE_PREPARED, AudioPlayerViewModel.STATE_PAUSED -> {
+                viewModel.startPlayer()
             }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        viewModel.pausePlayer()
     }
 
     override fun onDestroy() {
 
         super.onDestroy()
-        pausePlayer()
-        mediaPlayer.release()
+        viewModel.pausePlayer()
+        viewModel.releasePlayer()
     }
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
         private const val DELAY = 500L
-    }
 
+    }
 }
