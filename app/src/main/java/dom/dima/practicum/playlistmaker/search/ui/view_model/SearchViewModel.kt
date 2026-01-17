@@ -3,16 +3,15 @@ package dom.dima.practicum.playlistmaker.search.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
 import dom.dima.practicum.playlistmaker.settings.domain.consumer.ConsumerData
 
 class SearchViewModel(
-    private val tracksInteractor: TracksInteractor
+    private val tracksInteractor: TracksInteractor,
+    private val gson: Gson
 ) : ViewModel () {
 
 
@@ -46,15 +45,8 @@ class SearchViewModel(
 
     }
 
-    companion object {
-        fun getFactory(
-            tracksInteractor: TracksInteractor,
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(tracksInteractor)
-            }
-        }
-
+    fun gson(): Gson {
+        return gson
     }
 
 }

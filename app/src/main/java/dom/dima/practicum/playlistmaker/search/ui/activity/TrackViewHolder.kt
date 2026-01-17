@@ -24,7 +24,8 @@ import java.util.Locale
 class TrackViewHolder(
     parent: ViewGroup,
     trackList: List<Track>,
-    private val searchHistoryService: SearchHistoryService
+    private val searchHistoryService: SearchHistoryService,
+    private val gson: Gson
     ) :
     ApplicationConstants,
     RecyclerView.ViewHolder(
@@ -35,7 +36,6 @@ class TrackViewHolder(
     private val trackIcon: ImageView = itemView.findViewById(R.id.trackIcon)
     private val trackArtistName: TextView = itemView.findViewById(R.id.trackArtistName)
     private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
-    private val gson: Gson = Gson()
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())

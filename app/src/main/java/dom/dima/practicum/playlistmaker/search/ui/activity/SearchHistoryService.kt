@@ -1,18 +1,20 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
-import androidx.core.content.edit
 
-class SearchHistoryService(private val sharedPreferences: SharedPreferences) :
+class SearchHistoryService(
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+) :
     ApplicationConstants {
 
     private val MAX_HISTORY_SIZE = 10
     val tracks = ArrayList<Track>()
-    private val gson: Gson = Gson()
 
     init {
         val json = sharedPreferences.getString(TRACK_HISTORY, ArrayList<Track>().toString())
@@ -35,7 +37,7 @@ class SearchHistoryService(private val sharedPreferences: SharedPreferences) :
 
     private fun reloadSharedPreferences() {
         val json = gson.toJson(tracks)
-        sharedPreferences.edit() {
+        sharedPreferences.edit {
             putString(TRACK_HISTORY, json)
         }
     }
