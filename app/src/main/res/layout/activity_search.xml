@@ -92,7 +92,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
         <Button
             android:id="@+id/clear_history"
-            style="@style/btn_4_activity_search_style"
+            style="@style/btn_style"
             android:text="@string/clear_history"
             android:layout_gravity="center"
             android:layout_marginTop="24dp"
@@ -110,6 +110,7 @@
         tools:ignore="UseCompoundDrawables">
         <ImageView
             style="@style/errors_ic_style"
+            android:layout_marginTop="102dp"
             android:contentDescription="@string/todo"
             android:src="@drawable/ic_no_content"
             />
@@ -130,6 +131,7 @@
         >
         <ImageView
             style="@style/errors_ic_style"
+            android:layout_marginTop="102dp"
             android:contentDescription="@string/todo"
             android:src="@drawable/ic_no_connect"
             />
@@ -140,7 +142,8 @@
 
         <Button
             android:id="@+id/btn_reload"
-            style="@style/btn_4_activity_search_style"
+            style="@style/btn_style"
+            android:layout_marginTop="24dp"
             android:text="@string/reload"
             />
     </LinearLayout>

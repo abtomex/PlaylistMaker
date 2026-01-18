@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/parent_linear_layout_style"
+    android:nestedScrollingEnabled="true"
+    android:id="@+id/playlists"
+    android:visibility="visible"
+    android:gravity="center_horizontal"
+    tools:ignore="UseCompoundDrawables">
+    <Button
+        android:id="@+id/btn_reload"
+        style="@style/btn_style"
+        android:layout_marginTop="24dp"
+        android:text="@string/new_playlist"
+        />
+    <ImageView
+        style="@style/errors_ic_style"
+        android:layout_marginTop="46dp"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/ic_no_content"
+        />
+    <TextView
+        style="@style/activity_search_infos_text_style"
+        android:text="@string/no_any_playlist"
+        />
+
+</LinearLayout>
