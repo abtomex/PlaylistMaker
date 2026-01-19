@@ -4,23 +4,17 @@
     style="@style/parent_linear_layout_style"
     >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/media"
+        style="@style/header_style"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="0dp"
+        app:navigationIcon="@drawable/back">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/media"
-            style="@style/header_style"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/back">
-
-            <TextView
-                style="@style/header_text_style"
-                android:text="@string/media" />
-        </com.google.android.material.appbar.MaterialToolbar>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            style="@style/header_text_style"
+            android:text="@string/media" />
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/mediaTabLayout"
