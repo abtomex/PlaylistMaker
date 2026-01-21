@@ -14,6 +14,7 @@ retrofitVersion = '2.9.0'
 gsonVersion = '2.10'
 koinVersion='3.3.0'
 fragment_version = "1.8.9"
+navigationFragment = "2.9.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +31,7 @@ glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", versi
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofitVersion" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitVersion" }
 koin = { group = "io.insert-koin", name = "koin-android", version.ref = "koinVersion" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 #gson = { group = "com.google.code.gson", name = "gson", version.ref = "gsonVersion" }
 
 [plugins]

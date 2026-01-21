@@ -8,7 +8,7 @@
     >
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/search_layout"
+        android:id="@+id/action_back"
         style="@style/header_style"
         android:layout_marginStart="0dp"
         app:navigationIcon="@drawable/back">

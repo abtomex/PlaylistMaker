@@ -55,7 +55,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     override fun buttonBackId(): Int {
-        return R.id.search_layout
+        return R.id.action_back
     }
 
 
@@ -63,7 +63,7 @@ class SearchActivity : ApplicationConstants, AbstractButtonBackActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_search)
+        setContentView(R.layout.fragment_search)
 
         recyclerView = initSongsRecyclerView()
         noContentView = findViewById(R.id.no_content)
