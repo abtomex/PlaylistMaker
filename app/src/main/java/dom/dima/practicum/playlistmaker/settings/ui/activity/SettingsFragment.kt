@@ -1,32 +1,33 @@
 package dom.dima.practicum.playlistmaker.settings.ui.activity
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.TextView
-import com.google.android.material.switchmaterial.SwitchMaterial
-import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
-import dom.dima.practicum.playlistmaker.ApplicationConstants
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.databinding.FragmentSettingsBinding
 import dom.dima.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AbstractButtonBackActivity(), ApplicationConstants {
+class SettingsFragment : Fragment() {
 
+    private lateinit var binding: FragmentSettingsBinding
     private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun buttonBackId(): Int {
-        return R.id.settings_layout
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.fragment_settings)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val buttonShare = findViewById<TextView>(R.id.share_text)
-        val buttonCheckSupport = findViewById<TextView>(R.id.helpdesk_text)
-        val buttonAgreement = findViewById<TextView>(R.id.agreement_text)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val themeSwitcher = binding.themeSwitcher
+        val buttonShare = binding.shareText
+        val buttonCheckSupport = binding.helpdeskText
+        val buttonAgreement = binding.agreementText
 
         themeSwitcher.isChecked = viewModel.isDarkThemeOn()
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
