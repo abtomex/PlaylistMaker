@@ -84,19 +84,17 @@
     <style name="errors_ic_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">102dp</item>
         <item name="android:contentDescription">@string/todo</item>
 
     </style>
 
-    <style name="btn_4_activity_search_style" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="btn_style" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textSize">@dimen/btn_activity_search_text_size</item>
+        <item name="android:textSize">@dimen/btn_text_size</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0</item>
-        <item name="android:layout_marginTop">24dp</item>
         <item name="android:backgroundTint">@color/btn_activity_search_color</item>
         <item name="android:textColor">@color/btn_reload_text</item>
         <item name="cornerRadius">54dp</item>
@@ -127,6 +125,19 @@
         <item name="android:layout_marginEnd">16dp</item>
 
     </style>
+
+    <style name="mediaTabLayoutStyle">
+        <item name="tabTextAppearance">@style/mediaTabLayoutTextStyle</item>
+    </style>
+
+    <style name="mediaTabLayoutTextStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabRippleColor">@null</item>
+    </style>
+
 
 
 </resources>
