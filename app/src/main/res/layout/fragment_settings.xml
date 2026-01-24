@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/parent_linear_layout_style">
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/parent_linear_layout_style"
+    tools:context=".settings.ui.activity.SettingsFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/settings_layout"

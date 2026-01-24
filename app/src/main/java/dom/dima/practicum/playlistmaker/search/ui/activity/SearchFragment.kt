@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentSearchBinding
@@ -47,7 +48,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
     private var searchIsScheduled = false
 
     companion object {
-        private const val SAVED_TEXT = "SAVED_TEXT"
         private const val DEFAULT_STR = ""
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
@@ -93,7 +93,8 @@ class SearchFragment : Fragment(), ApplicationConstants {
         trackAdapter = TrackAdapter(
             tracks,
             searchHistoryService,
-            viewModel.gson()
+            viewModel.gson(),
+            findNavController()
         )
 
         binding.trackRecyclerView.adapter = trackAdapter
@@ -216,10 +217,11 @@ class SearchFragment : Fragment(), ApplicationConstants {
             performSearch()
         }
 
-        binding.actionBack.setNavigationOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+        binding.actionBack.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
+
 
     private fun clearSearchHistory() {
         tracks.clear()
