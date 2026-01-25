@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentSettingsBinding
 import dom.dima.practicum.playlistmaker.settings.ui.view_model.SettingsViewModel
@@ -12,15 +13,17 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var binding: FragmentSettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -48,8 +51,13 @@ class SettingsFragment : Fragment() {
         }
 
         buttonAgreement.setOnClickListener {
-            viewModel.showAgreement(getString(R.string.practicum_offer))
+            findNavController().navigate(R.id.action_settingsFragment_to_agreementFragment)
         }
-
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

@@ -217,9 +217,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
             performSearch()
         }
 
-        binding.actionBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
     }
 
 

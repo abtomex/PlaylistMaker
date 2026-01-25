@@ -14,7 +14,8 @@ import kotlin.getValue
 
 class MediaFragment : Fragment() {
 
-    private lateinit var binding: FragmentMediaBinding
+    private var _binding: FragmentMediaBinding? = null
+    private val binding get() = _binding!!
     private lateinit var tabsMediator: TabLayoutMediator
     private val viewModel: MediaViewModel by viewModel()
 
@@ -23,8 +24,8 @@ class MediaFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentMediaBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentMediaBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,6 +48,7 @@ class MediaFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         tabsMediator.detach()
+        _binding = null
     }
 
 }

@@ -76,9 +76,21 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textColor">@color/activity_search_infos_text_color</item>
+        <item name="android:textColor">@color/infos_text_color</item>
         <item name="android:textSize">@dimen/activity_search_infos_text_size</item>
 
+    </style>
+
+    <style name="agreement_text_style">
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textColor">@color/infos_text_color</item>
+        <item name="android:textSize">@dimen/agreement_text_size</item>
     </style>
 
     <style name="errors_ic_style">
@@ -139,5 +151,5 @@
     </style>
 
 
-
+    <dimen name="agreement_text_size">16sp</dimen>
 </resources>

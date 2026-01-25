@@ -40,7 +40,7 @@ class AudioPlayerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -52,7 +52,7 @@ class AudioPlayerFragment : Fragment() {
         val durability = binding.durabilityVal
         val commonButton = binding.commonButton
 
-        binding.actionBack.setNavigationOnClickListener {
+        binding.actionBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
@@ -179,11 +179,16 @@ class AudioPlayerFragment : Fragment() {
         viewModel.pausePlayer()
     }
 
-    override fun onDestroy() {
-
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         viewModel.pausePlayer()
-        viewModel.releasePlayer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+//        viewModel.pausePlayer()
+//        viewModel.releasePlayer()
+        handler.removeCallbacks(progressRunnable)
     }
 
     companion object {

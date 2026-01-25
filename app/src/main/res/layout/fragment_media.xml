@@ -6,11 +6,11 @@
     tools:context=".media.ui.MediaFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/media"
+        android:id="@+id/action_back"
         style="@style/header_style"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="0dp"
-        app:navigationIcon="@drawable/back">
+        >
 
         <TextView
             style="@style/header_text_style"

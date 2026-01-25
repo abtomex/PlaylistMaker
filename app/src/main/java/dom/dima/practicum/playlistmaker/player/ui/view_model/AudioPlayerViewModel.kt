@@ -22,6 +22,8 @@ class AudioPlayerViewModel(
     }
 
     fun preparePlayer(url: String?) {
+        println("!!!___the instance viewModel: $this")
+        if(STATE_PLAYING == state.value?.stateData?.playerState || STATE_PAUSED == state.value?.stateData?.playerState) return
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {

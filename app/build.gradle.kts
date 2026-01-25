@@ -60,6 +60,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.koin)
-
+    implementation(libs.navigation.ui.ktx)
 
 }
