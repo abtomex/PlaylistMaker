@@ -306,6 +306,5 @@ class SearchFragment : Fragment(), ApplicationConstants {
     override fun onDestroyView() {
         super.onDestroyView()
         handler.removeCallbacks(searchRunnable)
-        _binding = null
     }
 }

@@ -186,8 +186,6 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        viewModel.pausePlayer()
-//        viewModel.releasePlayer()
         handler.removeCallbacks(progressRunnable)
     }
 
