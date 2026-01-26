@@ -151,5 +151,10 @@
     </style>
 
 
-    <dimen name="agreement_text_size">16sp</dimen>
+    <style name="bottom_navigation_view_style" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="itemBackground">@color/bottom_navigation_view_background</item>
+        <item name="itemIconTint">@color/bottom_nav_icon_tint</item>
+        <item name="itemTextColor">@color/bottom_nav_icon_tint</item>
+    </style>
+
 </resources>

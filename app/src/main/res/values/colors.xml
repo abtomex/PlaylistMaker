@@ -35,4 +35,7 @@
     <color name="color_theme">#FFFFFF</color>
     <color name="mediaplayer_button_bkg">#1A1B22</color>
     <color name="progress_bar_color">#3772E7</color>
+    <color name="bottom_navigation_view_background">#FFFFFF</color>
+    <color name="bottom_navigation_view_unselected">#1A1B22</color>
+    <color name="bottom_navigation_view_selected">#3772E7</color>
 </resources>

@@ -1,6 +1,7 @@
 package dom.dima.practicum.playlistmaker.root.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import dom.dima.practicum.playlistmaker.R
@@ -24,5 +25,25 @@ class RootActivity : AppCompatActivity() {
 
         val bottomNavigationView = binding.bottomNavView
         bottomNavigationView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.audioPlayerFragment,
+                R.id.agreementFragment -> {
+                    hideBottomNavigation()
+                }
+                else -> {
+                    showBottomNavigation()
+                }
+            }
+        }
+    }
+
+    private fun showBottomNavigation() {
+        binding.bottomNavView.visibility = View.VISIBLE
+    }
+
+    private fun hideBottomNavigation() {
+        binding.bottomNavView.visibility = View.GONE
     }
 }
