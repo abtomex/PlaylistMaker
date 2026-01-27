@@ -12,11 +12,11 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
+import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -24,8 +24,7 @@ import java.util.Locale
 class TrackViewHolder(
     parent: ViewGroup,
     trackList: List<Track>,
-    private val searchHistoryService: SearchHistoryService,
-    private val gson: Gson,
+    private val viewModel: SearchViewModel,
     private val navController: NavController
     ) :
     ApplicationConstants,
@@ -47,7 +46,7 @@ class TrackViewHolder(
             if (position != RecyclerView.NO_POSITION && clickDebounce()) {
                 val clickedItem = trackList[position]
                 showPlayer(itemView.context, clickedItem)
-                searchHistoryService.addToHistory(clickedItem)
+                viewModel.addToHistory(clickedItem)
             }
         }
     }
@@ -56,7 +55,7 @@ class TrackViewHolder(
 
         navController.navigate(
             R.id.action_searchFragment_to_audioPlayerFragment,
-            AudioPlayerFragment.createArgs(gson.toJson(clickedItem))
+            AudioPlayerFragment.createArgs(viewModel.gson().toJson(clickedItem))
         )
     }
 

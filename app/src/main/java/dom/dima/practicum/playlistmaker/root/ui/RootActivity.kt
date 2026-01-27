@@ -16,7 +16,6 @@ class RootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Привязываем вёрстку к экрану
         _binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

@@ -37,8 +37,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
     private var searchTrack: String = ""
 
     private lateinit var trackAdapter: TrackAdapter
-    private lateinit var searchHistoryService: SearchHistoryService
-
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable = createSearchRunnable(emptyList())
 
@@ -63,7 +61,7 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        hideAllViews()
         initializeViews()
         setupRecyclerView()
         setupSearchEditText()
@@ -76,40 +74,14 @@ class SearchFragment : Fragment(), ApplicationConstants {
     }
 
     private fun setupRecyclerView() {
-        val sharedPreferences = requireContext()
-            .getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE)
-
-        searchHistoryService = SearchHistoryService(
-            sharedPreferences,
-            viewModel.gson()
-        )
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            if (TRACK_HISTORY == key) {
-                updateTrackHistory()
-            }
-        }
 
         trackAdapter = TrackAdapter(
             tracks,
-            searchHistoryService,
-            viewModel.gson(),
+            viewModel,
             findNavController()
         )
 
         binding.trackRecyclerView.adapter = trackAdapter
-    }
-
-    private fun updateTrackHistory() {
-        tracks.clear()
-        tracks.addAll(searchHistoryService.tracks)
-        hideAllViews()
-
-        binding.trackRecyclerView.isVisible = true
-        binding.searchHistoryText.isVisible = true
-        binding.clearHistory.isVisible = true
-
-        trackAdapter.notifyDataSetChanged()
     }
 
     private fun setupSearchEditText() {
@@ -133,19 +105,27 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     private fun onSearchFocusChanged(hasFocus: Boolean) {
         hideAllViews()
-        if (hasFocus && searchHistoryService.tracks.isNotEmpty()) {
-            showSearchHistory()
+        if (hasFocus) {
+            viewModel.loadHistoryTracks()
         }
     }
 
-    private fun showSearchHistory() {
-        tracks.clear()
-        tracks.addAll(searchHistoryService.tracks)
+    private fun showSearchHistory(historyTracks: List<Track>) {
+        searchInProgress = false
+        binding.progressBar.isVisible = false
+
+        if (historyTracks.isNotEmpty() && binding.searchEditText.hasFocus()) {
+            tracks.clear()
+
+            binding.trackRecyclerView.isVisible = true
+            binding.clearHistory.isVisible = true
+            binding.searchHistoryText.isVisible = true
+
+            tracks.addAll(historyTracks)
+
+        }
         trackAdapter.notifyDataSetChanged()
 
-        binding.trackRecyclerView.isVisible = true
-        binding.clearHistory.isVisible = true
-        binding.searchHistoryText.isVisible = true
     }
 
     private fun createTextWatcher() = object : TextWatcher {
@@ -158,8 +138,10 @@ class SearchFragment : Fragment(), ApplicationConstants {
             if (s.isNullOrEmpty()) {
                 handler.removeCallbacks(searchRunnable)
                 searchIsScheduled = false
-                showSearchHistoryIfNeeded()
-            } else {
+                viewModel.loadHistoryTracks()
+                return
+            }
+            if (viewModel.performedSearchStr != searchTrack) {
                 scheduleSearch()
             }
         }
@@ -180,23 +162,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
     }
 
-    private fun showSearchHistoryIfNeeded() {
-        binding.searchEditText.text?.clear()
-        binding.searchEditText.clearFocus()
-        hideKeyboard()
-
-        tracks.clear()
-        if (searchHistoryService.tracks.isNotEmpty()) {
-            tracks.addAll(searchHistoryService.tracks)
-            hideAllViews()
-
-            binding.searchHistoryText.isVisible = true
-            binding.trackRecyclerView.isVisible = true
-            binding.clearHistory.isVisible = true
-        }
-
-        trackAdapter.notifyDataSetChanged()
-    }
 
     private fun setupObservers() {
         viewModel.getState().observe(viewLifecycleOwner) { state ->
@@ -210,7 +175,9 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
 
         binding.clearIcon.setOnClickListener {
-            showSearchHistoryIfNeeded()
+            viewModel.loadHistoryTracks()
+            binding.searchEditText.setText("")
+            viewModel.loadHistoryTracks()
         }
 
         binding.btnReload.setOnClickListener {
@@ -219,10 +186,9 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     }
 
-
     private fun clearSearchHistory() {
         tracks.clear()
-        searchHistoryService.clearHistory()
+        viewModel.clearHistory()
         hideAllViews()
     }
 
@@ -231,7 +197,7 @@ class SearchFragment : Fragment(), ApplicationConstants {
             searchIsScheduled = false
             return
         }
-
+        viewModel.performedSearchStr = searchTrack
         searchInProgress = true
         hideAllViews()
 
@@ -243,6 +209,7 @@ class SearchFragment : Fragment(), ApplicationConstants {
             is SearchState.Loading -> showLoading()
             is SearchState.Error -> showError(state.message)
             is SearchState.Content -> showSearchResults(state.data)
+            is SearchState.History -> showSearchHistory(state.data)
         }
     }
 
@@ -305,6 +272,7 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        println("view $this destroyed")
         handler.removeCallbacks(searchRunnable)
     }
 }
