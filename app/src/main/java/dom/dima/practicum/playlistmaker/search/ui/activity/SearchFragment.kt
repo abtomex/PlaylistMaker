@@ -2,7 +2,6 @@ package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper

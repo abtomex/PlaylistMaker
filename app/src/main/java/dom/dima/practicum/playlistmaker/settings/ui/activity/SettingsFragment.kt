@@ -15,7 +15,6 @@ class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
@@ -35,6 +34,7 @@ class SettingsFragment : Fragment() {
         val buttonAgreement = binding.agreementText
 
         themeSwitcher.isChecked = viewModel.isDarkThemeOn()
+
         themeSwitcher.setOnCheckedChangeListener { _, checked ->
             viewModel.changeTheme(checked)
         }

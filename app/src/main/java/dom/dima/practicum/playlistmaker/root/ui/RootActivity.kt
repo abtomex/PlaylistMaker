@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.ActivityRootBinding
-import androidx.navigation.ui.setupWithNavController
+import dom.dima.practicum.playlistmaker.root.view_model.RootViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RootActivity : AppCompatActivity() {
 
     private lateinit var _binding: ActivityRootBinding
     private val binding get() = _binding
+
+    private val viewModel by viewModel<RootViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class RootActivity : AppCompatActivity() {
                 }
             }
         }
+        viewModel.actualizeTheme()
     }
 
     private fun showBottomNavigation() {
