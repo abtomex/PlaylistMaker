@@ -8,4 +8,6 @@ sealed interface SearchState {
     data class Error(val message: String) : SearchState
     data class Content(val data: List<Track>) : SearchState
 
+    data class History(val data: List<Track>) : SearchState
+
 }

@@ -5,6 +5,9 @@ import dom.dima.practicum.playlistmaker.search.domain.models.Track
 
 interface TracksInteractor {
     fun searchTracks(searchStr: String, consumer: TracksConsumer)
+    fun returnHistoryTracks(consumer: TracksConsumer)
+    fun addToHistory(track: Track)
+    fun clearHistory()
 
     interface TracksConsumer {
         fun consume(data: ConsumerData<List<Track>>)

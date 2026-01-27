@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".player.ui.activity.AudioPlayerFragment"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -27,7 +29,7 @@
             app:layout_constraintGuide_end="24dp" />
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/header"
+            android:id="@+id/action_back"
             style="@style/header_style"
             android:layout_marginStart="0dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -44,7 +46,7 @@
             android:contentDescription="@string/album_image"
             app:layout_constraintEnd_toEndOf="@id/rightBorder"
             app:layout_constraintStart_toStartOf="@id/leftBorder"
-            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintTop_toBottomOf="@id/action_back"
             tools:src="@drawable/ic_no_image_placeholder_45" />
 
         <TextView

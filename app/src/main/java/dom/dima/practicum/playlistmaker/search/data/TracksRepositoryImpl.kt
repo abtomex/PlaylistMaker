@@ -1,14 +1,32 @@
 package dom.dima.practicum.playlistmaker.search.data
 
-import dom.dima.practicum.playlistmaker.search.domain.models.Track
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.search.data.dto.TracksSearchRequest
 import dom.dima.practicum.playlistmaker.search.data.dto.TracksSearchResponse
 import dom.dima.practicum.playlistmaker.search.data.network.NetworkClient
-import dom.dima.practicum.playlistmaker.settings.domain.api.ApiResponse
 import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
+import dom.dima.practicum.playlistmaker.search.domain.models.Track
+import dom.dima.practicum.playlistmaker.settings.domain.api.ApiResponse
 import java.util.Objects
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+) : TracksRepository, ApplicationConstants {
+
+    val tracks = ArrayList<Track>()
+
+    init {
+        val json = sharedPreferences.getString(TRACK_HISTORY, ArrayList<Track>().toString())
+        val type = object : TypeToken<List<Track>>() {}.type
+        tracks.addAll(gson.fromJson(json, type))
+    }
+
 
     override fun searchTracks(searchStr: String): ApiResponse<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(searchStr))
@@ -35,4 +53,37 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
             return ApiResponse.Error("response result code is ${response.resultCode}")
         }
     }
+
+    override fun historyTracks(): List<Track> {
+        return tracks
+    }
+
+    override fun addToHistory(track: Track) {
+
+        if(tracks.contains(track)){
+            tracks.remove(track)
+        }
+        tracks.add(0, track)
+
+        while (tracks.size > MAX_HISTORY_SIZE) {
+            tracks.removeAt(MAX_HISTORY_SIZE)
+        }
+        reloadSharedPreferences()
+    }
+
+    override fun clearHistory() {
+        tracks.clear()
+        reloadSharedPreferences()
+
+    }
+
+    private fun reloadSharedPreferences() {
+        val json = gson.toJson(tracks)
+        sharedPreferences.edit {
+            putString(TRACK_HISTORY, json)
+        }
+    }
+
+
+
 }
