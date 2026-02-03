@@ -271,7 +271,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        println("view $this destroyed")
         handler.removeCallbacks(searchRunnable)
     }
 }
