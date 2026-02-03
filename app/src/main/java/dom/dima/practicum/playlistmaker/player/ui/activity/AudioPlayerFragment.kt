@@ -2,8 +2,6 @@ package dom.dima.practicum.playlistmaker.player.ui.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -32,8 +30,6 @@ class AudioPlayerFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var playerState = AudioPlayerViewModel.STATE_DEFAULT
-    private val handler = Handler(Looper.getMainLooper())
-
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     override fun onCreateView(
@@ -104,21 +100,19 @@ class AudioPlayerFragment : Fragment() {
                 }
 
                 is AudioPlayerState.Completion -> {
-                    handler.removeCallbacks(progressRunnable)
                     isStarted = false
-                    commonButton.setImageResource(R.drawable.button_play)
-                    setText("00:00", null, binding.progress)
+                    viewModel.pausePlayer()
+                    binding.progress.text = "00:00"
                 }
 
-                is AudioPlayerState.Start -> {
+                is AudioPlayerState.Playing -> {
                     commonButton.setImageResource(R.drawable.button_pause)
                     isStarted = true
-                    handler.postDelayed(progressRunnable, DELAY)
+                    binding.progress.text = state.progress
 
                 }
 
                 is AudioPlayerState.Pause -> {
-                    handler.removeCallbacks(progressRunnable)
                     isStarted = false
                     commonButton.setImageResource(R.drawable.button_play)
 
@@ -148,20 +142,6 @@ class AudioPlayerFragment : Fragment() {
 
     private var isStarted: Boolean = false
 
-
-    private val progressRunnable = object : Runnable {
-        override fun run() {
-            setText(
-                SimpleDateFormat(
-                    "mm:ss",
-                    Locale.getDefault()
-                ).format(viewModel.currentPosition()), null, binding.progress
-            )
-            handler.postDelayed(this, DELAY)
-        }
-
-    }
-
     private fun playbackControl() {
         when (playerState) {
             AudioPlayerViewModel.STATE_PLAYING -> {
@@ -184,13 +164,8 @@ class AudioPlayerFragment : Fragment() {
         viewModel.pausePlayer()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        handler.removeCallbacks(progressRunnable)
-    }
 
     companion object {
-        private const val DELAY = 500L
         const val CLICKED_TRACK_CONTENT = "track"
 
         fun createArgs(track: String): Bundle =
