@@ -1,7 +1,6 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
@@ -9,14 +8,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
-import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerActivity
+import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -24,8 +24,8 @@ import java.util.Locale
 class TrackViewHolder(
     parent: ViewGroup,
     trackList: List<Track>,
-    private val searchHistoryService: SearchHistoryService,
-    private val gson: Gson
+    private val viewModel: SearchViewModel,
+    private val navController: NavController
     ) :
     ApplicationConstants,
     RecyclerView.ViewHolder(
@@ -45,17 +45,18 @@ class TrackViewHolder(
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION && clickDebounce()) {
                 val clickedItem = trackList[position]
-                showPlayerActivity(itemView.context, clickedItem)
-                searchHistoryService.addToHistory(clickedItem)
+                showPlayer(itemView.context, clickedItem)
+                viewModel.addToHistory(clickedItem)
             }
         }
     }
 
-    private fun showPlayerActivity(context: Context?, clickedItem: Track) {
-        val playerIntent = Intent(context, AudioPlayerActivity::class.java)
-            .putExtra(CLICKED_TRACK_CONTENT, gson.toJson(clickedItem))
+    private fun showPlayer(context: Context?, clickedItem: Track) {
 
-        context?.startActivity(playerIntent)
+        navController.navigate(
+            R.id.action_searchFragment_to_audioPlayerFragment,
+            AudioPlayerFragment.createArgs(viewModel.gson().toJson(clickedItem))
+        )
     }
 
     fun bind(model : Track) {

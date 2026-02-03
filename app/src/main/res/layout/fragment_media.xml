@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/parent_linear_layout_style"
-    >
+    tools:context=".media.ui.MediaFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/media"
+        android:id="@+id/action_back"
         style="@style/header_style"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="0dp"
-        app:navigationIcon="@drawable/back">
+        >
 
         <TextView
             style="@style/header_text_style"

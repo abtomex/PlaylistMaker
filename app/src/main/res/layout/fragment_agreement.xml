@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/parent_linear_layout_style"
+    android:orientation="vertical"
+    android:nestedScrollingEnabled="true"
+    tools:context=".settings.ui.activity.AgreementFragment"
+
+    >
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/action_back"
+        style="@style/header_style"
+        android:layout_marginStart="0dp"
+        app:navigationIcon="@drawable/back">
+
+        <TextView
+            style="@style/header_text_style"
+            android:text="@string/agreement_header" />
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <TextView
+        android:id="@+id/agreement_head_text"
+        style="@style/agreement_text_style"
+        android:fontFamily="@font/ys_text_bold"
+        android:textSize="24sp"
+        android:text="@string/agreement_header_1"
+        />
+    <TextView
+        style="@style/agreement_text_style"
+        android:text="@string/agreement_description"
+        android:layout_marginTop="8px"
+        />
+    <TextView
+        style="@style/agreement_text_style"
+        android:text="@string/agreement_header_terms"
+        android:fontFamily="@font/ys_text_bold"
+        android:textSize="24sp"
+        />
+
+    <TextView
+        style="@style/agreement_text_style"
+        android:text="@string/agreement_terms"
+        android:layout_marginTop="8px"
+        />
+
+</LinearLayout>

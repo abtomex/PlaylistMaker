@@ -5,15 +5,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
-import android.widget.ImageButton
-import android.widget.ImageView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import dom.dima.practicum.playlistmaker.AbstractButtonBackActivity
-import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
@@ -22,44 +25,53 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Objects
 
-class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
+@Suppress("DEPRECATION", "INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION")
+class AudioPlayerFragment : Fragment() {
 
-    private lateinit var commonButton: ImageButton
+    private var _binding: FragmentAudioplayerBinding? = null
+    private val binding get() = _binding!!
 
     private var playerState = AudioPlayerViewModel.STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
 
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
-    override fun buttonBackId(): Int {
-        return R.id.header
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_audioplayer)
-
-        val trackJson = intent.getStringExtra(CLICKED_TRACK_CONTENT)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
         val track = viewModel.fromJson(trackJson, Track::class.java)
-        val trackIcon = findViewById<ImageView>(R.id.cover)
-        val durability = findViewById<TextView>(R.id.durability_val)
-        commonButton = findViewById(R.id.common_button)
+        val trackIcon = binding.cover
+        val durability = binding.durabilityVal
+        val commonButton = binding.commonButton
+
+        binding.actionBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
 
         Glide.with(this)
             .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
             .fitCenter()
             .placeholder(R.drawable.ic_no_image_placeholder_45)
-            .transform(RoundedCorners(dpToPx(8.0f, this)))
+            .transform(RoundedCorners(dpToPx(8.0f, requireActivity())))
             .into(trackIcon)
         durability.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
-        setText("00:00", null, findViewById(R.id.progress))
-        setText(track.trackName, null, findViewById(R.id.track_name))
-        setText(track.artistName, null, findViewById(R.id.artist_name))
-        setText(track.collectionName, findViewById(R.id.album), findViewById(R.id.album_val))
-        setText(track.primaryGenreName, findViewById(R.id.genre), findViewById(R.id.genre_val))
-        setText(track.country, findViewById(R.id.country), findViewById(R.id.country_val))
+        setText("00:00", null, binding.progress)
+        setText(track.trackName, null, binding.trackName)
+        setText(track.artistName, null, binding.artistName)
+        setText(track.collectionName, binding.album, binding.albumVal)
+        setText(track.primaryGenreName, binding.genre, binding.genreVal)
+        setText(track.country, binding.country, binding.countryVal)
 
         try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
@@ -67,14 +79,14 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
             val outputFormat = SimpleDateFormat("yyyy", Locale.getDefault())
             setText(
                 outputFormat.format(date!!),
-                findViewById(R.id.year),
-                findViewById(R.id.year_val)
+                binding.year,
+                binding.yearVal
             )
-        } catch (exc: Exception) {
+        } catch (_: Exception) {
             setText(
                 "",
-                findViewById(R.id.year),
-                findViewById(R.id.year_val)
+                binding.year,
+                binding.yearVal
             )
         }
 
@@ -84,7 +96,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
             playbackControl()
         }
 
-        viewModel.getState().observe(this) { state ->
+        viewModel.getState().observe(viewLifecycleOwner) { state ->
             playerState = state.stateData.playerState
             when (state) {
                 is AudioPlayerState.Prepared -> {
@@ -95,7 +107,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
                     handler.removeCallbacks(progressRunnable)
                     isStarted = false
                     commonButton.setImageResource(R.drawable.button_play)
-                    setText("00:00", null, findViewById(R.id.progress))
+                    setText("00:00", null, binding.progress)
                 }
 
                 is AudioPlayerState.Start -> {
@@ -143,7 +155,7 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
                 SimpleDateFormat(
                     "mm:ss",
                     Locale.getDefault()
-                ).format(viewModel.currentPosition()), null, findViewById(R.id.progress)
+                ).format(viewModel.currentPosition()), null, binding.progress
             )
             handler.postDelayed(this, DELAY)
         }
@@ -167,15 +179,21 @@ class AudioPlayerActivity : ApplicationConstants, AbstractButtonBackActivity() {
         viewModel.pausePlayer()
     }
 
-    override fun onDestroy() {
-
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         viewModel.pausePlayer()
-        viewModel.releasePlayer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacks(progressRunnable)
     }
 
     companion object {
         private const val DELAY = 500L
+        const val CLICKED_TRACK_CONTENT = "track"
 
+        fun createArgs(track: String): Bundle =
+            bundleOf(CLICKED_TRACK_CONTENT to track)
     }
 }
