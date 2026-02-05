@@ -102,7 +102,7 @@ class AudioPlayerFragment : Fragment() {
                 is AudioPlayerState.Completion -> {
                     isStarted = false
                     viewModel.pausePlayer()
-                    binding.progress.text = "00:00"
+                    binding.progress.text = getString(R.string.zero_timer)
                 }
 
                 is AudioPlayerState.Playing -> {

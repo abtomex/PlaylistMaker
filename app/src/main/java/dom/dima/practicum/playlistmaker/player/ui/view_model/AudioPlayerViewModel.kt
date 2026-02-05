@@ -59,9 +59,10 @@ class AudioPlayerViewModel(
     }
 
     private fun startTimer() {
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
-                delay(300L)
+                delay(TIMER_DELAY_MS)
                 state.postValue(AudioPlayerState.Playing(StateData(STATE_PLAYING), getCurrentPlayerPosition()))
             }
         }
@@ -72,6 +73,8 @@ class AudioPlayerViewModel(
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
+
+        const val TIMER_DELAY_MS = 300L
 
     }
 

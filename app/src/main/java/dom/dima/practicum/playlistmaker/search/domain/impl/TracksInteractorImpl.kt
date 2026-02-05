@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class TracksInteractorImpl(
-    private val repository: TracksRepository,
+    private val repository: TracksRepository
 ) : TracksInteractor {
 
     override fun searchTracks(searchStr: String) = flow {
