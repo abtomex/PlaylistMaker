@@ -4,32 +4,41 @@ import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
 import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.settings.domain.api.ApiResponse
-import dom.dima.practicum.playlistmaker.settings.domain.consumer.ConsumerData
-import java.util.concurrent.Executor
+import dom.dima.practicum.playlistmaker.settings.domain.consumer.LoadingData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
-class TracksInteractorImpl(private val repository: TracksRepository, private val executor: Executor ) : TracksInteractor {
+class TracksInteractorImpl(
+    private val repository: TracksRepository,
+) : TracksInteractor {
 
-    override fun searchTracks(searchStr: String, consumer: TracksInteractor.TracksConsumer) {
-        executor.execute {
-
-            when (val searchResponse = repository.searchTracks(searchStr)) {
+    override fun searchTracks(searchStr: String) = flow {
+        emit(repository.searchTracks(searchStr))
+    }
+        .flowOn(Dispatchers.IO)
+        .map { searchResponse ->
+            when (searchResponse) {
                 is ApiResponse.Success -> {
-                    consumer.consume(ConsumerData.Data(searchResponse.data))
+                    return@map LoadingData.Data(searchResponse.data)
                 }
+
                 is ApiResponse.Error -> {
-                    consumer.consume(ConsumerData.Error("Что-то пошло не так ${searchResponse.message}"))
+                    return@map LoadingData.Error("Что-то пошло не так ${searchResponse.message}")
                 }
             }
-
         }
-    }
 
-    override fun returnHistoryTracks(consumer: TracksInteractor.TracksConsumer) {
-        executor.execute {
-            val history = repository.historyTracks()
-            consumer.consume(ConsumerData.HistoryData(history))
-        }
+
+    override fun returnHistoryTracks() = flow {
+        emit(repository.historyTracks())
     }
+        .flowOn(Dispatchers.IO)
+        .map { searchResponse ->
+            return@map LoadingData.HistoryData((searchResponse as ApiResponse.Success).data)
+        }
+
 
     override fun addToHistory(track: Track) {
         repository.addToHistory(track)

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,9 +14,6 @@ import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -26,7 +22,6 @@ class TrackViewHolder(
     trackList: List<Track>,
     private val viewModel: SearchViewModel,
     private val navController: NavController,
-    private val lifecycleScope: LifecycleCoroutineScope
 ) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.view_track, parent, false)
 ) {
@@ -35,9 +30,6 @@ class TrackViewHolder(
     private val trackIcon: ImageView = itemView.findViewById(R.id.trackIcon)
     private val trackArtistName: TextView = itemView.findViewById(R.id.trackArtistName)
     private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
-
-    private var isClickAllowed = true
-    private var clickDebounceJob: Job? = null
 
     init {
         itemView.setOnClickListener {
@@ -50,15 +42,11 @@ class TrackViewHolder(
 
     private fun handleClick(position: Int, trackList: List<Track>) {
 
-        if (isClickAllowed) {
-            isClickAllowed = false
+        if (viewModel.clickIsAllowed) {
+            viewModel.clickIsAllowed = false
             val clickedItem = trackList[position]
 
-            clickDebounceJob?.cancel()
-            clickDebounceJob = lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
+            viewModel.clickDebounce()
 
             showPlayer(itemView.context, clickedItem)
             viewModel.addToHistory(clickedItem)
@@ -94,7 +82,4 @@ class TrackViewHolder(
     }
 
 
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
 }

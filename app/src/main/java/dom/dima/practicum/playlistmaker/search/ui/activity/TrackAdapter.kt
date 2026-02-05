@@ -1,7 +1,6 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
@@ -11,12 +10,11 @@ class TrackAdapter(
     private val trackList: List<Track>,
     private val viewModel: SearchViewModel,
     private val navController: NavController,
-    private val lifecycleScope: LifecycleCoroutineScope
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        return TrackViewHolder(parent, trackList, viewModel, navController, lifecycleScope)
+        return TrackViewHolder(parent, trackList, viewModel, navController)
     }
 
     override fun getItemCount(): Int {

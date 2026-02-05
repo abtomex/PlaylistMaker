@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,16 +11,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.databinding.FragmentSearchBinding
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
 import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment(), ApplicationConstants {
@@ -32,16 +29,11 @@ class SearchFragment : Fragment(), ApplicationConstants {
     private val tracks = mutableListOf<Track>()
     private lateinit var trackAdapter: TrackAdapter
 
-    @Volatile
-    private var searchInProgress = false
-
     private var inputSearchText: String = DEFAULT_STR
     private var searchTrack: String = ""
-    private var searchJob: Job? = null
 
     companion object {
         private const val DEFAULT_STR = ""
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     override fun onCreateView(
@@ -72,7 +64,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
             tracks,
             viewModel,
             findNavController(),
-            lifecycleScope
 
         )
         binding.trackRecyclerView.adapter = trackAdapter
@@ -88,7 +79,8 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    performSearch()
+                    hideAllViews()
+                    viewModel.doSearch(searchTrack)
                     true
                 } else {
                     false
@@ -104,11 +96,11 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showSearchHistory(historyTracks: List<Track>) {
 
         if (!isAdded || view == null) return
 
-        searchInProgress = false
         binding.progressBar.isVisible = false
 
         if (historyTracks.isNotEmpty() && binding.searchEditText.hasFocus()) {
@@ -131,29 +123,17 @@ class SearchFragment : Fragment(), ApplicationConstants {
             binding.clearIcon.isVisible = s?.isNotEmpty() == true
 
             if (s.isNullOrEmpty()) {
-                searchJob?.cancel()
-                searchJob = null
                 viewModel.loadHistoryTracks()
                 return
             }
             if (viewModel.performedSearchStr != searchTrack) {
-                scheduleSearch()
+                hideAllViews()
+                viewModel.scheduleSearch(searchTrack)
             }
         }
 
         override fun afterTextChanged(s: Editable?) {
             inputSearchText = s?.toString() ?: DEFAULT_STR
-        }
-    }
-
-    private fun scheduleSearch() {
-        searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            delay(SEARCH_DEBOUNCE_DELAY)
-
-            if (isAdded && view != null) {
-                performSearch()
-            }
         }
     }
 
@@ -177,7 +157,8 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
 
         binding.btnReload.setOnClickListener {
-            performSearch()
+            hideAllViews()
+            viewModel.doSearch(searchTrack)
         }
     }
 
@@ -187,19 +168,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
         hideAllViews()
     }
 
-    private fun performSearch() {
-        if (searchTrack.isEmpty() || searchInProgress) {
-            return
-        }
-
-        if (!isAdded || view == null) return
-
-        viewModel.performedSearchStr = searchTrack
-        searchInProgress = true
-        hideAllViews()
-
-        viewModel.searchDebounce(searchTrack)
-    }
 
     private fun render(state: SearchState) {
 
@@ -218,6 +186,7 @@ class SearchFragment : Fragment(), ApplicationConstants {
         binding.progressBar.isVisible = true
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showSearchResults(foundTracks: List<Track>) {
 
         if (!isAdded || view == null) return
@@ -233,7 +202,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
             binding.noContent.isVisible = true
         }
 
-        searchInProgress = false
     }
 
     private fun showError(message: String) {
@@ -259,9 +227,6 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        searchJob?.cancel()
-        searchJob = null
         _binding = null
     }
 }
