@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.navigation.fragment)
+    implementation(libs.kotlin.corutines)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -61,5 +62,6 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.koin)
     implementation(libs.navigation.ui.ktx)
+    //org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4
 
 }

@@ -28,7 +28,7 @@ class TracksRepositoryImpl(
     }
 
 
-    override fun searchTracks(searchStr: String): ApiResponse<List<Track>> {
+    override suspend fun searchTracks(searchStr: String): ApiResponse<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(searchStr))
         if (response.resultCode == 200) {
             return ApiResponse.Success((response as TracksSearchResponse).results.filter {
@@ -54,8 +54,8 @@ class TracksRepositoryImpl(
         }
     }
 
-    override fun historyTracks(): List<Track> {
-        return tracks
+    override suspend fun historyTracks(): ApiResponse<List<Track>> {
+        return ApiResponse.Success(tracks)
     }
 
     override fun addToHistory(track: Track) {

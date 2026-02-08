@@ -1,23 +1,18 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.ApplicationConstants
-import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentSearchBinding
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
@@ -31,22 +26,14 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
     private val viewModel by viewModel<SearchViewModel>()
 
-    private var inputSearchText: String = DEFAULT_STR
     private val tracks = mutableListOf<Track>()
-    private var searchTrack: String = ""
-
     private lateinit var trackAdapter: TrackAdapter
-    private val handler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable = createSearchRunnable(emptyList())
 
-    @Volatile
-    private var searchInProgress = false
-    @Volatile
-    private var searchIsScheduled = false
+    private var inputSearchText: String = DEFAULT_STR
+    private var searchTrack: String = ""
 
     companion object {
         private const val DEFAULT_STR = ""
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     override fun onCreateView(
@@ -73,13 +60,12 @@ class SearchFragment : Fragment(), ApplicationConstants {
     }
 
     private fun setupRecyclerView() {
-
         trackAdapter = TrackAdapter(
             tracks,
             viewModel,
-            findNavController()
-        )
+            findNavController(),
 
+        )
         binding.trackRecyclerView.adapter = trackAdapter
     }
 
@@ -93,7 +79,8 @@ class SearchFragment : Fragment(), ApplicationConstants {
 
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    performSearch()
+                    hideAllViews()
+                    viewModel.doSearch(searchTrack)
                     true
                 } else {
                     false
@@ -109,8 +96,11 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showSearchHistory(historyTracks: List<Track>) {
-        searchInProgress = false
+
+        if (!isAdded || view == null) return
+
         binding.progressBar.isVisible = false
 
         if (historyTracks.isNotEmpty() && binding.searchEditText.hasFocus()) {
@@ -121,10 +111,8 @@ class SearchFragment : Fragment(), ApplicationConstants {
             binding.searchHistoryText.isVisible = true
 
             tracks.addAll(historyTracks)
-
+            trackAdapter.notifyDataSetChanged()
         }
-        trackAdapter.notifyDataSetChanged()
-
     }
 
     private fun createTextWatcher() = object : TextWatcher {
@@ -135,13 +123,12 @@ class SearchFragment : Fragment(), ApplicationConstants {
             binding.clearIcon.isVisible = s?.isNotEmpty() == true
 
             if (s.isNullOrEmpty()) {
-                handler.removeCallbacks(searchRunnable)
-                searchIsScheduled = false
                 viewModel.loadHistoryTracks()
                 return
             }
             if (viewModel.performedSearchStr != searchTrack) {
-                scheduleSearch()
+                hideAllViews()
+                viewModel.scheduleSearch(searchTrack)
             }
         }
 
@@ -150,21 +137,12 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
     }
 
-    private fun scheduleSearch() {
-        handler.removeCallbacks(searchRunnable)
-        if (!searchIsScheduled) {
-            searchIsScheduled = true
-            handler.postDelayed(
-                { performSearch() },
-                SEARCH_DEBOUNCE_DELAY
-            )
-        }
-    }
-
-
     private fun setupObservers() {
         viewModel.getState().observe(viewLifecycleOwner) { state ->
-            render(state)
+
+            if (isAdded && view != null) {
+                render(state)
+            }
         }
     }
 
@@ -174,15 +152,14 @@ class SearchFragment : Fragment(), ApplicationConstants {
         }
 
         binding.clearIcon.setOnClickListener {
-            viewModel.loadHistoryTracks()
             binding.searchEditText.setText("")
             viewModel.loadHistoryTracks()
         }
 
         binding.btnReload.setOnClickListener {
-            performSearch()
+            hideAllViews()
+            viewModel.doSearch(searchTrack)
         }
-
     }
 
     private fun clearSearchHistory() {
@@ -191,19 +168,11 @@ class SearchFragment : Fragment(), ApplicationConstants {
         hideAllViews()
     }
 
-    private fun performSearch() {
-        if (searchTrack.isEmpty() || searchInProgress) {
-            searchIsScheduled = false
-            return
-        }
-        viewModel.performedSearchStr = searchTrack
-        searchInProgress = true
-        hideAllViews()
-
-        viewModel.loadData(searchTrack)
-    }
 
     private fun render(state: SearchState) {
+
+        if (!isAdded || view == null) return
+
         when (state) {
             is SearchState.Loading -> showLoading()
             is SearchState.Error -> showError(state.message)
@@ -217,38 +186,31 @@ class SearchFragment : Fragment(), ApplicationConstants {
         binding.progressBar.isVisible = true
     }
 
-    private fun showSearchResults(foundTracks: List<Track>) {
-        handler.removeCallbacks(searchRunnable)
-
-        val newSearchRunnable = createSearchRunnable(foundTracks)
-        searchRunnable = newSearchRunnable
-        handler.post(newSearchRunnable)
-
-        searchIsScheduled = false
-        searchInProgress = false
-    }
-
     @SuppressLint("NotifyDataSetChanged")
-    private fun createSearchRunnable(foundTracks: List<Track>): Runnable {
-        return Runnable {
-            binding.progressBar.isVisible = false
+    private fun showSearchResults(foundTracks: List<Track>) {
 
-            if (foundTracks.isNotEmpty()) {
-                tracks.clear()
-                tracks.addAll(foundTracks)
-                hideAllViews()
-                binding.trackRecyclerView.isVisible = true
-                trackAdapter.notifyDataSetChanged()
-            } else {
-                hideAllViews()
-                binding.noContent.isVisible = true
-            }
+        if (!isAdded || view == null) return
+
+        if (foundTracks.isNotEmpty()) {
+            tracks.clear()
+            tracks.addAll(foundTracks)
+            hideAllViews()
+            binding.trackRecyclerView.isVisible = true
+            trackAdapter.notifyDataSetChanged()
+        } else {
+            hideAllViews()
+            binding.noContent.isVisible = true
         }
+
     }
 
     private fun showError(message: String) {
+        if (!isAdded || view == null) return
+
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        requireActivity().onBackPressedDispatcher.onBackPressed()
+
+        hideAllViews()
+        binding.btnReload.isVisible = true
     }
 
     private fun hideAllViews() {
@@ -258,19 +220,13 @@ class SearchFragment : Fragment(), ApplicationConstants {
             clearHistory.isVisible = false
             searchHistoryText.isVisible = false
             progressBar.isVisible = false
+
+            btnReload.isVisible = false
         }
-    }
-
-    private fun hideKeyboard() {
-        val inputMethodManager = requireActivity()
-            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        val view = view?.findViewById<View>(R.id.searchEditText) ?: view
-        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacks(searchRunnable)
+        _binding = null
     }
 }

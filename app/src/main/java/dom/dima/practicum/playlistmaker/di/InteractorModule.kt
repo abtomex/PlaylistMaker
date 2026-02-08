@@ -9,8 +9,6 @@ import dom.dima.practicum.playlistmaker.sharing.domain.ExternalNavigator
 import dom.dima.practicum.playlistmaker.sharing.domain.SharingInteractor
 import dom.dima.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import org.koin.dsl.module
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 val interactorModule = module {
 
@@ -21,11 +19,7 @@ val interactorModule = module {
         SharingInteractorImpl(get())
     }
     single<TracksInteractor> {
-        TracksInteractorImpl(get(), get())
-    }
-    //Executor
-    single<Executor> {
-        Executors.newCachedThreadPool()
+        TracksInteractorImpl(get())
     }
 
     single<ExternalNavigator> {
