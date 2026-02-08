@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
+import dom.dima.practicum.playlistmaker.player.ui.state.FavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -47,6 +48,7 @@ class AudioPlayerFragment : Fragment() {
         val trackIcon = binding.cover
         val durability = binding.durabilityVal
         val commonButton = binding.commonButton
+        val buttonLike = binding.buttonEnableLike
 
         binding.actionBack.setOnClickListener {
             findNavController().popBackStack()
@@ -62,7 +64,7 @@ class AudioPlayerFragment : Fragment() {
         durability.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
-        setText("00:00", null, binding.progress)
+        setText(getString(R.string.zero_timer), null, binding.progress)
         setText(track.trackName, null, binding.trackName)
         setText(track.artistName, null, binding.artistName)
         setText(track.collectionName, binding.album, binding.albumVal)
@@ -92,7 +94,11 @@ class AudioPlayerFragment : Fragment() {
             playbackControl()
         }
 
-        viewModel.getState().observe(viewLifecycleOwner) { state ->
+        buttonLike.setOnClickListener {
+            viewModel.addToFavoriteOrRemove(track)
+        }
+
+        viewModel.getPlayerState().observe(viewLifecycleOwner) { state ->
             playerState = state.stateData.playerState
             when (state) {
                 is AudioPlayerState.Prepared -> {
@@ -119,7 +125,19 @@ class AudioPlayerFragment : Fragment() {
                 }
             }
 
+        }
 
+        viewModel.getFavoriteState().observe(viewLifecycleOwner) {state ->
+            when (state) {
+
+                is FavoriteState.AddToFavorite -> {
+                    println("++++++++++++++++++++")
+                }
+                is FavoriteState.RemoveFromFavorite -> {
+                    println("--------------------")
+                }
+
+            }
         }
 
     }
