@@ -16,7 +16,8 @@ class TrackDbConverter {
             track.releaseDate,
             track.primaryGenreName,
             track.country,
-            track.previewUrl
+            track.previewUrl,
+            System.currentTimeMillis()
         )
     }
 
@@ -31,7 +32,7 @@ class TrackDbConverter {
             favoriteEntity.releaseDate,
             favoriteEntity.primaryGenreName,
             favoriteEntity.country,
-            favoriteEntity.previewUrl,
+            favoriteEntity.previewUrl
         )
     }
 }

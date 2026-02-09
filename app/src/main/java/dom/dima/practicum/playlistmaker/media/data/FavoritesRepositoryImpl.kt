@@ -28,6 +28,10 @@ class FavoritesRepositoryImpl (
         }
     }
 
+    override fun favoriteStatus(track: Track): Flow<Boolean> = flow {
+        val found = appDatabase.favoriteDao().getTrackById(track.trackId)
+        emit(found != null )
+    }
 
 
 }

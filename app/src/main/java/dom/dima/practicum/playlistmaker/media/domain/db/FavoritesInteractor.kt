@@ -8,4 +8,5 @@ interface FavoritesInteractor {
 
     fun favoriteTracks(): Flow<List<Track>>
     suspend fun addToFavorites(track: Track): Flow<AddFavoriteState>
+    suspend fun favoriteStatus(track: Track): Flow<Boolean>
 }

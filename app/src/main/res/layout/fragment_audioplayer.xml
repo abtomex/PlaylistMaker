@@ -102,7 +102,7 @@
 
 
         <ImageButton
-            android:id="@+id/button_enable_like"
+            android:id="@+id/button_like_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -110,7 +110,7 @@
             android:backgroundTint="@color/color_theme"
             android:contentDescription="@string/todo"
             android:padding="0dp"
-            android:src="@drawable/button_like"
+            android:src="@drawable/button_unliked"
             app:layout_constraintBottom_toBottomOf="@id/common_button"
             app:layout_constraintEnd_toStartOf="@id/rightBorder"
             app:layout_constraintTop_toTopOf="@id/common_button" />

@@ -25,7 +25,7 @@
         app:tabIndicatorColor="@color/text_color"
         style="@style/mediaTabLayoutStyle"
         android:background="@color/color_theme"
-        android:layout_marginBottom="24dp" />
+        />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/mediaViewPager"

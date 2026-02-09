@@ -15,7 +15,7 @@ interface FavoritesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(movies: FavoriteEntity)
 
-    @Query("SELECT * FROM favorite_track_table")
+    @Query("SELECT * FROM favorite_track_table order by created_ts desc")
     suspend fun getTracks(): List<FavoriteEntity>
 
     @Query("SELECT * FROM favorite_track_table where trackId = :trackId")

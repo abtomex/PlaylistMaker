@@ -48,7 +48,7 @@ class AudioPlayerFragment : Fragment() {
         val trackIcon = binding.cover
         val durability = binding.durabilityVal
         val commonButton = binding.commonButton
-        val buttonLike = binding.buttonEnableLike
+        val buttonLike = binding.buttonLikeSwitch
 
         binding.actionBack.setOnClickListener {
             findNavController().popBackStack()
@@ -98,6 +98,8 @@ class AudioPlayerFragment : Fragment() {
             viewModel.addToFavoriteOrRemove(track)
         }
 
+        viewModel.initButtonLikeStatus(track)
+
         viewModel.getPlayerState().observe(viewLifecycleOwner) { state ->
             playerState = state.stateData.playerState
             when (state) {
@@ -130,11 +132,11 @@ class AudioPlayerFragment : Fragment() {
         viewModel.getFavoriteState().observe(viewLifecycleOwner) {state ->
             when (state) {
 
-                is FavoriteState.AddToFavorite -> {
-                    println("++++++++++++++++++++")
+                is FavoriteState.IsFavorite -> {
+                    buttonLike.setImageResource(R.drawable.button_liked)
                 }
-                is FavoriteState.RemoveFromFavorite -> {
-                    println("--------------------")
+                is FavoriteState.NotFavorite -> {
+                    buttonLike.setImageResource(R.drawable.button_unliked)
                 }
 
             }

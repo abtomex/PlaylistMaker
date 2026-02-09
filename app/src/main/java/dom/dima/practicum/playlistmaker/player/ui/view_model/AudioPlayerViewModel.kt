@@ -79,12 +79,24 @@ class AudioPlayerViewModel(
         viewModelScope.launch {
             favoritesInteractor.addToFavorites(track).collect { state ->
                 when (state) {
-                    is AddFavoriteState.Added -> favoriteState.postValue(FavoriteState.AddToFavorite())
-                    is AddFavoriteState.Removed -> favoriteState.postValue(FavoriteState.RemoveFromFavorite())
+                    is AddFavoriteState.Added -> favoriteState.postValue(FavoriteState.IsFavorite())
+                    is AddFavoriteState.Removed -> favoriteState.postValue(FavoriteState.NotFavorite())
                 }
             }
         }
 
+    }
+
+    fun initButtonLikeStatus(track: Track) {
+        viewModelScope.launch {
+            favoritesInteractor.favoriteStatus(track).collect { isInFavorites ->
+                when (isInFavorites) {
+                    true -> favoriteState.postValue(FavoriteState.IsFavorite())
+                    false -> favoriteState.postValue(FavoriteState.NotFavorite())
+                }
+            }
+
+        }
     }
 
     companion object {

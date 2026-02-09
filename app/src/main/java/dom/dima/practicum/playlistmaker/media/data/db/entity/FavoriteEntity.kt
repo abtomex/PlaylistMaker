@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.media.data.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -15,6 +16,8 @@ class FavoriteEntity (
     val releaseDate: String?,
     val primaryGenreName: String?,
     val country: String?,
-    val previewUrl: String?
+    val previewUrl: String?,
+    @ColumnInfo("created_ts")
+    val createdTs: Long
 
 )
