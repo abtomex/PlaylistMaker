@@ -30,28 +30,55 @@ class TracksRepositoryImpl(
 
     override suspend fun searchTracks(searchStr: String): ApiResponse<List<Track>> {
         val response = networkClient.doRequest(TracksSearchRequest(searchStr))
-        if (response.resultCode == 200) {
-            return ApiResponse.Success((response as TracksSearchResponse).results.filter {
-                Objects.nonNull(
-                    it
-                )
-            }.map {
-                Track(
-                    it.trackId,
-                    it.trackName,
-                    it.artistName,
-                    it.trackTimeMillis,
-                    it.artworkUrl100,
-                    it.collectionName,
-                    it.releaseDate,
-                    it.primaryGenreName,
-                    it.country,
-                    it.previewUrl
-                )
-            })
-        } else {
-            return ApiResponse.Error("response result code is ${response.resultCode}")
+        return when (response.resultCode) {
+            -1 -> ApiResponse.NoInternet("Проверьте подключение к интернету")
+            200 -> {
+                ApiResponse.Success((response as TracksSearchResponse).results.filter {
+                    Objects.nonNull(
+                        it
+                    )
+                }.map {
+                    Track(
+                        it.trackId,
+                        it.trackName,
+                        it.artistName,
+                        it.trackTimeMillis,
+                        it.artworkUrl100,
+                        it.collectionName,
+                        it.releaseDate,
+                        it.primaryGenreName,
+                        it.country,
+                        it.previewUrl
+                    )
+                })
+            }
+
+            else -> ApiResponse.Error("response result code is ${response.resultCode}")
         }
+        /*
+                if (response.resultCode == 200) {
+                    return ApiResponse.Success((response as TracksSearchResponse).results.filter {
+                        Objects.nonNull(
+                            it
+                        )
+                    }.map {
+                        Track(
+                            it.trackId,
+                            it.trackName,
+                            it.artistName,
+                            it.trackTimeMillis,
+                            it.artworkUrl100,
+                            it.collectionName,
+                            it.releaseDate,
+                            it.primaryGenreName,
+                            it.country,
+                            it.previewUrl
+                        )
+                    })
+                } else {
+                    return ApiResponse.Error("response result code is ${response.resultCode}")
+                }
+        */
     }
 
     override suspend fun historyTracks(): ApiResponse<List<Track>> {
@@ -60,7 +87,7 @@ class TracksRepositoryImpl(
 
     override fun addToHistory(track: Track) {
 
-        if(tracks.contains(track)){
+        if (tracks.contains(track)) {
             tracks.remove(track)
         }
         tracks.add(0, track)
@@ -83,7 +110,6 @@ class TracksRepositoryImpl(
             putString(TRACK_HISTORY, json)
         }
     }
-
 
 
 }

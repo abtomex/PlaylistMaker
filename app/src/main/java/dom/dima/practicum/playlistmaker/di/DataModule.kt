@@ -22,7 +22,7 @@ val dataModule = module {
     }
 
     single<NetworkClient> {
-        RetrofitNetworkClient(get())
+        RetrofitNetworkClient(get(), androidContext())
     }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
