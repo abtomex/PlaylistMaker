@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-//    alias(libs.plugins.kotlin.parcelize)
     id("com.google.devtools.ksp")
 }
 
@@ -67,6 +66,5 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
     implementation(libs.navigation.ui.ktx)
-    //org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4
 
 }
