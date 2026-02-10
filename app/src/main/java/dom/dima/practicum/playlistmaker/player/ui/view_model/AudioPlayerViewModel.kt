@@ -9,7 +9,6 @@ import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.media.domain.db.FavoritesInteractor
 import dom.dima.practicum.playlistmaker.media.domain.state.AddFavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
-import dom.dima.practicum.playlistmaker.player.ui.state.FavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.state.StateData
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
@@ -26,9 +25,6 @@ class AudioPlayerViewModel(
 
     private val playerState = MutableLiveData<AudioPlayerState>()
     fun getPlayerState(): LiveData<AudioPlayerState> = playerState
-
-    private val favoriteState = MutableLiveData<FavoriteState>()
-    fun getFavoriteState(): LiveData<FavoriteState> = favoriteState
 
     private var timerJob: Job? = null
 
@@ -50,7 +46,12 @@ class AudioPlayerViewModel(
 
     fun startPlayer() {
         mediaPlayer.start()
-        playerState.postValue(AudioPlayerState.Playing(StateData(STATE_PLAYING), getCurrentPlayerPosition()))
+        playerState.postValue(
+            AudioPlayerState.Playing(
+                StateData(STATE_PLAYING),
+                getCurrentPlayerPosition()
+            )
+        )
         startTimer()
 
     }
@@ -58,11 +59,17 @@ class AudioPlayerViewModel(
     fun pausePlayer() {
         mediaPlayer.pause()
         timerJob?.cancel()
-        playerState.postValue(AudioPlayerState.Pause(StateData(STATE_PAUSED), getCurrentPlayerPosition()))
+        playerState.postValue(
+            AudioPlayerState.Pause(
+                StateData(STATE_PAUSED),
+                getCurrentPlayerPosition()
+            )
+        )
     }
 
     private fun getCurrentPlayerPosition(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition) ?: "00:00"
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+            ?: "00:00"
     }
 
     private fun startTimer() {
@@ -70,7 +77,12 @@ class AudioPlayerViewModel(
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
                 delay(TIMER_DELAY_MS)
-                playerState.postValue(AudioPlayerState.Playing(StateData(STATE_PLAYING), getCurrentPlayerPosition()))
+                playerState.postValue(
+                    AudioPlayerState.Playing(
+                        StateData(STATE_PLAYING),
+                        getCurrentPlayerPosition()
+                    )
+                )
             }
         }
     }
@@ -79,8 +91,8 @@ class AudioPlayerViewModel(
         viewModelScope.launch {
             favoritesInteractor.addToFavorites(track).collect { state ->
                 when (state) {
-                    is AddFavoriteState.Added -> favoriteState.postValue(FavoriteState.IsFavorite())
-                    is AddFavoriteState.Removed -> favoriteState.postValue(FavoriteState.NotFavorite())
+                    is AddFavoriteState.Added -> playerState.postValue(AudioPlayerState.Favorite())
+                    is AddFavoriteState.Removed -> playerState.postValue(AudioPlayerState.NotFavorite())
                 }
             }
         }
@@ -89,11 +101,15 @@ class AudioPlayerViewModel(
 
     fun initButtonLikeStatus(track: Track) {
         viewModelScope.launch {
-            favoritesInteractor.favoriteStatus(track).collect { isInFavorites ->
-                when (isInFavorites) {
-                    true -> favoriteState.postValue(FavoriteState.IsFavorite())
-                    false -> favoriteState.postValue(FavoriteState.NotFavorite())
-                }
+        // Комментарий ревьюеру:
+        // Чтобы позволить запросу в БД выполняться без Flow в main потоке, была применена настройка
+        // .allowMainThreadQueries() в конфигурации БД. Иначе приложение падает с ошибкой
+        // Cannot access database on the main thread since it may potentially lock the UI for a long period of time.
+
+            val favStatus = favoritesInteractor.favoriteStatus(track)
+            when (favStatus) {
+                true -> playerState.postValue(AudioPlayerState.Favorite())
+                false -> playerState.postValue(AudioPlayerState.NotFavorite())
             }
 
         }

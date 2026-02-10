@@ -7,15 +7,22 @@ import dom.dima.practicum.playlistmaker.media.domain.state.AddFavoriteState
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl (
     private val appDatabase: AppDatabase,
     private val trackDbConverter: TrackDbConverter
 ) : FavoritesRepository {
-    override fun favoriteTracks(): Flow<List<Track>> = flow {
-        val favorites = appDatabase.favoriteDao().getTracks()
-        emit( favorites.map { entity -> trackDbConverter.map(entity) })
+    override fun favoriteTracks(): Flow<List<Track>> {
+        return appDatabase.favoriteDao().getTracks()
+            .map {it.map { trackDbConverter.map(it) }
+        }
     }
+
+//    = flow {
+//        val favorites = appDatabase.favoriteDao().getTracks()
+//        emit( favorites.map { entity -> trackDbConverter.map(entity) })
+//    }
 
     override fun createFavorite(track: Track): Flow<AddFavoriteState> = flow {
         val found = appDatabase.favoriteDao().getTrackById(track.trackId)
@@ -28,9 +35,9 @@ class FavoritesRepositoryImpl (
         }
     }
 
-    override fun favoriteStatus(track: Track): Flow<Boolean> = flow {
+    override fun favoriteStatus(track: Track) : Boolean {
         val found = appDatabase.favoriteDao().getTrackById(track.trackId)
-        emit(found != null )
+        return found != null
     }
 
 

@@ -16,7 +16,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
-import dom.dima.practicum.playlistmaker.player.ui.state.FavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -101,19 +100,21 @@ class AudioPlayerFragment : Fragment() {
         viewModel.initButtonLikeStatus(track)
 
         viewModel.getPlayerState().observe(viewLifecycleOwner) { state ->
-            playerState = state.stateData.playerState
             when (state) {
                 is AudioPlayerState.Prepared -> {
+                    playerState = state.data.playerState
                     commonButton.isEnabled = true
                 }
 
                 is AudioPlayerState.Completion -> {
+                    playerState = state.data.playerState
                     isStarted = false
                     viewModel.pausePlayer()
                     binding.progress.text = getString(R.string.zero_timer)
                 }
 
                 is AudioPlayerState.Playing -> {
+                    playerState = state.data.playerState
                     commonButton.setImageResource(R.drawable.button_pause)
                     isStarted = true
                     binding.progress.text = state.progress
@@ -121,25 +122,20 @@ class AudioPlayerFragment : Fragment() {
                 }
 
                 is AudioPlayerState.Pause -> {
+                    playerState = state.data.playerState
                     isStarted = false
                     commonButton.setImageResource(R.drawable.button_play)
+                    binding.progress.text = state.progress
 
                 }
-            }
-
-        }
-
-        viewModel.getFavoriteState().observe(viewLifecycleOwner) {state ->
-            when (state) {
-
-                is FavoriteState.IsFavorite -> {
+                is AudioPlayerState.Favorite -> {
                     buttonLike.setImageResource(R.drawable.button_liked)
                 }
-                is FavoriteState.NotFavorite -> {
+                is AudioPlayerState.NotFavorite -> {
                     buttonLike.setImageResource(R.drawable.button_unliked)
                 }
-
             }
+
         }
 
     }

@@ -1,10 +1,12 @@
 package dom.dima.practicum.playlistmaker.player.ui.state
 
-sealed class AudioPlayerState(val stateData: StateData, val progress: String) {
+sealed class AudioPlayerState() {
 
-    class Prepared (val data: StateData) : AudioPlayerState(data, "00:00")
-    class Completion (val data: StateData) : AudioPlayerState(data, "00:00")
-    class Playing (val data: StateData, progress: String) : AudioPlayerState(data, progress)
-    class Pause (val data: StateData, progress: String) : AudioPlayerState(data, progress)
+    class Prepared (val data: StateData) : AudioPlayerState()
+    class Completion (val data: StateData) : AudioPlayerState()
+    class Playing (val data: StateData, val progress: String) : AudioPlayerState()
+    class Pause (val data: StateData, val progress: String) : AudioPlayerState()
+    class Favorite() : AudioPlayerState()
+    class NotFavorite() : AudioPlayerState()
 
 }
