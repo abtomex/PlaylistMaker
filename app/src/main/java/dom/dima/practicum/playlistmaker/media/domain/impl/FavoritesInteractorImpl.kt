@@ -17,7 +17,7 @@ class FavoritesInteractorImpl (
         return favoritesRepository.createFavorite(track)
     }
 
-    override fun favoriteStatus(track: Track): Boolean {
+    override suspend fun favoriteStatus(track: Track): Flow<Boolean> {
         return favoritesRepository.favoriteStatus(track)
     }
 

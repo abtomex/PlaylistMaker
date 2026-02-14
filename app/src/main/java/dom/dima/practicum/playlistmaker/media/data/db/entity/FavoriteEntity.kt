@@ -17,8 +17,6 @@ class FavoriteEntity (
     val primaryGenreName: String?,
     val country: String?,
     val previewUrl: String?,
-//    Комментарий для ревьюера:
-//    Поле, которое я использую для сортировки избранного по порядку добавления
     @ColumnInfo("created_ts")
     val createdTs: Long
 

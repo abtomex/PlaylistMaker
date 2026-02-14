@@ -101,17 +101,12 @@ class AudioPlayerViewModel(
 
     fun initButtonLikeStatus(track: Track) {
         viewModelScope.launch {
-        // Комментарий ревьюеру:
-        // Чтобы позволить запросу в БД выполняться без Flow в main потоке, была применена настройка
-        // .allowMainThreadQueries() в конфигурации БД. Иначе приложение падает с ошибкой
-        // Cannot access database on the main thread since it may potentially lock the UI for a long period of time.
-
-            val favStatus = favoritesInteractor.favoriteStatus(track)
-            when (favStatus) {
-                true -> playerState.postValue(AudioPlayerState.Favorite())
-                false -> playerState.postValue(AudioPlayerState.NotFavorite())
+            favoritesInteractor.favoriteStatus(track).collect { isInFavorites ->
+                when (isInFavorites) {
+                    true -> playerState.postValue(AudioPlayerState.Favorite())
+                    false -> playerState.postValue(AudioPlayerState.NotFavorite())
+                }
             }
-
         }
     }
 

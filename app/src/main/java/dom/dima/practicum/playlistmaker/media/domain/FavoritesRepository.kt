@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface FavoritesRepository {
     fun favoriteTracks(): Flow<List<Track>>
     fun createFavorite(track: Track): Flow<AddFavoriteState>
-    fun favoriteStatus(track: Track): Boolean
+    fun favoriteStatus(track: Track): Flow<Boolean>
 
 }

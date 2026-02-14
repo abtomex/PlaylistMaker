@@ -19,11 +19,6 @@ class FavoritesRepositoryImpl (
         }
     }
 
-//    = flow {
-//        val favorites = appDatabase.favoriteDao().getTracks()
-//        emit( favorites.map { entity -> trackDbConverter.map(entity) })
-//    }
-
     override fun createFavorite(track: Track): Flow<AddFavoriteState> = flow {
         val found = appDatabase.favoriteDao().getTrackById(track.trackId)
         if ( found != null ) {
@@ -35,9 +30,9 @@ class FavoritesRepositoryImpl (
         }
     }
 
-    override fun favoriteStatus(track: Track) : Boolean {
+    override fun favoriteStatus(track: Track): Flow<Boolean> = flow {
         val found = appDatabase.favoriteDao().getTrackById(track.trackId)
-        return found != null
+        emit(found != null )
     }
 
 
