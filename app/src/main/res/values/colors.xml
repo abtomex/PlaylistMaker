@@ -38,4 +38,5 @@
     <color name="bottom_navigation_view_background">#FFFFFF</color>
     <color name="bottom_navigation_view_unselected">#1A1B22</color>
     <color name="bottom_navigation_view_selected">#3772E7</color>
+    <color name="heart_liked">#F56B6C</color>
 </resources>

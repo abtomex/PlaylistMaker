@@ -27,6 +27,9 @@ class TracksInteractorImpl(
                 is ApiResponse.Error -> {
                     return@map LoadingData.Error("Что-то пошло не так ${searchResponse.message}")
                 }
+                is ApiResponse.NoInternet -> {
+                    return@map LoadingData.NoInternet("Проверьте подключение к интернету")
+                }
             }
         }
 

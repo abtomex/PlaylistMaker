@@ -47,6 +47,7 @@ class AudioPlayerFragment : Fragment() {
         val trackIcon = binding.cover
         val durability = binding.durabilityVal
         val commonButton = binding.commonButton
+        val buttonLike = binding.buttonLikeSwitch
 
         binding.actionBack.setOnClickListener {
             findNavController().popBackStack()
@@ -62,7 +63,7 @@ class AudioPlayerFragment : Fragment() {
         durability.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
-        setText("00:00", null, binding.progress)
+        setText(getString(R.string.zero_timer), null, binding.progress)
         setText(track.trackName, null, binding.trackName)
         setText(track.artistName, null, binding.artistName)
         setText(track.collectionName, binding.album, binding.albumVal)
@@ -92,20 +93,28 @@ class AudioPlayerFragment : Fragment() {
             playbackControl()
         }
 
-        viewModel.getState().observe(viewLifecycleOwner) { state ->
-            playerState = state.stateData.playerState
+        buttonLike.setOnClickListener {
+            viewModel.addToFavoriteOrRemove(track)
+        }
+
+        viewModel.initButtonLikeStatus(track)
+
+        viewModel.getPlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is AudioPlayerState.Prepared -> {
+                    playerState = state.data.playerState
                     commonButton.isEnabled = true
                 }
 
                 is AudioPlayerState.Completion -> {
+                    playerState = state.data.playerState
                     isStarted = false
                     viewModel.pausePlayer()
                     binding.progress.text = getString(R.string.zero_timer)
                 }
 
                 is AudioPlayerState.Playing -> {
+                    playerState = state.data.playerState
                     commonButton.setImageResource(R.drawable.button_pause)
                     isStarted = true
                     binding.progress.text = state.progress
@@ -113,12 +122,19 @@ class AudioPlayerFragment : Fragment() {
                 }
 
                 is AudioPlayerState.Pause -> {
+                    playerState = state.data.playerState
                     isStarted = false
                     commonButton.setImageResource(R.drawable.button_play)
+                    binding.progress.text = state.progress
 
                 }
+                is AudioPlayerState.Favorite -> {
+                    buttonLike.setImageResource(R.drawable.button_liked)
+                }
+                is AudioPlayerState.NotFavorite -> {
+                    buttonLike.setImageResource(R.drawable.button_unliked)
+                }
             }
-
 
         }
 

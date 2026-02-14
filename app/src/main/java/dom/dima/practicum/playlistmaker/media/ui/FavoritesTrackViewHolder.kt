@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.search.ui.activity
+package dom.dima.practicum.playlistmaker.media.ui
 
 import android.content.Context
 import android.util.TypedValue
@@ -11,21 +11,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.R
+import dom.dima.practicum.playlistmaker.media.view_model.FavoriteTracksViewModel
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
-import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-open class TrackViewHolder(
+class FavoritesTrackViewHolder(
     parent: ViewGroup,
     trackList: List<Track>,
-    private val viewModel: SearchViewModel,
+    private val viewModel: FavoriteTracksViewModel,
     private val navController: NavController,
 ) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.view_track, parent, false)
 ) {
-
     private val trackName: TextView = itemView.findViewById(R.id.trackName)
     private val trackIcon: ImageView = itemView.findViewById(R.id.trackIcon)
     private val trackArtistName: TextView = itemView.findViewById(R.id.trackArtistName)
@@ -45,17 +44,15 @@ open class TrackViewHolder(
         if (viewModel.clickIsAllowed) {
             viewModel.clickIsAllowed = false
             val clickedItem = trackList[position]
-
-            viewModel.clickDebounce()
-
-            showPlayer(clickedItem)
-            viewModel.addToHistory(clickedItem)
+            viewModel.clickDebounce {
+                showPlayer(clickedItem)
+            }
         }
     }
 
     private fun showPlayer(clickedItem: Track) {
         navController.navigate(
-            R.id.action_searchFragment_to_audioPlayerFragment,
+            R.id.action_mediaFragment_to_audioPlayerFragment,
             AudioPlayerFragment.createArgs(viewModel.gson().toJson(clickedItem))
         )
     }

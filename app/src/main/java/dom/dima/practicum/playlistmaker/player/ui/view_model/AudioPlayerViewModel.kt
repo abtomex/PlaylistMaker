@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import dom.dima.practicum.playlistmaker.media.domain.db.FavoritesInteractor
+import dom.dima.practicum.playlistmaker.media.domain.state.AddFavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.state.StateData
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
@@ -17,11 +19,12 @@ import java.util.Locale
 
 class AudioPlayerViewModel(
     private val gson: Gson,
-    private val mediaPlayer: MediaPlayer
+    private val mediaPlayer: MediaPlayer,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    private val state = MutableLiveData<AudioPlayerState>()
-    fun getState(): LiveData<AudioPlayerState> = state
+    private val playerState = MutableLiveData<AudioPlayerState>()
+    fun getPlayerState(): LiveData<AudioPlayerState> = playerState
 
     private var timerJob: Job? = null
 
@@ -33,17 +36,22 @@ class AudioPlayerViewModel(
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            state.postValue(AudioPlayerState.Prepared(StateData(STATE_PREPARED)))
+            playerState.postValue(AudioPlayerState.Prepared(StateData(STATE_PREPARED)))
         }
         mediaPlayer.setOnCompletionListener {
-            state.postValue(AudioPlayerState.Completion(StateData(STATE_PREPARED)))
+            playerState.postValue(AudioPlayerState.Completion(StateData(STATE_PREPARED)))
         }
 
     }
 
     fun startPlayer() {
         mediaPlayer.start()
-        state.postValue(AudioPlayerState.Playing(StateData(STATE_PLAYING), getCurrentPlayerPosition()))
+        playerState.postValue(
+            AudioPlayerState.Playing(
+                StateData(STATE_PLAYING),
+                getCurrentPlayerPosition()
+            )
+        )
         startTimer()
 
     }
@@ -51,11 +59,17 @@ class AudioPlayerViewModel(
     fun pausePlayer() {
         mediaPlayer.pause()
         timerJob?.cancel()
-        state.postValue(AudioPlayerState.Pause(StateData(STATE_PAUSED), getCurrentPlayerPosition()))
+        playerState.postValue(
+            AudioPlayerState.Pause(
+                StateData(STATE_PAUSED),
+                getCurrentPlayerPosition()
+            )
+        )
     }
 
     private fun getCurrentPlayerPosition(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition) ?: "00:00"
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+            ?: "00:00"
     }
 
     private fun startTimer() {
@@ -63,7 +77,35 @@ class AudioPlayerViewModel(
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
                 delay(TIMER_DELAY_MS)
-                state.postValue(AudioPlayerState.Playing(StateData(STATE_PLAYING), getCurrentPlayerPosition()))
+                playerState.postValue(
+                    AudioPlayerState.Playing(
+                        StateData(STATE_PLAYING),
+                        getCurrentPlayerPosition()
+                    )
+                )
+            }
+        }
+    }
+
+    fun addToFavoriteOrRemove(track: Track) {
+        viewModelScope.launch {
+            favoritesInteractor.addToFavorites(track).collect { state ->
+                when (state) {
+                    is AddFavoriteState.Added -> playerState.postValue(AudioPlayerState.Favorite())
+                    is AddFavoriteState.Removed -> playerState.postValue(AudioPlayerState.NotFavorite())
+                }
+            }
+        }
+
+    }
+
+    fun initButtonLikeStatus(track: Track) {
+        viewModelScope.launch {
+            favoritesInteractor.favoriteStatus(track).collect { isInFavorites ->
+                when (isInFavorites) {
+                    true -> playerState.postValue(AudioPlayerState.Favorite())
+                    false -> playerState.postValue(AudioPlayerState.NotFavorite())
+                }
             }
         }
     }

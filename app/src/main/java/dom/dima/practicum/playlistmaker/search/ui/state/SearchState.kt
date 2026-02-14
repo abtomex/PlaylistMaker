@@ -6,6 +6,7 @@ sealed interface SearchState {
 
     data object Loading : SearchState
     data class Error(val message: String) : SearchState
+    data class NoInternet(val message: String) : SearchState
     data class Content(val data: List<Track>) : SearchState
 
     data class History(val data: List<Track>) : SearchState

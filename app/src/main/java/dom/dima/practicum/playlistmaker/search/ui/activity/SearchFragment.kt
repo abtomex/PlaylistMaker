@@ -176,9 +176,16 @@ class SearchFragment : Fragment(), ApplicationConstants {
         when (state) {
             is SearchState.Loading -> showLoading()
             is SearchState.Error -> showError(state.message)
+            is SearchState.NoInternet -> showNoConnectionView()
             is SearchState.Content -> showSearchResults(state.data)
             is SearchState.History -> showSearchHistory(state.data)
         }
+    }
+
+    private fun showNoConnectionView() {
+        hideAllViews()
+        binding.noConnect.isVisible = true
+
     }
 
     private fun showLoading() {

@@ -73,6 +73,10 @@ class SearchViewModel(
                 val error = SearchState.Error(data.message)
                 state.postValue(error)
             }
+            is LoadingData.NoInternet -> {
+                val error = SearchState.NoInternet(data.message)
+                state.postValue(error)
+            }
 
         }
 
