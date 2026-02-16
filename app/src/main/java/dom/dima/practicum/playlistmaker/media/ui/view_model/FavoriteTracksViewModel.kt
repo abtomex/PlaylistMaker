@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.view_model
+package dom.dima.practicum.playlistmaker.media.ui.view_model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

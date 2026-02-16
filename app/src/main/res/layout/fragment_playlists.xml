@@ -6,9 +6,11 @@
     android:id="@+id/playlists"
     android:visibility="visible"
     android:gravity="center_horizontal"
-    tools:ignore="UseCompoundDrawables">
+    tools:ignore="UseCompoundDrawables"
+    tools:context=".media.ui.fragment.PlaylistsFragment"
+    >
     <Button
-        android:id="@+id/btn_reload"
+        android:id="@+id/btn_new"
         style="@style/btn_style"
         android:layout_marginTop="24dp"
         android:text="@string/new_playlist"

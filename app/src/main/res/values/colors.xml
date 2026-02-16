@@ -39,4 +39,8 @@
     <color name="bottom_navigation_view_unselected">#1A1B22</color>
     <color name="bottom_navigation_view_selected">#3772E7</color>
     <color name="heart_liked">#F56B6C</color>
+    <color name="playlist_inputs_text_color">#1A1B22</color>
+    <color name="new_playlist_inputs_stroke">#AEAFB4</color>
+    <color name="new_playlist_background">#FFFFFFFF</color>
+
 </resources>

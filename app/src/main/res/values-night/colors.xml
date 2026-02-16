@@ -21,5 +21,7 @@
     <color name="bottom_navigation_view_unselected">#FFFFFF</color>
     <color name="bottom_navigation_view_selected">#3772E7</color>
     <color name="heart_liked">#F56B6C</color>
+    <color name="new_playlist_inputs_stroke">#FFFFFF</color>
+    <color name="new_playlist_background">#1A1B22</color>
 
 </resources>

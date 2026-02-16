@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui
+package dom.dima.practicum.playlistmaker.media.ui.fragment
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
