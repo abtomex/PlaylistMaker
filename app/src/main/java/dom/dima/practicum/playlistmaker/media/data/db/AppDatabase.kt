@@ -7,7 +7,7 @@ import dom.dima.practicum.playlistmaker.media.data.db.dao.PlaylistsDao
 import dom.dima.practicum.playlistmaker.media.data.db.entity.FavoriteEntity
 import dom.dima.practicum.playlistmaker.media.data.db.entity.PlaylistEntity
 
-@Database(version = 2, entities = [FavoriteEntity::class, PlaylistEntity::class])
+@Database(version = 3, entities = [FavoriteEntity::class, PlaylistEntity::class])
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao() : FavoritesDao
     abstract fun playlistsDao() : PlaylistsDao

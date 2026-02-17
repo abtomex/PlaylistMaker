@@ -22,7 +22,7 @@ class PlaylistDbConverter (
 
     fun map(playlistEntity: PlaylistEntity) : Playlist {
 
-        val type = object : TypeToken<IntArray>() {}.type
+        val type = object : TypeToken<MutableList<Int>>() {}.type
 
         return Playlist (
             playlistEntity.id,

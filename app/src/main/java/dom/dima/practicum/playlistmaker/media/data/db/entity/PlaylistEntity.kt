@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 class PlaylistEntity (
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val title: String?,
+    val title: String,
     val description: String?,
     val coverImgName: String?,
     @ColumnInfo("created_ts")

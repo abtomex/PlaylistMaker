@@ -55,7 +55,7 @@ class NewPlaylistFragment : Fragment(){
         binding.createPlaylistButton.setOnClickListener {
             viewModel.createPlaylist(
 
-                binding.newPlaylistTitleInput.text?.toString(),
+                binding.newPlaylistTitleInput.text.toString(),
                 coverUri,
                 binding.newPlaylistDescriptionInput.text?.toString()
             )

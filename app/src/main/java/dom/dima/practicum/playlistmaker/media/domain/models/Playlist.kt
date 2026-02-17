@@ -1,12 +1,12 @@
 package dom.dima.practicum.playlistmaker.media.domain.models
 
 class Playlist (
-    val id: Int,
-    val title: String?,
+    val id: Int = 0,
+    val title: String,
     val description: String?,
     val coverImgName: String?,
-    var createdTs: Long?,
-    val trackIds: Array<Int>?
+    var createdTs: Long = System.currentTimeMillis(),
+    val trackIds: MutableList<Int> = mutableListOf()
 ) {
 
     init {
