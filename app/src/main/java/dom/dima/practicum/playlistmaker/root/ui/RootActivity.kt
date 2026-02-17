@@ -14,7 +14,7 @@ class RootActivity : AppCompatActivity() {
 
     private lateinit var _binding: ActivityRootBinding
     private val binding get() = _binding
-
+//    private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private val viewModel by viewModel<RootViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +22,7 @@ class RootActivity : AppCompatActivity() {
 
         _binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
+//        initPermissionLauncher()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.root_fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
@@ -32,6 +33,7 @@ class RootActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.audioPlayerFragment,
+                R.id.newPlaylistFragment,
                 R.id.agreementFragment -> {
                     hideBottomNavigation()
                 }
@@ -50,4 +52,34 @@ class RootActivity : AppCompatActivity() {
     private fun hideBottomNavigation() {
         binding.bottomNavView.visibility = View.GONE
     }
+//
+//    private fun initPermissionLauncher() {
+//        permissionLauncher =
+//            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+//                if (granted) {
+//                    Log.d("PERMISSION", "Photo access granted")
+//                } else {
+//                    Log.d("PERMISSION", "Photo access denied")
+//                }
+//            }
+//    }
+//
+//    fun requestGalleryPermission(): Boolean {
+//        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            Manifest.permission.READ_MEDIA_IMAGES
+//        } else {
+//            Manifest.permission.READ_EXTERNAL_STORAGE
+//        }
+//
+//        val granted = ContextCompat.checkSelfPermission(
+//            this, permission
+//        ) == PackageManager.PERMISSION_GRANTED
+//
+//        if (!granted) {
+//            permissionLauncher.launch(permission)
+//            return false
+//        }
+//        return true
+//    }
+
 }

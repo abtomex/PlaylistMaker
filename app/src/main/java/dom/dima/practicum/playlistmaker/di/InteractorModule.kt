@@ -2,7 +2,9 @@ package dom.dima.practicum.playlistmaker.di
 
 import dom.dima.practicum.playlistmaker.media.domain.db.FavoritesInteractor
 import dom.dima.practicum.playlistmaker.media.domain.db.PlaylistsInteractor
+import dom.dima.practicum.playlistmaker.media.domain.files.PlaylistsFilesInteractor
 import dom.dima.practicum.playlistmaker.media.domain.impl.FavoritesInteractorImpl
+import dom.dima.practicum.playlistmaker.media.domain.impl.PlaylistsFilesInteractorImpl
 import dom.dima.practicum.playlistmaker.media.domain.impl.PlaylistsInteractorImpl
 import dom.dima.practicum.playlistmaker.search.domain.TracksInteractor
 import dom.dima.practicum.playlistmaker.search.domain.impl.TracksInteractorImpl
@@ -36,6 +38,10 @@ val interactorModule = module {
 
     single<PlaylistsInteractor> {
         PlaylistsInteractorImpl(get())
+    }
+
+    single<PlaylistsFilesInteractor> {
+        PlaylistsFilesInteractorImpl(get())
     }
 
 }

@@ -8,5 +8,5 @@
         android:dashGap="30dp" />
     <solid android:color="@android:color/transparent" />
     <!-- Если нужны скругленные углы -->
-    <corners android:radius="8dp" />
+    <corners android:radius="16dp" />
 </shape>

@@ -55,7 +55,8 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/todo"
             android:scaleType="centerCrop"
-            android:src="@drawable/dashed_border" />
+            android:background="@drawable/dashed_border"
+            android:clipToOutline="true" />
 
         <ImageView
             android:id="@+id/add_cover_icon"
@@ -104,6 +105,7 @@
         app:strokeWidth="0dp"
         app:elevation="0dp"
         android:stateListAnimator="@null"
+        android:enabled="false"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

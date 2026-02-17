@@ -20,8 +20,8 @@ class PlaylistDbConverter (
         )
     }
 
-    fun map(playlistEntity: PlaylistEntity?) : Playlist? {
-        if(playlistEntity == null) return null
+    fun map(playlistEntity: PlaylistEntity) : Playlist {
+
         val type = object : TypeToken<IntArray>() {}.type
 
         return Playlist (

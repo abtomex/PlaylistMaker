@@ -43,7 +43,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        NewPlaylistViewModel(get())
+        NewPlaylistViewModel(get(), get())
     }
 
     factory <MediaPlayer> {
