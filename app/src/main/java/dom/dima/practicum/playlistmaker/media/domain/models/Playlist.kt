@@ -1,20 +1,16 @@
 package dom.dima.practicum.playlistmaker.media.domain.models
 
+import android.net.Uri
+
 class Playlist (
     val id: Int = 0,
     val title: String,
     val description: String?,
-    val coverImgName: String?,
+    val cover: Uri?,
     var createdTs: Long = System.currentTimeMillis(),
     val trackIds: MutableList<Int> = mutableListOf()
 ) {
 
-    init {
-        if (createdTs == null) {
-            createdTs = System.currentTimeMillis()
-        }
-
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/parent_linear_layout_style"
     android:nestedScrollingEnabled="true"
     android:id="@+id/playlists"
     android:visibility="visible"
     android:gravity="center_horizontal"
     tools:ignore="UseCompoundDrawables"
-    tools:context=".media.ui.fragment.PlaylistsFragment"
-    >
+    tools:context=".media.ui.fragment.PlaylistsFragment">
     <Button
         android:id="@+id/btn_new"
         style="@style/btn_style"
@@ -22,15 +22,20 @@
         android:paddingHorizontal="16dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
         />
 
     <ImageView
+        android:id="@+id/nothing_icon"
         style="@style/errors_ic_style"
         android:layout_marginTop="46dp"
         android:contentDescription="@string/todo"
         android:src="@drawable/ic_no_content"
         />
     <TextView
+        android:id="@+id/nothing_text"
         style="@style/activity_search_infos_text_style"
         android:text="@string/no_any_playlist"
         />

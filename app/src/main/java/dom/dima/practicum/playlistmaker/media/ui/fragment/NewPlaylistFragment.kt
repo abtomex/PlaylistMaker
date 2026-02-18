@@ -1,6 +1,7 @@
 package dom.dima.practicum.playlistmaker.media.ui.fragment
 
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -24,11 +24,11 @@ import dom.dima.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import dom.dima.practicum.playlistmaker.media.ui.state.PlaylistStateVM
 import dom.dima.practicum.playlistmaker.media.ui.view_model.NewPlaylistViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
-class NewPlaylistFragment : Fragment(){
+class NewPlaylistFragment : Fragment() {
     @Volatile
-    private var coverUri: String? = null
+    private var coverUri: Uri? = null
+
     @Volatile
     private var title: String = ""
     private var _binding: FragmentNewPlaylistBinding? = null
@@ -74,29 +74,29 @@ class NewPlaylistFragment : Fragment(){
         binding.newPlaylistImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-        viewModel.getPlaylistState().observe (viewLifecycleOwner) { state ->
+        viewModel.getPlaylistState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is PlaylistStateVM.CoverCreated -> {
 
-                    val filePath = File(requireActivity().filesDir, "pm")
-                    val file = File(filePath, state.filename)
-                    coverUri = state.filename
-
                     Glide.with(this)
-                        .load(file.toUri())
+                        .load(state.uri)
                         .fitCenter()
                         .placeholder(R.drawable.ic_no_image_placeholder_45)
-                        .transform(RoundedCorners(dpToPx(16.0f, )))
+                        .transform(RoundedCorners(dpToPx(8.0f)))
                         .into(binding.playlistCover)
+                    this.coverUri = state.uri
 
                     binding.addCoverIcon.visibility = View.GONE
 
                 }
+
                 is PlaylistStateVM.Added -> {
-                    val playlistName = binding.newPlaylistTitleInput.text?.toString() ?: getString(R.string.no_title)
+                    val playlistName = binding.newPlaylistTitleInput.text?.toString()
+                        ?: getString(R.string.no_title)
                     showSuccessToast(playlistName)
                     findNavController().popBackStack()
                 }
+
                 is PlaylistStateVM.Error -> {}
             }
         }
@@ -113,6 +113,7 @@ class NewPlaylistFragment : Fragment(){
 
         // Snackbar.make(binding.root, getString(R.string.playlist_created, playlistName), Snackbar.LENGTH_LONG).show()
     }
+
     private fun showExitConfirmationDialog() {
         android.app.AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.break_playlist_creation))

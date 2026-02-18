@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class PlaylistsFilesInteractorImpl (
     private val playlistsFilesRepository : PlaylistsFilesRepository
 ): PlaylistsFilesInteractor {
-    override suspend fun createPlaylistCover(uri: Uri): Flow<String> {
+    override suspend fun createPlaylistCover(uri: Uri): Flow<Uri> {
         return playlistsFilesRepository.createPlaylistCover(uri)
     }
 }

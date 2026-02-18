@@ -4,5 +4,5 @@ import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsFilesInteractor {
-    suspend fun createPlaylistCover(uri: Uri) : Flow<String>
+    suspend fun createPlaylistCover(uri: Uri) : Flow<Uri>
 }

@@ -9,7 +9,6 @@ import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.PlaylistItemBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.utils.Useful
-import java.io.File
 
 class PlaylistViewHolder(
     private val binding: PlaylistItemBinding,
@@ -24,22 +23,13 @@ class PlaylistViewHolder(
 
         val radius = Useful.dpToPx(8f, itemView.context)
 
-        if (!item.coverImgName.isNullOrEmpty()) {
-            try {
-                val file = File(item.coverImgName)
-                if (file.exists()) {
-                    Glide.with(itemView.context).load(file)
-                        .placeholder(R.drawable.ic_no_image_placeholder_45)
-                        .transform(MultiTransformation(CenterCrop(), RoundedCorners(radius)))
-                        .into(binding.playlistCover)
-                } else {
-                    loadDefaultCover(radius)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                loadDefaultCover(radius)
-            }
-        } else {
+        try {
+            Glide.with(itemView.context).load(item.cover)
+                .placeholder(R.drawable.ic_no_image_placeholder_45)
+                .transform(MultiTransformation(CenterCrop(), RoundedCorners(radius)))
+                .into(binding.playlistCover)
+        } catch (e: Exception) {
+            e.printStackTrace()
             loadDefaultCover(radius)
         }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.core.net.toUri
 import dom.dima.practicum.playlistmaker.media.domain.PlaylistsFilesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,7 +16,7 @@ class PlaylistsFilesRepositoryImpl (
     private val context: Context
 ) : PlaylistsFilesRepository {
 
-    override suspend fun createPlaylistCover(uri: Uri): Flow<String> = flow {
+    override suspend fun createPlaylistCover(uri: Uri): Flow<Uri> = flow {
         val filePath = File( context.filesDir, "pm")
         if (!filePath.exists()){
             filePath.mkdirs()
@@ -27,7 +28,7 @@ class PlaylistsFilesRepositoryImpl (
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-        emit(fileName)
+        emit(file.toUri())
     }
 
 }

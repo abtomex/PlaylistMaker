@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.databinding.PlaylistItemBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 
-class PlaylistAdapter(
+class PlaylistsAdapter(
     private val onPlaylistClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 

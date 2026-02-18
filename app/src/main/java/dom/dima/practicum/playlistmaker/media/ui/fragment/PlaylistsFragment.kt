@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
@@ -19,7 +18,12 @@ class PlaylistsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: PlaylistsViewModel by viewModel()
 
-    private lateinit var adapter: PlaylistAdapter
+    private lateinit var adapter: PlaylistsAdapter
+
+    private enum class ElementsVisibility {
+        NOT_PLAYLISTS,
+        THERE_IS_AT_LEAST_ONE_PLAYLIST
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,8 +39,8 @@ class PlaylistsFragment : Fragment() {
             findNavController().navigate(R.id.action_mediaFragment_to_newPlaylistFragment2)
         }
 
-        val layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.playlistsItems.layoutManager = layoutManager
+//        val layoutManager = GridLayoutManager(requireContext(), 2)
+//        binding.playlistsItems.layoutManager = layoutManager
 
         binding.playlistsItems.addItemDecoration(
             GridSpacingItemDecoration(
@@ -44,10 +48,37 @@ class PlaylistsFragment : Fragment() {
                 spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing_8)
             )
         )
-        adapter = PlaylistAdapter { playlist ->
+        adapter = PlaylistsAdapter { playlist ->
             navigateToPlaylistFragment(playlist)
         }
         binding.playlistsItems.adapter = adapter
+        viewModel.initPlaylistsList()
+
+        viewModel.getPlaylistsState().observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                setupVisibility(ElementsVisibility.NOT_PLAYLISTS)
+            } else {
+                adapter.submitList(it)
+                setupVisibility(ElementsVisibility.THERE_IS_AT_LEAST_ONE_PLAYLIST)
+            }
+        }
+
+    }
+
+    private fun setupVisibility(state: ElementsVisibility) {
+        when (state) {
+            ElementsVisibility.NOT_PLAYLISTS -> {
+                binding.playlistsItems.visibility = View.GONE
+                binding.nothingIcon.visibility = View.VISIBLE
+                binding.nothingText.visibility = View.VISIBLE
+            }
+            ElementsVisibility.THERE_IS_AT_LEAST_ONE_PLAYLIST -> {
+                binding.playlistsItems.visibility = View.VISIBLE
+                binding.nothingIcon.visibility = View.GONE
+                binding.nothingText.visibility = View.GONE
+
+            }
+        }
 
     }
 

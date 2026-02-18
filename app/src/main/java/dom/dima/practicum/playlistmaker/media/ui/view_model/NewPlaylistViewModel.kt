@@ -18,10 +18,10 @@ class NewPlaylistViewModel (
 
     private val playlistState = MutableLiveData<PlaylistStateVM>()
     fun getPlaylistState(): LiveData<PlaylistStateVM> = playlistState
-    fun createPlaylist(title: String, coverUri: String?, description: String?) {
+    fun createPlaylist(title: String, coverUri: Uri?, description: String?) {
         viewModelScope.launch {
             playlistsInteractor
-                .addOne(Playlist(title = title, description = description, coverImgName =  coverUri))
+                .addOne(Playlist(title = title, description = description, cover =  coverUri))
                 .collect {
                     playlistState.postValue(PlaylistStateVM.Added(it))
                 }
