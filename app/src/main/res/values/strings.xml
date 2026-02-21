@@ -50,5 +50,8 @@
     <string name="continue_breaking">Завершить</string>
     <string name="cancel">Отмена</string>
     <string name="playlist_created">Плейлист «%s» создан</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="complete_add_to_playlist">Добавлено в плейлист %s</string>
+    <string name="tracks_count">0 треков</string>
 
 </resources>

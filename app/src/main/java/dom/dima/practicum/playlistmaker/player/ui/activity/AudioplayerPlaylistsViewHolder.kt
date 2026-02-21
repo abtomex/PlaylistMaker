@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.player.ui.activity
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -6,25 +6,25 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.databinding.ViewPlaylistInPlaylistsBinding
+import dom.dima.practicum.playlistmaker.databinding.ViewPlaylistBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.utils.Useful
 
-class PlaylistViewHolder(
-    private val binding: ViewPlaylistInPlaylistsBinding,
+class AudioplayerPlaylistsViewHolder(
+    val binding: ViewPlaylistBinding,
     private val onPlaylistClick: (Playlist) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: Playlist) {
-        binding.playlistTitle.text = item.title
+    fun bind(playlist: Playlist) {
+        binding.playlistTitle.text = playlist.title
 
-        val tracksCount = item.trackIds.size
+        val tracksCount = playlist.trackIds.size
         binding.tracksCount.text = tracksCount.toString()
 
-        val radius = Useful.dpToPx(8f, itemView.context)
+        val radius = Useful.dpToPx(2f, itemView.context)
 
         try {
-            Glide.with(itemView.context).load(item.cover)
+            Glide.with(itemView.context).load(playlist.cover)
                 .placeholder(R.drawable.ic_no_image_placeholder_45)
                 .transform(MultiTransformation(CenterCrop(), RoundedCorners(radius)))
                 .into(binding.playlistCover)
@@ -34,7 +34,7 @@ class PlaylistViewHolder(
         }
 
         itemView.setOnClickListener {
-            onPlaylistClick(item)
+            onPlaylistClick(playlist)
         }
     }
 
@@ -43,4 +43,6 @@ class PlaylistViewHolder(
             .transform(MultiTransformation(CenterCrop(), RoundedCorners(radius)))
             .into(binding.playlistCover)
     }
+
+
 }

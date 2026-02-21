@@ -14,7 +14,6 @@ class RootActivity : AppCompatActivity() {
 
     private lateinit var _binding: ActivityRootBinding
     private val binding get() = _binding
-//    private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private val viewModel by viewModel<RootViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +21,6 @@ class RootActivity : AppCompatActivity() {
 
         _binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        initPermissionLauncher()
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.root_fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController

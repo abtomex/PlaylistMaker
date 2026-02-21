@@ -7,4 +7,5 @@ interface PlaylistsRepository {
     fun allPlaylists() : Flow<List<Playlist>>
     fun createPlaylist(playlist: Playlist) : Flow<Playlist>
     suspend fun getOnePlaylist(id: Int) : Playlist?
+    fun save(playlist: Playlist) : Flow<Playlist>
 }

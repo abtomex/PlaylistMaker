@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.media.domain.db.FavoritesInteractor
+import dom.dima.practicum.playlistmaker.media.domain.db.PlaylistsInteractor
+import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.media.domain.state.AddFavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.state.StateData
@@ -20,7 +22,9 @@ import java.util.Locale
 class AudioPlayerViewModel(
     private val gson: Gson,
     private val mediaPlayer: MediaPlayer,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistsInteractor: PlaylistsInteractor
+
 ) : ViewModel() {
 
     private val playerState = MutableLiveData<AudioPlayerState>()
@@ -106,6 +110,27 @@ class AudioPlayerViewModel(
                     true -> playerState.postValue(AudioPlayerState.Favorite())
                     false -> playerState.postValue(AudioPlayerState.NotFavorite())
                 }
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist, track: Track) {
+        playlist.trackIds.add(track.trackId)
+        viewModelScope.launch {
+            playlistsInteractor
+                .updatePlaylist(playlist)
+                .collect {
+                    playerState.postValue(AudioPlayerState.CompleteAddToPlaylist(playlist.title))
+                }
+        }
+
+
+    }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            playlistsInteractor.getAll().collect {
+                playerState.postValue(AudioPlayerState.Playlists(it))
             }
         }
     }

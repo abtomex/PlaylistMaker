@@ -16,4 +16,8 @@ class PlaylistsInteractorImpl(
     override suspend fun addOne(playlist: Playlist): Flow<Playlist> {
         return playlistsRepository.createPlaylist(playlist)
     }
+
+    override suspend fun updatePlaylist(playlist: Playlist) : Flow<Playlist> {
+        return playlistsRepository.save(playlist)
+    }
 }

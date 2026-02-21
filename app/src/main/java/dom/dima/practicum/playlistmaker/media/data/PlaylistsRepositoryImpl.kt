@@ -31,4 +31,10 @@ class PlaylistsRepositoryImpl(
         val foundEntity = appDatabase.playlistsDao().getOne(id) ?: return null
         return playlistDbConverter.map(foundEntity)
     }
+
+    override fun save(playlist: Playlist) : Flow<Playlist> = flow {
+        val playlistId = playlist.id
+        appDatabase.playlistsDao().saveOne(playlistDbConverter.map(playlist))
+        emit(playlistDbConverter.map(appDatabase.playlistsDao().getOne(playlistId)!!))
+    }
 }

@@ -1,9 +1,10 @@
 package dom.dima.practicum.playlistmaker.media.ui.fragment
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dom.dima.practicum.playlistmaker.databinding.PlaylistItemBinding
+import dom.dima.practicum.playlistmaker.databinding.ViewPlaylistInPlaylistsBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 
 class PlaylistsAdapter(
@@ -12,6 +13,7 @@ class PlaylistsAdapter(
 
     private val items = mutableListOf<Playlist>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(list: List<Playlist>) {
         items.clear()
         items.addAll(list)
@@ -19,7 +21,7 @@ class PlaylistsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        val binding = PlaylistItemBinding.inflate(
+        val binding = ViewPlaylistInPlaylistsBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

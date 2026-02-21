@@ -1,23 +1,25 @@
 package dom.dima.practicum.playlistmaker.player.ui.activity
 
-import android.content.Context
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
+import dom.dima.practicum.playlistmaker.utils.Useful
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -31,6 +33,11 @@ class AudioPlayerFragment : Fragment() {
 
     private var playerState = AudioPlayerViewModel.STATE_DEFAULT
     private val viewModel by viewModel<AudioPlayerViewModel>()
+
+    private lateinit var playlistsAdapter: AudioplayerPlaylistsAdapter
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,12 +60,13 @@ class AudioPlayerFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        setupBottomSheet()
 
         Glide.with(this)
             .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
             .fitCenter()
             .placeholder(R.drawable.ic_no_image_placeholder_45)
-            .transform(RoundedCorners(dpToPx(8.0f, requireActivity())))
+            .transform(RoundedCorners(Useful.dpToPx(8.0f, requireActivity())))
             .into(trackIcon)
         durability.text =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
@@ -128,16 +136,86 @@ class AudioPlayerFragment : Fragment() {
                     binding.progress.text = state.progress
 
                 }
+
                 is AudioPlayerState.Favorite -> {
                     buttonLike.setImageResource(R.drawable.button_liked)
                 }
+
                 is AudioPlayerState.NotFavorite -> {
                     buttonLike.setImageResource(R.drawable.button_unliked)
+                }
+
+                is AudioPlayerState.Playlists -> {
+                    playlistsAdapter.submitList(state.playlists)
+
+                }
+
+                is AudioPlayerState.CompleteAddToPlaylist -> {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.complete_add_to_playlist, state.title),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
 
         }
+        binding.buttonAddToPlaylist.setOnClickListener {
 
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+            viewModel.getPlaylists()
+        }
+
+        binding.btnNew.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
+        }
+
+
+        setupRecyclerView()
+
+    }
+
+    private fun setupBottomSheet() {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet)
+
+        bottomSheetBehavior.apply {
+            isHideable = true
+            state = BottomSheetBehavior.STATE_HIDDEN
+            skipCollapsed = true
+
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> { }
+
+                        BottomSheetBehavior.STATE_EXPANDED -> { }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            })
+        }
+    }
+
+    private fun setupRecyclerView() {
+        playlistsAdapter = AudioplayerPlaylistsAdapter(mutableListOf()) { playlist ->
+            val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
+            val track = viewModel.fromJson(trackJson, Track::class.java)
+            viewModel.addTrackToPlaylist(playlist, track)
+            showToast("Трек добавлен в плейлист \"${playlist.title}\"")
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        binding.playlistsRecyclerView.adapter = playlistsAdapter
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun setText(text: String?, key: TextView?, view: TextView?) {
@@ -146,14 +224,6 @@ class AudioPlayerFragment : Fragment() {
             view?.isVisible = false
             key?.isVisible = false
         }
-    }
-
-    private fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            context.resources.displayMetrics
-        ).toInt()
     }
 
     private var isStarted: Boolean = false
