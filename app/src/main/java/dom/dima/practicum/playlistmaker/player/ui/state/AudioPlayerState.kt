@@ -12,5 +12,6 @@ sealed class AudioPlayerState() {
     class NotFavorite() : AudioPlayerState()
     class Playlists(val playlists : List<Playlist>) : AudioPlayerState()
     class CompleteAddToPlaylist(val title: String) : AudioPlayerState()
+    class AlreadyExists(val title: String) : AudioPlayerState()
 
 }

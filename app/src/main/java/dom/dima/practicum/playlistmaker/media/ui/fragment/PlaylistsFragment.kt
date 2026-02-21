@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
+import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistsViewModel
 import dom.dima.practicum.playlistmaker.utils.GridSpacingItemDecoration
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,6 +45,9 @@ class PlaylistsFragment : Fragment() {
                 spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing_8)
             )
         )
+        adapter = PlaylistsAdapter { playlist ->
+            navigateToPlaylistFragment(playlist)
+        }
         binding.playlistsItems.adapter = adapter
         viewModel.initPlaylistsList()
 
@@ -73,6 +77,12 @@ class PlaylistsFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun navigateToPlaylistFragment(playlist: Playlist) {
+        Bundle().apply {
+            putInt("playlistId", playlist.id)
+        }
     }
 
     override fun onDestroyView() {

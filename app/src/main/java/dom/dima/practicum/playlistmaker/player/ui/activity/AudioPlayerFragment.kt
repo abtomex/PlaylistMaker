@@ -159,6 +159,14 @@ class AudioPlayerFragment : Fragment() {
                     ).show()
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
+
+                is AudioPlayerState.AlreadyExists -> {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.track_already_exists_in_playlist, state.title),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
 
         }
@@ -204,6 +212,7 @@ class AudioPlayerFragment : Fragment() {
 
     private fun setupRecyclerView() {
         playlistsAdapter = AudioplayerPlaylistsAdapter(mutableListOf()) { playlist ->
+
             val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
             val track = viewModel.fromJson(trackJson, Track::class.java)
             viewModel.addTrackToPlaylist(playlist, track)

@@ -115,6 +115,12 @@ class AudioPlayerViewModel(
     }
 
     fun addTrackToPlaylist(playlist: Playlist, track: Track) {
+
+        if (playlist.trackIds.contains(track.trackId)) {
+            playerState.postValue(AudioPlayerState.AlreadyExists(playlist.title))
+            return
+        }
+
         playlist.trackIds.add(track.trackId)
         viewModelScope.launch {
             playlistsInteractor

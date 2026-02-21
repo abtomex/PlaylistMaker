@@ -27,7 +27,7 @@ class PlaylistDbConverter (
 
     fun map(playlistEntity: PlaylistEntity) : Playlist {
 
-        val type = object : TypeToken<MutableList<Int>>() {}.type
+        val type = object : TypeToken<Set<Int>>() {}.type
         val filePath = File( context.filesDir, "pm")
         val file = if (playlistEntity.coverImgName != null)
             File(filePath, playlistEntity.coverImgName)
@@ -38,7 +38,6 @@ class PlaylistDbConverter (
             playlistEntity.title,
             playlistEntity.description,
             file?.toUri(),
-            playlistEntity.createdTs,
             gson.fromJson(playlistEntity.trackIds, type)
         )
     }

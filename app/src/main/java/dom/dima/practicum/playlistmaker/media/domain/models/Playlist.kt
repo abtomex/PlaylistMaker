@@ -7,8 +7,7 @@ class Playlist (
     val title: String,
     val description: String?,
     val cover: Uri?,
-    var createdTs: Long = System.currentTimeMillis(),
-    val trackIds: MutableList<Int> = mutableListOf()
+    val trackIds: MutableSet<Int> = mutableSetOf()
 ) {
 
 
