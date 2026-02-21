@@ -157,6 +157,7 @@ class AudioPlayerFragment : Fragment() {
                         getString(R.string.complete_add_to_playlist, state.title),
                         Toast.LENGTH_LONG
                     ).show()
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
 
@@ -206,16 +207,10 @@ class AudioPlayerFragment : Fragment() {
             val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
             val track = viewModel.fromJson(trackJson, Track::class.java)
             viewModel.addTrackToPlaylist(playlist, track)
-            showToast("Трек добавлен в плейлист \"${playlist.title}\"")
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
         }
 
         binding.playlistsRecyclerView.adapter = playlistsAdapter
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT)
-            .show()
     }
 
     private fun setText(text: String?, key: TextView?, view: TextView?) {
