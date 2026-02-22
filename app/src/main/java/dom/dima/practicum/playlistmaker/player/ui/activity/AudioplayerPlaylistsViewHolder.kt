@@ -12,14 +12,14 @@ import dom.dima.practicum.playlistmaker.utils.Useful
 
 class AudioplayerPlaylistsViewHolder(
     val binding: ViewPlaylistBinding,
-    private val onPlaylistClick: (Playlist) -> Unit
+    private val onPlaylistClick: (Playlist) -> Unit,
+    private val tracksCountDescriptor: (Int) -> String
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(playlist: Playlist) {
         binding.playlistTitle.text = playlist.title
 
-        val tracksCount = playlist.trackIds.size
-        binding.tracksCount.text = tracksCount.toString()
+        binding.tracksCount.text = tracksCountDescriptor(playlist.trackIds.size)
 
         val radius = Useful.dpToPx(2f, itemView.context)
 

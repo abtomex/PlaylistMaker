@@ -199,26 +199,34 @@ class AudioPlayerFragment : Fragment() {
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
-                        BottomSheetBehavior.STATE_HIDDEN -> { }
+                        BottomSheetBehavior.STATE_HIDDEN -> {}
 
-                        BottomSheetBehavior.STATE_EXPANDED -> { }
+                        BottomSheetBehavior.STATE_EXPANDED -> {}
                     }
                 }
 
-                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
             })
         }
     }
 
     private fun setupRecyclerView() {
-        playlistsAdapter = AudioplayerPlaylistsAdapter(mutableListOf()) { playlist ->
+        playlistsAdapter = AudioplayerPlaylistsAdapter(
+            mutableListOf(),
+            onPlaylistClick = { playlist ->
+                val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
+                val track = viewModel.fromJson(trackJson, Track::class.java)
+                viewModel.addTrackToPlaylist(playlist, track)
 
-            val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
-            val track = viewModel.fromJson(trackJson, Track::class.java)
-            viewModel.addTrackToPlaylist(playlist, track)
+            },
+            tracksCountDescriptor = { tracksCount -> Useful.trackItemsText (
+                tracksCount,
+                getString(R.string.track_items_count_variant1, tracksCount),
+                getString(R.string.track_items_count_variant2, tracksCount),
+                getString(R.string.track_items_count_variant3, tracksCount)
+            )}
 
-        }
-
+        )
         binding.playlistsRecyclerView.adapter = playlistsAdapter
     }
 

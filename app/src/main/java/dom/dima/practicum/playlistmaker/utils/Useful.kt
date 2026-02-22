@@ -10,5 +10,14 @@ class Useful {
                 TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics
             ).toInt()
         }
+
+        fun trackItemsText(count: Int, variant1: String, variant2: String, variant3: String): String {
+            if (count in 11 .. 14) return variant2
+            return when (count % 10) {
+                1 -> variant1
+                2, 3, 4 -> variant2
+                else -> variant3
+            }
+        }
     }
 }

@@ -9,7 +9,8 @@ import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 
 class AudioplayerPlaylistsAdapter(
     private val playlists : MutableList<Playlist>,
-    private val onPlaylistClick: (Playlist) -> Unit
+    private val onPlaylistClick: (Playlist) -> Unit,
+    private val tracksCountDescriptor: (Int) -> String
 ) : RecyclerView.Adapter<AudioplayerPlaylistsViewHolder>() {
 
 
@@ -29,7 +30,7 @@ class AudioplayerPlaylistsAdapter(
             parent,
             false
         )
-        return AudioplayerPlaylistsViewHolder(binding, onPlaylistClick)
+        return AudioplayerPlaylistsViewHolder(binding, onPlaylistClick, tracksCountDescriptor)
     }
 
     override fun onBindViewHolder(

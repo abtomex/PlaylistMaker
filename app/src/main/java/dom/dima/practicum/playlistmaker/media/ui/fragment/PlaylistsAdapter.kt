@@ -8,7 +8,8 @@ import dom.dima.practicum.playlistmaker.databinding.ViewPlaylistInPlaylistsBindi
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 
 class PlaylistsAdapter(
-    private val onPlaylistClick: (Playlist) -> Unit
+    private val onPlaylistClick: (Playlist) -> Unit,
+    private val tracksCountDescriptor: (Int) -> String
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
     private val items = mutableListOf<Playlist>()
@@ -26,7 +27,7 @@ class PlaylistsAdapter(
             parent,
             false
         )
-        return PlaylistViewHolder(binding, onPlaylistClick)
+        return PlaylistViewHolder(binding, onPlaylistClick, tracksCountDescriptor)
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {

@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -23,6 +23,7 @@ import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentNewPlaylistBinding
 import dom.dima.practicum.playlistmaker.media.ui.state.PlaylistStateVM
 import dom.dima.practicum.playlistmaker.media.ui.view_model.NewPlaylistViewModel
+import dom.dima.practicum.playlistmaker.utils.Useful
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : Fragment() {
@@ -46,12 +47,25 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.actionBack.setOnClickListener {
-            if (title.isNotEmpty() || coverUri != null) {
+            if (title.trim().isNotEmpty() || coverUri != null) {
                 showExitConfirmationDialog()
             } else {
                 findNavController().popBackStack()
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (title.trim().isNotEmpty() || coverUri != null) {
+                        showExitConfirmationDialog()
+                    } else {
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+        )
         binding.createPlaylistButton.setOnClickListener {
             viewModel.createPlaylist(
 
@@ -82,7 +96,7 @@ class NewPlaylistFragment : Fragment() {
                         .load(state.uri)
                         .fitCenter()
                         .placeholder(R.drawable.ic_no_image_placeholder_45)
-                        .transform(RoundedCorners(dpToPx(8.0f)))
+                        .transform(RoundedCorners(Useful.dpToPx(8.0f, requireActivity())))
                         .into(binding.playlistCover)
                     this.coverUri = state.uri
 
@@ -111,7 +125,6 @@ class NewPlaylistFragment : Fragment() {
             Toast.LENGTH_LONG
         ).show()
 
-        // Snackbar.make(binding.root, getString(R.string.playlist_created, playlistName), Snackbar.LENGTH_LONG).show()
     }
 
     private fun showExitConfirmationDialog() {
@@ -126,15 +139,6 @@ class NewPlaylistFragment : Fragment() {
             }
             .show()
     }
-
-    private fun dpToPx(dp: Float): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            this.resources.displayMetrics
-        ).toInt()
-    }
-
 
     private fun setupTitleText() {
         with(binding.newPlaylistTitleInput) {
@@ -157,8 +161,8 @@ class NewPlaylistFragment : Fragment() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
         override fun afterTextChanged(s: Editable?) {
-            title = s.toString()
-            if (s.toString().isEmpty()) {
+            title = s.toString().trim()
+            if (s.toString().trim().isEmpty()) {
                 binding.createPlaylistButton.isEnabled = false
                 binding.createPlaylistButton.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.gray))
@@ -174,10 +178,6 @@ class NewPlaylistFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance() = NewPlaylistFragment()
     }
 
 }

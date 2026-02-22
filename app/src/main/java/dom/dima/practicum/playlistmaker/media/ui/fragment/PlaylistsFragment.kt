@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.R
@@ -11,6 +12,7 @@ import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistsViewModel
 import dom.dima.practicum.playlistmaker.utils.GridSpacingItemDecoration
+import dom.dima.practicum.playlistmaker.utils.Useful
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
@@ -45,9 +47,17 @@ class PlaylistsFragment : Fragment() {
                 spacingPx = resources.getDimensionPixelSize(R.dimen.grid_spacing_8)
             )
         )
-        adapter = PlaylistsAdapter { playlist ->
-            navigateToPlaylistFragment(playlist)
-        }
+        adapter = PlaylistsAdapter (
+            onPlaylistClick = { playlist -> navigateToPlaylistFragment(playlist) },
+            tracksCountDescriptor = { tracksCount -> Useful.trackItemsText (
+                tracksCount,
+                getString(R.string.track_items_count_variant1, tracksCount),
+                getString(R.string.track_items_count_variant2, tracksCount),
+                getString(R.string.track_items_count_variant3, tracksCount)
+            )}
+
+        )
+
         binding.playlistsItems.adapter = adapter
         viewModel.initPlaylistsList()
 
@@ -62,17 +72,18 @@ class PlaylistsFragment : Fragment() {
 
     }
 
+
     private fun setupVisibility(state: ElementsVisibility) {
         when (state) {
             ElementsVisibility.NOT_PLAYLISTS -> {
-                binding.playlistsItems.visibility = View.GONE
-                binding.nothingIcon.visibility = View.VISIBLE
-                binding.nothingText.visibility = View.VISIBLE
+                binding.playlistsItems.isVisible = false
+                binding.nothingIcon.isVisible = true
+                binding.nothingText.isVisible = true
             }
             ElementsVisibility.THERE_IS_AT_LEAST_ONE_PLAYLIST -> {
-                binding.playlistsItems.visibility = View.VISIBLE
-                binding.nothingIcon.visibility = View.GONE
-                binding.nothingText.visibility = View.GONE
+                binding.playlistsItems.isVisible = true
+                binding.nothingIcon.isVisible = false
+                binding.nothingText.isVisible = false
 
             }
         }
