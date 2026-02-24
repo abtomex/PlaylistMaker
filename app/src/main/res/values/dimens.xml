@@ -16,5 +16,6 @@
     <dimen name="agreement_text_size">16sp</dimen>
     <dimen name="new_playlist_fields_margins">16dp</dimen>
     <dimen name="grid_spacing_8">8dp</dimen>
+    <dimen name="playlist_info_text_size">18sp</dimen>
 
 </resources>
