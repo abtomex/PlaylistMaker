@@ -61,5 +61,7 @@
     <string name="year_placeholder">2022</string>
     <string name="_300min_placeholder">300 минут</string>
     <string name="_98tracks_placeholder">98 треков</string>
+    <string name="share">Поделиться</string>
+    <string name="more_options">Больше опций</string>
 
 </resources>
