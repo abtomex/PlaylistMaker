@@ -37,6 +37,7 @@ class PlaylistScreenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+//        requireView().setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.playlist_screen_background_color))
         val playlistId = requireArguments().getInt(CLICKED_PLAYLIST_ID)
         viewModel.loadPlaylistData(playlistId)
 
