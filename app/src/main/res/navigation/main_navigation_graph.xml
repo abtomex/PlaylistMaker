@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/mediaFragment"
-        android:name="dom.dima.practicum.playlistmaker.media.ui.fragment.MediaFragment"
+        android:name="dom.dima.practicum.playlistmaker.media.ui.fragment.media.MediaFragment"
         android:label="fragment_media"
         tools:layout="@layout/fragment_media" >
         <action
@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_mediaFragment_to_newPlaylistFragment2"
             app:destination="@id/newPlaylistFragment" />
+        <action
+            android:id="@+id/action_mediaFragment_to_playlistScreenFragment"
+            app:destination="@id/playlistScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioPlayerFragment"
@@ -50,7 +53,16 @@
         tools:layout="@layout/fragment_agreement" />
     <fragment
         android:id="@+id/newPlaylistFragment"
-        android:name="dom.dima.practicum.playlistmaker.media.ui.fragment.NewPlaylistFragment"
+        android:name="dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.NewPlaylistFragment"
         android:label="fragment_new_playlist"
         tools:layout="@layout/fragment_new_playlist" />
+    <fragment
+        android:id="@+id/playlistScreenFragment"
+        android:name="dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.playlist_screen.PlaylistScreenFragment"
+        android:label="fragment_playlist_screen"
+        tools:layout="@layout/fragment_playlist_screen" >
+        <action
+            android:id="@+id/action_playlistScreenFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+    </fragment>
 </navigation>

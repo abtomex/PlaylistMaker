@@ -3,22 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".media.ui.fragment.playlists.playlist_screen.PlaylistScreenFragment"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/playlist_description_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
         android:nestedScrollingEnabled="true"
         android:orientation="vertical"
-        tools:context=".media.ui.fragment.NewPlaylistFragment">
+        tools:context=".media.ui.fragment.playlists.NewPlaylistFragment"
+        >
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/leftBorder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="@dimen/new_playlist_fields_margins" />
+            app:layout_constraintGuide_begin="18dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/rightBorder"
@@ -43,11 +47,11 @@
             android:id="@+id/playlist_cover"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/ic_no_image_placeholder_45"
-            android:clipToOutline="false"
+            android:src="@drawable/ic_no_image_placeholder_45"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toTopOf="parent"
-
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
             />
 
         <TextView
@@ -134,7 +138,6 @@
             app:layout_constraintTop_toBottomOf="@id/total_tracks_info" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <LinearLayout
         android:id="@+id/standard_bottom_sheet"
         android:layout_width="match_parent"
@@ -145,6 +148,7 @@
         android:gravity="center_horizontal"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         android:visibility="visible"
+        android:layout_marginTop="24dp"
         >
 
         <View
@@ -161,8 +165,10 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:visibility="visible"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
 
     </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

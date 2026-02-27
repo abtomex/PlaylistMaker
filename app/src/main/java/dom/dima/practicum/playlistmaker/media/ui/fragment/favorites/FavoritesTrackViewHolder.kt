@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.media.ui.fragment.favorites
 
 import android.content.Context
 import android.util.TypedValue

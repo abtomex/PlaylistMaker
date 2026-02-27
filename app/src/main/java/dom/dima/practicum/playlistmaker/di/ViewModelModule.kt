@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import dom.dima.practicum.playlistmaker.media.ui.view_model.FavoriteTracksViewModel
 import dom.dima.practicum.playlistmaker.media.ui.view_model.MediaViewModel
 import dom.dima.practicum.playlistmaker.media.ui.view_model.NewPlaylistViewModel
+import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistScreenViewModel
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistsViewModel
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.root.view_model.RootViewModel
@@ -46,6 +47,9 @@ val viewModelModule = module {
         NewPlaylistViewModel(get(), get())
     }
 
+    viewModel {
+        PlaylistScreenViewModel(get(), get())
+    }
     factory <MediaPlayer> {
         MediaPlayer()
     }

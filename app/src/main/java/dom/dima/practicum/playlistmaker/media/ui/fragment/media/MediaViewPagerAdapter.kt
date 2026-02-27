@@ -1,9 +1,11 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.media.ui.fragment.media
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import dom.dima.practicum.playlistmaker.media.ui.fragment.favorites.FavoritesTracksFragment
+import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.dictionary.PlaylistsFragment
 
 
 class MediaViewPagerAdapter(
@@ -16,8 +18,8 @@ class MediaViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when(position) {
-            0 -> FavoritesTracksFragment.newInstance()
-            else -> PlaylistsFragment.newInstance()
+            0 -> FavoritesTracksFragment.Companion.newInstance()
+            else -> PlaylistsFragment.Companion.newInstance()
         }
     }
 }

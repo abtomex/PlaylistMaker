@@ -27,7 +27,7 @@ class PlaylistsRepositoryImpl(
         emit(playlist)
     }
 
-    override suspend fun getOnePlaylist(id: Int) : Playlist? {
+    override suspend fun getPlaylistById(id: Int) : Playlist? {
         val foundEntity = appDatabase.playlistsDao().getOne(id) ?: return null
         return playlistDbConverter.map(foundEntity)
     }

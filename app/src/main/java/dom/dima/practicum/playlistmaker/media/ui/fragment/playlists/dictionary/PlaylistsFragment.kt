@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.dictionary
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
+import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.playlist_screen.PlaylistScreenFragment
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistsViewModel
 import dom.dima.practicum.playlistmaker.utils.GridSpacingItemDecoration
 import dom.dima.practicum.playlistmaker.utils.Useful
@@ -91,9 +92,10 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun navigateToPlaylistFragment(playlist: Playlist) {
-        Bundle().apply {
-            putInt("playlistId", playlist.id)
-        }
+        findNavController().navigate(
+            R.id.action_mediaFragment_to_playlistScreenFragment,
+            PlaylistScreenFragment.createArgs(playlist.id)
+        )
     }
 
     override fun onDestroyView() {

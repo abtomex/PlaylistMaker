@@ -32,6 +32,7 @@ class RootActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.audioPlayerFragment,
                 R.id.newPlaylistFragment,
+                R.id.playlistScreenFragment,
                 R.id.agreementFragment -> {
                     hideBottomNavigation()
                 }

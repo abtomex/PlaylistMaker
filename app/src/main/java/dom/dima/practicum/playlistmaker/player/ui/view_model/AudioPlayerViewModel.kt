@@ -121,10 +121,9 @@ class AudioPlayerViewModel(
             return
         }
 
-        playlist.trackIds.add(track.trackId)
         viewModelScope.launch {
             playlistsInteractor
-                .updatePlaylist(playlist)
+                .updatePlaylist(playlist, track)
                 .collect {
                     playerState.postValue(AudioPlayerState.CompleteAddToPlaylist(playlist.title))
                 }

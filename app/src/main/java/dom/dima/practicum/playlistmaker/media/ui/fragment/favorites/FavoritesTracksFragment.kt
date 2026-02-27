@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.media.ui.fragment.favorites
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -23,7 +23,7 @@ class FavoritesTracksFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavoriteTracksBinding.inflate(inflater, container, false)
+      _binding = FragmentFavoriteTracksBinding.inflate(inflater, container, false)
         return binding.root
     }
 

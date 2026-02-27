@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.dictionary
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide

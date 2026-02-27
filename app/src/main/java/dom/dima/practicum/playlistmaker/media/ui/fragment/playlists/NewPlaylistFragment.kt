@@ -1,5 +1,6 @@
-package dom.dima.practicum.playlistmaker.media.ui.fragment
+package dom.dima.practicum.playlistmaker.media.ui.fragment.playlists
 
+import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
@@ -128,7 +129,7 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun showExitConfirmationDialog() {
-        android.app.AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.break_playlist_creation))
             .setMessage(getString(R.string.break_playlist_creation_message))
             .setPositiveButton(getString(R.string.continue_breaking)) { _, _ ->

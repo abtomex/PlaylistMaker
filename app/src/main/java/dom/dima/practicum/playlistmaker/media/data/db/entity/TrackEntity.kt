@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "favorite_track_table")
-class FavoriteEntity (
+@Entity(tableName = "track_table")
+class TrackEntity (
     @PrimaryKey
     val trackId: Int,
     val trackName: String,
@@ -18,6 +18,8 @@ class FavoriteEntity (
     val country: String?,
     val previewUrl: String?,
     @ColumnInfo("created_ts")
-    val createdTs: Long
+    val createdTs: Long,
+    @ColumnInfo("is_favorite")
+    var isFavorite: Boolean
 
 )
