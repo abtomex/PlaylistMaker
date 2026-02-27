@@ -103,7 +103,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:contentDescription="@string/todo"
                 android:src="@drawable/dark_dot_delimiter" />
 
             <TextView
@@ -132,7 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:contentDescription="@string/todo"
             android:src="@drawable/ic_more"

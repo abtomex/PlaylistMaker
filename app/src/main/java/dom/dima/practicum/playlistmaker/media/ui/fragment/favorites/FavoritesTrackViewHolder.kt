@@ -14,6 +14,7 @@ import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.media.ui.view_model.FavoriteTracksViewModel
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
+import dom.dima.practicum.playlistmaker.utils.Useful
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -66,17 +67,8 @@ class FavoritesTrackViewHolder(
             .load(model.artworkUrl100)
             .fitCenter()
             .placeholder(R.drawable.ic_no_image_placeholder_45)
-            .transform(RoundedCorners(dpToPx(2.0f, itemView.context)))
+            .transform(RoundedCorners(Useful.dpToPx(2.0f, itemView.context)))
             .into(trackIcon)
     }
-
-    private fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            context.resources.displayMetrics
-        ).toInt()
-    }
-
 
 }

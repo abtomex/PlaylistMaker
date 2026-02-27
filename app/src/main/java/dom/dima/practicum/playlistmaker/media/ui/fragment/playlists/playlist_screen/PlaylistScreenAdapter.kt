@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dom.dima.practicum.playlistmaker.databinding.ViewTrackBinding
-import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 
 class PlaylistScreenAdapter(
