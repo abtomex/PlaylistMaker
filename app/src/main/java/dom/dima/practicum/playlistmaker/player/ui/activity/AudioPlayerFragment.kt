@@ -172,10 +172,10 @@ class AudioPlayerFragment : Fragment() {
         }
         binding.buttonAddToPlaylist.setOnClickListener {
 
-            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_COLLAPSED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                viewModel.getPlaylists()
             }
-            viewModel.getPlaylists()
         }
 
         binding.btnNew.setOnClickListener {
@@ -194,7 +194,6 @@ class AudioPlayerFragment : Fragment() {
         bottomSheetBehavior.apply {
             isHideable = true
             state = BottomSheetBehavior.STATE_HIDDEN
-            skipCollapsed = true
 
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -219,7 +218,7 @@ class AudioPlayerFragment : Fragment() {
                 viewModel.addTrackToPlaylist(playlist, track)
 
             },
-            tracksCountDescriptor = { tracksCount -> Useful.trackItemsText (
+            tracksCountDescriptor = { tracksCount -> Useful.itemsText (
                 tracksCount,
                 getString(R.string.track_items_count_variant1, tracksCount),
                 getString(R.string.track_items_count_variant2, tracksCount),

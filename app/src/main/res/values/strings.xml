@@ -57,6 +57,9 @@
     <string name="track_items_count_variant1">%d трек</string>
     <string name="track_items_count_variant2">%d трека</string>
     <string name="track_items_count_variant3">%d треков</string>
+    <string name="minutes_items_count_variant1">%d минута</string>
+    <string name="minutes_items_count_variant2">%d минуты</string>
+    <string name="minutes_items_count_variant3">%d минут</string>
     <string name="new_playlist_placeholder">Best songs 2021</string>
     <string name="year_placeholder">2022</string>
     <string name="_300min_placeholder">300 минут</string>

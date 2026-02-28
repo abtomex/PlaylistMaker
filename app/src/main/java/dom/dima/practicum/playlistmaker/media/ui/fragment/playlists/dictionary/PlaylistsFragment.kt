@@ -50,7 +50,7 @@ class PlaylistsFragment : Fragment() {
         )
         adapter = PlaylistsAdapter (
             onPlaylistClick = { playlist -> navigateToPlaylistFragment(playlist) },
-            tracksCountDescriptor = { tracksCount -> Useful.trackItemsText (
+            tracksCountDescriptor = { tracksCount -> Useful.itemsText (
                 tracksCount,
                 getString(R.string.track_items_count_variant1, tracksCount),
                 getString(R.string.track_items_count_variant2, tracksCount),

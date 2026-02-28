@@ -9,7 +9,8 @@ import dom.dima.practicum.playlistmaker.search.domain.models.Track
 
 class PlaylistScreenAdapter(
     val tracks: MutableList<Track>,
-    val onTrackClick: (Track) -> Unit
+    val onTrackClick: (Track) -> Unit,
+    val onTrackLongClick: (Track) -> Unit
 ) : RecyclerView.Adapter<PlaylistScreenViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -21,7 +22,7 @@ class PlaylistScreenAdapter(
             parent,
             false
         )
-        return PlaylistScreenViewHolder(binding, onTrackClick)
+        return PlaylistScreenViewHolder(binding, onTrackClick, onTrackLongClick)
     }
 
     override fun onBindViewHolder(

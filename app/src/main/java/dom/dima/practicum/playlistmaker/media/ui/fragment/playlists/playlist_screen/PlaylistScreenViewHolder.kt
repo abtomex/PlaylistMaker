@@ -10,8 +10,10 @@ import dom.dima.practicum.playlistmaker.utils.Useful
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlaylistScreenViewHolder(val binding: ViewTrackBinding, val onTrackClick: (Track) -> Unit) :
-    RecyclerView.ViewHolder(binding.root) {
+class PlaylistScreenViewHolder(
+    val binding: ViewTrackBinding,
+    val onTrackClick: (Track) -> Unit,
+    val onTrackLongClick: (Track) -> Unit) : RecyclerView.ViewHolder(binding.root,) {
 
     fun bind(track: Track) {
         binding.trackName.text = track.trackName
@@ -27,6 +29,11 @@ class PlaylistScreenViewHolder(val binding: ViewTrackBinding, val onTrackClick: 
 
         itemView.setOnClickListener {
             onTrackClick(track)
+        }
+
+        itemView.setOnLongClickListener {
+            onTrackLongClick(track)
+            return@setOnLongClickListener false
         }
     }
 }
