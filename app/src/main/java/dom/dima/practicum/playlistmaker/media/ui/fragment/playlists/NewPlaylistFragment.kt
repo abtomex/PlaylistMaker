@@ -1,9 +1,12 @@
 package dom.dima.practicum.playlistmaker.media.ui.fragment.playlists
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -35,8 +38,25 @@ class NewPlaylistFragment : Fragment() {
     private var title: String = ""
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel: NewPlaylistViewModel by viewModel()
+
+    private var galaryIsGranted = false
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                galaryIsGranted = true
+            } else {
+                // Пользователь отказал в предоставлении разрешения
+                galaryIsGranted = false
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.data= Uri.fromParts("package", requireContext().packageName, null)
+                startActivity(intent)
+            }
+
+        }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,7 +107,10 @@ class NewPlaylistFragment : Fragment() {
             }
 
         binding.newPlaylistImage.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            if(galaryIsGranted) {
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
         }
         viewModel.getPlaylistState().observe(viewLifecycleOwner) { state ->
             when (state) {
