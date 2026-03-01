@@ -50,5 +50,14 @@ class TracksDbRepositoryImpl (
         return trackDbConverter.map(appDatabase.tracksDao().getTrackById(trackId))
     }
 
+    override suspend fun getAll(): List<Track> {
+        return appDatabase.tracksDao().getAll().stream().map { trackDbConverter.map(it) }.collect(
+            Collectors.toList())
+    }
+
+    override suspend fun deleteTrackById(trackId: Int) {
+        appDatabase.tracksDao().deleteTrackById(trackId)
+    }
+
 
 }

@@ -11,5 +11,7 @@ interface TracksDbRepository {
     suspend fun getTracksById(ids: Set<Int>): Set<Track>
     suspend fun createTrack(track: Track)
     suspend fun getTrackById(trackId: Int): Track?
+    suspend fun getAll() : List<Track>
+    suspend fun deleteTrackById(trackId: Int)
 
 }

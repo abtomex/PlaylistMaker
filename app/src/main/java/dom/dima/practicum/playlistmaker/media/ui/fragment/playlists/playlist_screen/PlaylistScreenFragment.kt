@@ -14,6 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistScreen1Binding
+import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
+import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.state.PlaylistScreenState
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistScreenViewModel
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.utils.Useful
@@ -42,46 +44,62 @@ class PlaylistScreenFragment : Fragment() {
 
 //        requireView().setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.playlist_screen_background_color))
         val playlistId = requireArguments().getInt(CLICKED_PLAYLIST_ID)
-        viewModel.loadPlaylistData(playlistId)
         view.post {
-            setupBottomSheet()
+            viewModel.loadPlaylistData(playlistId)
         }
 
         binding.actionBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        viewModel.getPlaylistState().observe(viewLifecycleOwner) {
-            binding.playlistTitle.text = it.title
-            val tracksCount = it.trackIds.size
-            binding.tracksCount.text = Useful.itemsText(
-                tracksCount,
-                getString(R.string.track_items_count_variant1, tracksCount),
-                getString(R.string.track_items_count_variant2, tracksCount),
-                getString(R.string.track_items_count_variant3, tracksCount)
-            )
-            Glide.with(this)
-                .load(it.cover)
-                .fitCenter()
-                .placeholder(R.drawable.ic_no_image_placeholder_45)
-                .transform(RoundedCorners(Useful.dpToPx(8.0f, requireActivity())))
-                .into(binding.playlistCover)
-            playlistScreenAdapter.submitList(it.tracks)
-            val totalDuration =
-                ((it.tracks.sumOf { trackDuration -> trackDuration.trackTimeMillis }) / 1000 / 60).toInt()
-            binding.tracksTotalDurability.text = Useful.itemsText(
-                totalDuration,
-                getString(R.string.minutes_items_count_variant1, totalDuration),
-                getString(R.string.minutes_items_count_variant2, totalDuration),
-                getString(R.string.minutes_items_count_variant3, totalDuration)
-            )
+        viewModel.getPlaylistState().observe(viewLifecycleOwner) { state ->
+            val playlist = state.playlist
+            when (state) {
+                is PlaylistScreenState.LoadData -> {
+                    setupBottomSheet(playlist)
+                    rewritePlaylistPage(playlist)
+                }
+                is PlaylistScreenState.ReloadData -> {
+                    rewritePlaylistPage(playlist)
+                }
+            }
         }
     }
 
-    private fun setupBottomSheet() {
+    fun rewritePlaylistPage(playlist: Playlist) {
+
+        binding.playlistTitle.text = playlist.title
+        val tracksCount = playlist.trackIds.size
+
+        binding.tracksCount.text = Useful.itemsText(
+            tracksCount,
+            getString(R.string.track_items_count_variant1, tracksCount),
+            getString(R.string.track_items_count_variant2, tracksCount),
+            getString(R.string.track_items_count_variant3, tracksCount)
+        )
+        Glide.with(this)
+            .load(playlist.cover)
+            .fitCenter()
+            .placeholder(R.drawable.ic_no_image_placeholder_45)
+            .transform(RoundedCorners(Useful.dpToPx(8.0f, requireActivity())))
+            .into(binding.playlistCover)
+        val totalDuration =
+            ((playlist.tracks.sumOf { trackDuration -> trackDuration.trackTimeMillis }) / 1000 / 60).toInt()
+
+        binding.tracksTotalDurability.text = Useful.itemsText(
+            totalDuration,
+            getString(R.string.minutes_items_count_variant1, totalDuration),
+            getString(R.string.minutes_items_count_variant2, totalDuration),
+            getString(R.string.minutes_items_count_variant3, totalDuration)
+        )
+        playlistScreenAdapter.submitList(playlist.tracks)
+
+    }
+
+    private fun setupBottomSheet(playlist: Playlist) {
 
         setupBottomSheetMargin()
-        setupRecyclerView()
+        setupRecyclerView(playlist)
     }
 
     private fun setupBottomSheetMargin() {
@@ -113,7 +131,7 @@ class PlaylistScreenFragment : Fragment() {
     }
 
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(playlist: Playlist) {
         playlistScreenAdapter = PlaylistScreenAdapter(
             mutableListOf(),
             onTrackClick = { track ->
@@ -124,15 +142,12 @@ class PlaylistScreenFragment : Fragment() {
             },
             onTrackLongClick = { track ->
                 MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("")
-                    .setMessage("Хотите удалить трек?")
-                    .setNegativeButton("Нет") {dialog, which ->
-
+                    .setMessage(getString(R.string.ask_to_delete_track_message))
+                    .setNegativeButton(getString(R.string.message_no)) { _, _ -> }
+                    .setPositiveButton(getString(R.string.message_yes)) { _, _ ->
+                        viewModel.removeTrackFromPlaylist(track, playlist)
                     }
-                    .setPositiveButton("Да") {dialog, which ->
-
-                    }
-                        .show()
+                    .show()
             }
 
 

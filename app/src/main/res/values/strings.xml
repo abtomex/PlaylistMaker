@@ -66,5 +66,8 @@
     <string name="_98tracks_placeholder">98 треков</string>
     <string name="share">Поделиться</string>
     <string name="more_options">Больше опций</string>
+    <string name="ask_to_delete_track_message">Хотите удалить трек?</string>
+    <string name="message_no">Нет</string>
+    <string name="message_yes">Да</string>
 
 </resources>

@@ -27,5 +27,8 @@ interface TracksDao {
     @Query("SELECT * FROM track_table where trackId in (:ids)")
     suspend fun getTracksByIds(ids: Set<Int>) : List<TrackEntity>
 
+    @Query("select * from track_table")
+    suspend fun getAll() : List<TrackEntity>
+
 
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.media.domain.db.PlaylistsInteractor
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
+import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.state.PlaylistScreenState
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.launch
 
@@ -15,13 +16,13 @@ class PlaylistScreenViewModel(
     val gson: Gson
 ) : ViewModel() {
 
-    private val playlistState = MutableLiveData<Playlist>()
-    fun getPlaylistState(): LiveData<Playlist> = playlistState
+    private val playlistState = MutableLiveData<PlaylistScreenState>()
+    fun getPlaylistState(): LiveData<PlaylistScreenState> = playlistState
 
     fun loadPlaylistData(playlistId: Int) {
         viewModelScope.launch {
             playlistsInteractor.getById(playlistId)
-                .collect { playlistState.postValue(it) }
+                .collect { playlistState.postValue(PlaylistScreenState.LoadData(it)) }
 
         }
 
@@ -30,6 +31,13 @@ class PlaylistScreenViewModel(
 
     fun toJson(track: Track): String {
         return gson.toJson(track)
+    }
+
+    fun removeTrackFromPlaylist(track: Track, playlist: Playlist) {
+        viewModelScope.launch {
+            playlistsInteractor.removeTrackFromPlaylist(track, playlist)
+                .collect { playlistState.postValue(PlaylistScreenState.ReloadData(it)) }
+        }
     }
 
 }

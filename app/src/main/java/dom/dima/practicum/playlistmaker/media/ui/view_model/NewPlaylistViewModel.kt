@@ -23,7 +23,7 @@ class NewPlaylistViewModel (
             playlistsInteractor
                 .addOne(Playlist(title = title, description = description, cover =  coverUri))
                 .collect {
-                    playlistState.postValue(PlaylistStateVM.Added(it))
+                    playlistState.postValue(PlaylistStateVM.Added())
                 }
         }
     }

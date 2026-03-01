@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import dom.dima.practicum.playlistmaker.media.data.db.entity.PlaylistEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaylistsDao {
@@ -14,14 +13,14 @@ interface PlaylistsDao {
     suspend fun saveOne(playlist: PlaylistEntity)
 
     @Query("SELECT * FROM playlist_table order by created_ts desc")
-    fun getAll(): Flow<List<PlaylistEntity>>
+    suspend fun getAll(): List<PlaylistEntity>
 
     @Query("DELETE FROM playlist_table where id = :playlistId")
     suspend fun deleteById(playlistId: Int)
 
     @Query("SELECT * FROM playlist_table where id = :playlistId")
     suspend fun getOne(playlistId: Int) : PlaylistEntity?
-
-
+    @Query("update playlist_table set trackIds = :trackIds where id = :playlistId")
+    suspend fun updateTrackIds(trackIds: String, playlistId: Int)
 
 }
