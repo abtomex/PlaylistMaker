@@ -65,8 +65,7 @@ class AudioPlayerViewModel(
         timerJob?.cancel()
         playerState.postValue(
             AudioPlayerState.Pause(
-                StateData(STATE_PAUSED),
-                getCurrentPlayerPosition()
+                StateData(STATE_PAUSED)
             )
         )
     }

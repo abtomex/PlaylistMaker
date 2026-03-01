@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.playlist_screen
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -42,7 +43,6 @@ class PlaylistScreenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-//        requireView().setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.playlist_screen_background_color))
         val playlistId = requireArguments().getInt(CLICKED_PLAYLIST_ID)
         view.post {
             viewModel.loadPlaylistData(playlistId)
@@ -63,6 +63,15 @@ class PlaylistScreenFragment : Fragment() {
                     rewritePlaylistPage(playlist)
                 }
             }
+        }
+
+        binding.buttonShare.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                setType("text/plain")
+                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                putExtra(Intent.EXTRA_TEXT, "трек 1, трек 2, трек 3")
+            }
+            requireContext().startActivity(shareIntent)
         }
     }
 

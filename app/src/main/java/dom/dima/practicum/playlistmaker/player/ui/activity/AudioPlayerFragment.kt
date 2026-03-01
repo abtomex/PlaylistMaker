@@ -133,7 +133,6 @@ class AudioPlayerFragment : Fragment() {
                     playerState = state.data.playerState
                     isStarted = false
                     commonButton.setImageResource(R.drawable.button_play)
-                    binding.progress.text = state.progress
 
                 }
 
@@ -198,9 +197,13 @@ class AudioPlayerFragment : Fragment() {
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
-                        BottomSheetBehavior.STATE_HIDDEN -> {}
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            binding.overlay.isVisible = true
+                        }
 
-                        BottomSheetBehavior.STATE_EXPANDED -> {}
+                        else -> {
+                            binding.overlay.isVisible = false
+                        }
                     }
                 }
 
