@@ -122,13 +122,14 @@ class PlaylistScreenFragment : Fragment() {
         }
 
         binding.buttonMore.setOnClickListener {
+            binding.menuMoreBottomSheet.isVisible = true
             val menuMoreBottomSheetBehavior = BottomSheetBehavior.from(binding.menuMoreBottomSheet)
             menuMoreBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             menuMoreBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when(newState) {
-                        BottomSheetBehavior.STATE_COLLAPSED -> binding.overlay.isVisible = true
-                        else -> binding.overlay.isVisible = false
+                        BottomSheetBehavior.STATE_HIDDEN -> binding.overlay.isVisible = false
+                        else -> binding.overlay.isVisible = true
                     }
 
                 }
