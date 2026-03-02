@@ -22,5 +22,7 @@ interface PlaylistsDao {
     suspend fun getOne(playlistId: Int) : PlaylistEntity?
     @Query("update playlist_table set trackIds = :trackIds where id = :playlistId")
     suspend fun updateTrackIds(trackIds: String, playlistId: Int)
+    @Query("update playlist_table set title = :title, coverImgName = :cover, description = :description where id = :playlistId")
+    suspend fun updatePlaylistInfo(playlistId: Int, title: String, cover: String?, description: String?)
 
 }

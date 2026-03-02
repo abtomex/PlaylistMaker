@@ -179,7 +179,7 @@ class AudioPlayerFragment : Fragment() {
 
         binding.btnNew.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_editPlaylistFragment)
         }
 
 

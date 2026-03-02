@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.media.domain.db
 
+import android.net.Uri
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
@@ -10,4 +11,6 @@ interface PlaylistsInteractor {
     suspend fun addOne(playlist: Playlist): Flow<Unit>
     suspend fun updatePlaylist(playlist: Playlist, track: Track) : Flow<Playlist>
     suspend fun removeTrackFromPlaylist(track: Track, playlist: Playlist) : Flow<Playlist>
+    suspend fun delete(playlist: Playlist) : Flow<Unit>
+    suspend fun updatePlaylistInfo(playlistId: Int, title: String, coverUri: Uri?, description: String?) : Flow<Unit>
 }

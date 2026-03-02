@@ -18,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistScreen1Binding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
+import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.PlaylistEditorFragment
 import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.state.PlaylistScreenState
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistScreenViewModel
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
@@ -56,10 +57,10 @@ class PlaylistScreenFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        viewModel.getPlaylistState().observe(viewLifecycleOwner) { state ->
-            val playlist = state.playlist
+        viewModel.getPlaylistState().observe(viewLifecycleOwner) {state ->
             when (state) {
                 is PlaylistScreenState.LoadData -> {
+                    val playlist = state.data
                     setupStandardBottomSheet(playlist)
                     setupMenuMoreBottomSheet(playlist)
                     initPlaylistButtons(playlist)
@@ -67,7 +68,11 @@ class PlaylistScreenFragment : Fragment() {
                 }
 
                 is PlaylistScreenState.ReloadData -> {
-                    rewritePlaylistPage(playlist)
+                    rewritePlaylistPage(state.data)
+                }
+
+                is PlaylistScreenState.PlaylistRemoved -> {
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -75,50 +80,8 @@ class PlaylistScreenFragment : Fragment() {
     }
 
     fun initPlaylistButtons(playlist: Playlist) {
-        if (playlist.tracks.isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.playlist_has_nothing_tracks),
-                Toast.LENGTH_LONG
-            ).show()
-            return
-        }
         binding.buttonShare.setOnClickListener {
-            val messageBuilder = StringBuilder()
-            messageBuilder.append(
-                getString(
-                    R.string.message_playlist_title,
-                    playlist.title,
-                    playlist.description
-                )
-            ).append("\n")
-            messageBuilder.append(
-                getString(
-                    R.string.message_playlist_tracks_count,
-                    playlist.tracks.size
-                )
-            ).append("\n")
-            for (i in 0..<playlist.tracks.size) {
-                val track = playlist.tracks[i]
-                messageBuilder.append("${i + 1}. ").append("${track.artistName} - ")
-                    .append("${track.trackName} ")
-                    .append(
-                        "(${
-                            SimpleDateFormat(
-                                "mm:ss",
-                                Locale.getDefault()
-                            ).format(track.trackTimeMillis)
-                        })"
-                    )
-                messageBuilder.append("\n")
-            }
-            //SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                setType("text/plain")
-                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra(Intent.EXTRA_TEXT, messageBuilder.toString())
-            }
-            requireContext().startActivity(shareIntent)
+            sharePlaylist(playlist)
         }
 
         binding.buttonMore.setOnClickListener {
@@ -140,9 +103,58 @@ class PlaylistScreenFragment : Fragment() {
 
     }
 
+    fun sharePlaylist(playlist: Playlist) {
+        if (playlist.tracks.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.playlist_has_nothing_tracks),
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        val messageBuilder = StringBuilder()
+        messageBuilder.append(
+            getString(
+                R.string.message_playlist_title,
+                playlist.title,
+                playlist.description
+            )
+        ).append("\n")
+        messageBuilder.append(
+            getString(
+                R.string.message_playlist_tracks_count,
+                playlist.tracks.size
+            )
+        ).append("\n")
+        for (i in 0..<playlist.tracks.size) {
+            val track = playlist.tracks[i]
+            messageBuilder.append("${i + 1}. ").append("${track.artistName} - ")
+                .append("${track.trackName} ")
+                .append(
+                    "(${
+                        SimpleDateFormat(
+                            "mm:ss",
+                            Locale.getDefault()
+                        ).format(track.trackTimeMillis)
+                    })"
+                )
+            messageBuilder.append("\n")
+        }
+        //SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            setType("text/plain")
+            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(Intent.EXTRA_TEXT, messageBuilder.toString())
+        }
+        requireContext().startActivity(shareIntent)
+
+    }
+
     fun rewritePlaylistPage(playlist: Playlist) {
 
         binding.playlistTitle.text = playlist.title
+        binding.playlistDescription.text = playlist.description
         val tracksCount = playlist.trackIds.size
 
         binding.tracksCount.text = Useful.itemsText(
@@ -178,7 +190,27 @@ class PlaylistScreenFragment : Fragment() {
     private fun setupMenuMoreBottomSheet(playlist: Playlist) {
 
         setupBottomSheetMargin(binding.menuMoreBottomSheet, binding.playlistTitle, 5f, BottomSheetBehavior.STATE_HIDDEN)
+        setupPlaylistViews(playlist)
+        binding.menuMoreShare.setOnClickListener {
+            sharePlaylist(playlist)
+        }
 
+        binding.menuMoreDeletePlaylist.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage(getString(R.string.ask_to_delete_playlist, playlist.title))
+                .setNegativeButton(getString(R.string.message_no)) { _, _ -> }
+                .setPositiveButton(getString(R.string.message_yes)) { _, _ ->
+                    viewModel.deletePlaylist(playlist)
+                }
+                .show()
+
+        }
+        binding.menuMoreEdit.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_playlistScreenFragment_to_editPlaylistFragment,
+                PlaylistEditorFragment.createArgs(playlist.id)
+            )
+        }
     }
 
     private fun setupBottomSheetMargin(bottomSheet: View, viewFromWhichMargin: View, margin: Float, defaultStartState: Int) {
@@ -208,6 +240,23 @@ class PlaylistScreenFragment : Fragment() {
 
     }
 
+    private fun setupPlaylistViews(playlist: Playlist) {
+        binding.menuMorePlaylistName.text = playlist.title
+        binding.menuMoreTracksCount.text = Useful.itemsText(
+            playlist.tracks.size,
+            getString(R.string.track_items_count_variant1, playlist.tracks.size) ,
+            getString(R.string.track_items_count_variant2, playlist.tracks.size),
+            getString(R.string.track_items_count_variant3, playlist.tracks.size),
+            )
+
+        Glide.with(binding.menuMorePlaylistIcon)
+            .load(playlist.cover)
+            .fitCenter()
+            .placeholder(R.drawable.ic_no_image_placeholder_45)
+            .transform(RoundedCorners(Useful.dpToPx(2.0f, requireContext())))
+            .into(binding.menuMorePlaylistIcon)
+
+    }
 
     private fun setupRecyclerView(playlist: Playlist) {
         playlistScreenAdapter = PlaylistScreenAdapter(

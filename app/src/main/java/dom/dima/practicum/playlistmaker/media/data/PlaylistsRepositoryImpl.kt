@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.media.data
 
+import androidx.core.net.toFile
 import dom.dima.practicum.playlistmaker.media.data.converters.PlaylistDbConverter
 import dom.dima.practicum.playlistmaker.media.data.db.AppDatabase
 import dom.dima.practicum.playlistmaker.media.domain.PlaylistsRepository
@@ -39,6 +40,15 @@ class PlaylistsRepositoryImpl (
         playlistId: Int
     ) {
         appDatabase.playlistsDao().updateTrackIds(playlistDbConverter.mapTrackIds(trackIds), playlistId)
+    }
+
+    override suspend fun delete(playlist: Playlist) {
+        appDatabase.playlistsDao().deleteById(playlist.id)
+    }
+
+    override suspend fun updateInfo(playlist: Playlist?) {
+        if (playlist == null) return
+        appDatabase.playlistsDao().updatePlaylistInfo(playlist.id, playlist.title, playlist.cover?.toFile()?.name, playlist.description)
     }
 
 }

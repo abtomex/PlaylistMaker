@@ -40,4 +40,11 @@ class PlaylistScreenViewModel(
         }
     }
 
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistsInteractor.delete(playlist)
+                .collect { playlistState.postValue(PlaylistScreenState.PlaylistRemoved()) }
+        }
+    }
+
 }

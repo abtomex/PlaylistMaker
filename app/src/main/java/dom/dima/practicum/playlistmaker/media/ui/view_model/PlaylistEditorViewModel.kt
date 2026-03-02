@@ -11,7 +11,7 @@ import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.media.ui.state.PlaylistStateVM
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel (
+class PlaylistEditorViewModel (
     private val playlistsInteractor: PlaylistsInteractor,
     private val playlistsFilesInteractor: PlaylistsFilesInteractor
 ) : ViewModel() {
@@ -28,6 +28,15 @@ class NewPlaylistViewModel (
         }
     }
 
+    fun updatePlaylist(playlistId: Int, title: String, coverUri: Uri?, description: String?) {
+        viewModelScope.launch {
+            playlistsInteractor.updatePlaylistInfo(playlistId, title, coverUri, description)
+                .collect {
+                    playlistState.postValue(PlaylistStateVM.Updated())
+                }
+        }
+    }
+
     fun saveImageToPrivateStorage(uri: Uri) {
 
         viewModelScope.launch {
@@ -39,5 +48,12 @@ class NewPlaylistViewModel (
 
     }
 
+    fun loadData(playlistId: Int) {
+        viewModelScope.launch {
+            playlistsInteractor.getById(playlistId).collect {
+                playlistState.postValue(PlaylistStateVM.LoadData(it))
+            }
+        }
+    }
 
 }

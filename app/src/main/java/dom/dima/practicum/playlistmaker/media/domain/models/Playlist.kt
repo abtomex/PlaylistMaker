@@ -5,9 +5,9 @@ import dom.dima.practicum.playlistmaker.search.domain.models.Track
 
 data class Playlist (
     val id: Int = 0,
-    val title: String,
-    val description: String?,
-    val cover: Uri?,
+    var title: String,
+    var description: String?,
+    var cover: Uri?,
     val trackIds: MutableSet<Int> = mutableSetOf(),
     val tracks: MutableList<Track> = mutableListOf()
 )

@@ -1,5 +1,6 @@
 package dom.dima.practicum.playlistmaker.media.domain.impl
 
+import android.net.Uri
 import dom.dima.practicum.playlistmaker.media.domain.PlaylistsRepository
 import dom.dima.practicum.playlistmaker.media.domain.TracksDbRepository
 import dom.dima.practicum.playlistmaker.media.domain.db.PlaylistsInteractor
@@ -52,11 +53,40 @@ class PlaylistsInteractorImpl(
         emit(updatedPlaylist!!)
     }
 
+    override suspend fun delete(playlist: Playlist) : Flow<Unit> = flow {
+
+        playlistsRepository.delete(playlist)
+        removeOrphanTracks(playlist.tracks)
+        emit(Unit)
+    }
+
+    override suspend fun updatePlaylistInfo(
+        playlistId: Int,
+        title: String,
+        coverUri: Uri?,
+        description: String?
+    ): Flow<Unit> = flow {
+
+        val playlist = playlistsRepository.getPlaylistById(playlistId)
+        playlist?.title = title
+        playlist?.cover = coverUri
+        playlist?.description = description
+
+        playlistsRepository.updateInfo(playlist)
+
+        emit(Unit)
+    }
+
     private suspend fun checkAndRemoveOrphanTracks() {
+        val candidatesForRemove = tracksDbRepository.getAll()
+        removeOrphanTracks(candidatesForRemove)
+    }
 
-        val tracksInPlaylists = playlistsRepository.allPlaylists().stream().flatMap { it.trackIds.stream() }.collect(Collectors.toSet())
-
-        val candidatesForRemove = tracksDbRepository.getAll().stream()
+    private suspend fun removeOrphanTracks(checkCandidates: List<Track>) {
+        val tracksInPlaylists =
+            playlistsRepository.allPlaylists().stream().flatMap { it.trackIds.stream() }
+                .collect(Collectors.toSet())
+        val candidatesForRemove = checkCandidates.stream()
             .filter { !it.isFavorite }
             .filter { !tracksInPlaylists.contains(it.trackId) }
             .map { it.trackId }

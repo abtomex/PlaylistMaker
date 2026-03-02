@@ -6,7 +6,7 @@
     android:nestedScrollingEnabled="true"
     android:orientation="vertical"
     android:fillViewport="true"
-    tools:context=".media.ui.fragment.playlists.NewPlaylistFragment">
+    tools:context=".media.ui.fragment.playlists.PlaylistEditorFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
@@ -33,8 +33,9 @@
         app:navigationIcon="@drawable/back">
 
         <TextView
+            android:id="@+id/editor_title"
             style="@style/header_text_style"
-            android:text="@string/new_playlist" />
+            android:text="@string/todo" />
     </com.google.android.material.appbar.MaterialToolbar>
 
     <FrameLayout
@@ -68,7 +69,7 @@
     </FrameLayout>
 
     <EditText
-        android:id="@+id/new_playlist_title_input"
+        android:id="@+id/playlist_editor_title_input"
         style="@style/new_playlist_inputs_style"
         android:layout_marginTop="32dp"
         android:autofillHints=""
@@ -79,21 +80,21 @@
         />
 
     <EditText
-        android:id="@+id/new_playlist_description_input"
+        android:id="@+id/playlist_editor_description_input"
         style="@style/new_playlist_inputs_style"
         android:layout_marginTop="16dp"
         android:autofillHints=""
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toEndOf="@+id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/new_playlist_title_input"
+        app:layout_constraintTop_toBottomOf="@+id/playlist_editor_title_input"
         android:hint="@string/new_playlist_description"
         />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_playlist_button"
+        android:id="@+id/playlist_button"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:text="@string/create"
+        android:text="@string/todo"
         android:textSize="16sp"
         android:textAllCaps="false"
         app:cornerRadius="8dp"

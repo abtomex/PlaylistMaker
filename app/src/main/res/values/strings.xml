@@ -74,5 +74,8 @@
     <string name="message_playlist_tracks_count">количество треков: %d</string>
     <string name="edit_playlist_info">Редактировать информацию</string>
     <string name="delete_playlist">Удалить плейлист</string>
+    <string name="ask_to_delete_playlist">Хотите удалить плейлист \"%s\"</string>
+    <string name="save">Сохранить</string>
+    <string name="edit_playlist">Редактировать</string>
 
 </resources>

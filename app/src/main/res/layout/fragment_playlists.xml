@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
+        android:paddingBottom="48dp"
         android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
+import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.PlaylistEditorFragment
 import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.playlist_screen.PlaylistScreenFragment
 import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistsViewModel
 import dom.dima.practicum.playlistmaker.utils.GridSpacingItemDecoration
@@ -39,7 +40,9 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val buttonNew = binding.btnNew
         buttonNew.setOnClickListener {
-            findNavController().navigate(R.id.action_mediaFragment_to_newPlaylistFragment2)
+            findNavController().navigate(
+                R.id.action_mediaFragment_to_editPlaylistFragment2,
+                PlaylistEditorFragment.createArgs(PlaylistEditorFragment.NEW_PLAYLIST_MARKER))
         }
 
         binding.playlistsItems.addItemDecoration(
