@@ -6,6 +6,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -21,6 +22,8 @@ import dom.dima.practicum.playlistmaker.media.ui.view_model.PlaylistScreenViewMo
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.utils.Useful
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistScreenFragment : Fragment() {
 
@@ -56,23 +59,67 @@ class PlaylistScreenFragment : Fragment() {
             val playlist = state.playlist
             when (state) {
                 is PlaylistScreenState.LoadData -> {
-                    setupBottomSheet(playlist)
+                    setupStandardBottomSheet(playlist)
+                    setupMenuMoreBottomSheet(playlist)
+                    initPlaylistButtons(playlist)
                     rewritePlaylistPage(playlist)
                 }
+
                 is PlaylistScreenState.ReloadData -> {
                     rewritePlaylistPage(playlist)
                 }
             }
         }
 
+    }
+
+    fun initPlaylistButtons(playlist: Playlist) {
+        if (playlist.tracks.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.playlist_has_nothing_tracks),
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
         binding.buttonShare.setOnClickListener {
+            val messageBuilder = StringBuilder()
+            messageBuilder.append(
+                getString(
+                    R.string.message_playlist_title,
+                    playlist.title,
+                    playlist.description
+                )
+            ).append("\n")
+            messageBuilder.append(
+                getString(
+                    R.string.message_playlist_tracks_count,
+                    playlist.tracks.size
+                )
+            ).append("\n")
+            for (i in 0..<playlist.tracks.size) {
+                val track = playlist.tracks[i]
+                messageBuilder.append("${i + 1}. ").append("${track.artistName} - ")
+                    .append("${track.trackName} ")
+                    .append(
+                        "(${
+                            SimpleDateFormat(
+                                "mm:ss",
+                                Locale.getDefault()
+                            ).format(track.trackTimeMillis)
+                        })"
+                    )
+                messageBuilder.append("\n")
+            }
+            //SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 setType("text/plain")
                 setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra(Intent.EXTRA_TEXT, "трек 1, трек 2, трек 3")
+                putExtra(Intent.EXTRA_TEXT, messageBuilder.toString())
             }
             requireContext().startActivity(shareIntent)
         }
+
     }
 
     fun rewritePlaylistPage(playlist: Playlist) {
@@ -105,36 +152,40 @@ class PlaylistScreenFragment : Fragment() {
 
     }
 
-    private fun setupBottomSheet(playlist: Playlist) {
+    private fun setupStandardBottomSheet(playlist: Playlist) {
 
-        setupBottomSheetMargin()
+        setupBottomSheetMargin(binding.standardBottomSheet, binding.buttonMore, 24f)
         setupRecyclerView(playlist)
     }
+    private fun setupMenuMoreBottomSheet(playlist: Playlist) {
 
-    private fun setupBottomSheetMargin() {
+        setupBottomSheetMargin(binding.menuMoreBottomSheet, binding.buttonMore, 24f)
+
+    }
+
+    private fun setupBottomSheetMargin(bottomSheet: View, viewFromWhichMargin: View, margin: Float) {
         val actionBackLocation = IntArray(2)
         binding.actionBack.getLocationInWindow(actionBackLocation)
         val zeroLine = actionBackLocation[1]
         val screenHeight = binding.playlistDescriptionConstraintLayout.height
         val absoluteScreenHeight = screenHeight + zeroLine
 
-        val buttonMoreLocation = IntArray(2)
-        binding.buttonMore.getLocationInWindow(buttonMoreLocation)
-        val buttonMoreY = buttonMoreLocation[1]
-        val buttonMoreHeight = binding.buttonMore.height
+        val viewFromWhichMarginLocation = IntArray(2)
+        viewFromWhichMargin.getLocationInWindow(viewFromWhichMarginLocation)
+        val viewFromWhichMarginY = viewFromWhichMarginLocation[1]
+        val viewFromWhichMarginHeight = viewFromWhichMargin.height
 
-        val bottomSheet = binding.standardBottomSheet
         val behavior = BottomSheetBehavior.from(bottomSheet)
 
         val margin24dp = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            24f,
+            margin,
             resources.displayMetrics
         ).toInt()
 
         behavior.apply {
             state = BottomSheetBehavior.STATE_COLLAPSED
-            peekHeight = absoluteScreenHeight - buttonMoreY - buttonMoreHeight - margin24dp
+            peekHeight = absoluteScreenHeight - viewFromWhichMarginY - viewFromWhichMarginHeight - margin24dp
         }
 
     }

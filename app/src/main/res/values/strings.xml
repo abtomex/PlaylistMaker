@@ -69,5 +69,10 @@
     <string name="ask_to_delete_track_message">Хотите удалить трек?</string>
     <string name="message_no">Нет</string>
     <string name="message_yes">Да</string>
+    <string name="playlist_has_nothing_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="message_playlist_title">Плейлист: %s\n%s</string>
+    <string name="message_playlist_tracks_count">количество треков: %d</string>
+    <string name="edit_playlist_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
 
 </resources>

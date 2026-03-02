@@ -174,5 +174,25 @@
         <item name="android:textSize">16sp</item>
 
     </style>
+    <style name="menu_more_linear_layout">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">61dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="menu_more_text_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">61dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">"@font/ys_display_regular</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/menu_more_text_color</item>
+        <item name="android:textSize">@dimen/track_text_size</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginTop">8dp</item>
+
+    </style>
 
 </resources>
