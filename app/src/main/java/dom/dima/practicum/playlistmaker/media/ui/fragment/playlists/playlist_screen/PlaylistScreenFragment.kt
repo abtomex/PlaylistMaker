@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -120,6 +121,22 @@ class PlaylistScreenFragment : Fragment() {
             requireContext().startActivity(shareIntent)
         }
 
+        binding.buttonMore.setOnClickListener {
+            val menuMoreBottomSheetBehavior = BottomSheetBehavior.from(binding.menuMoreBottomSheet)
+            menuMoreBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            menuMoreBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when(newState) {
+                        BottomSheetBehavior.STATE_COLLAPSED -> binding.overlay.isVisible = true
+                        else -> binding.overlay.isVisible = false
+                    }
+
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            })
+        }
+
     }
 
     fun rewritePlaylistPage(playlist: Playlist) {
@@ -154,16 +171,16 @@ class PlaylistScreenFragment : Fragment() {
 
     private fun setupStandardBottomSheet(playlist: Playlist) {
 
-        setupBottomSheetMargin(binding.standardBottomSheet, binding.buttonMore, 24f)
+        setupBottomSheetMargin(binding.standardBottomSheet, binding.buttonMore, 24f, BottomSheetBehavior.STATE_COLLAPSED)
         setupRecyclerView(playlist)
     }
     private fun setupMenuMoreBottomSheet(playlist: Playlist) {
 
-        setupBottomSheetMargin(binding.menuMoreBottomSheet, binding.buttonMore, 24f)
+        setupBottomSheetMargin(binding.menuMoreBottomSheet, binding.playlistTitle, 5f, BottomSheetBehavior.STATE_HIDDEN)
 
     }
 
-    private fun setupBottomSheetMargin(bottomSheet: View, viewFromWhichMargin: View, margin: Float) {
+    private fun setupBottomSheetMargin(bottomSheet: View, viewFromWhichMargin: View, margin: Float, defaultStartState: Int) {
         val actionBackLocation = IntArray(2)
         binding.actionBack.getLocationInWindow(actionBackLocation)
         val zeroLine = actionBackLocation[1]
@@ -184,7 +201,7 @@ class PlaylistScreenFragment : Fragment() {
         ).toInt()
 
         behavior.apply {
-            state = BottomSheetBehavior.STATE_COLLAPSED
+            state = defaultStartState
             peekHeight = absoluteScreenHeight - viewFromWhichMarginY - viewFromWhichMarginHeight - margin24dp
         }
 
