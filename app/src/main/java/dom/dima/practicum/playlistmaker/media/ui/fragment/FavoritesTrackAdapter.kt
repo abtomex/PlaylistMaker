@@ -1,9 +1,9 @@
-package dom.dima.practicum.playlistmaker.media.ui
+package dom.dima.practicum.playlistmaker.media.ui.fragment
 
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import dom.dima.practicum.playlistmaker.media.view_model.FavoriteTracksViewModel
+import dom.dima.practicum.playlistmaker.media.ui.view_model.FavoriteTracksViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 
 class FavoritesTrackAdapter (

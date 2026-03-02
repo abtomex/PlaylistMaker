@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui
+package dom.dima.practicum.playlistmaker.media.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentMediaBinding
-import dom.dima.practicum.playlistmaker.media.view_model.MediaViewModel
+import dom.dima.practicum.playlistmaker.media.ui.view_model.MediaViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 

@@ -3,8 +3,11 @@ package dom.dima.practicum.playlistmaker.di
 import android.content.Context
 import com.google.gson.Gson
 import dom.dima.practicum.playlistmaker.media.data.FavoritesRepositoryImpl
+import dom.dima.practicum.playlistmaker.media.data.PlaylistsRepositoryImpl
+import dom.dima.practicum.playlistmaker.media.data.converters.PlaylistDbConverter
 import dom.dima.practicum.playlistmaker.media.data.converters.TrackDbConverter
 import dom.dima.practicum.playlistmaker.media.domain.FavoritesRepository
+import dom.dima.practicum.playlistmaker.media.domain.PlaylistsRepository
 import dom.dima.practicum.playlistmaker.search.data.TracksRepositoryImpl
 import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
 import dom.dima.practicum.playlistmaker.settings.data.repository.SettingsRepositoryImpl
@@ -32,6 +35,12 @@ val repositoryModule = module {
     factory { Gson() }
 
     factory { TrackDbConverter() }
+
+    factory { PlaylistDbConverter(get(), get()) }
+
+    single<PlaylistsRepository> {
+        PlaylistsRepositoryImpl(get(), get())
+    }
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())

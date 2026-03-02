@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.media.ui
+package dom.dima.practicum.playlistmaker.media.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.databinding.FragmentFavoriteTracksBinding
-import dom.dima.practicum.playlistmaker.media.view_model.FavoriteTracksViewModel
+import dom.dima.practicum.playlistmaker.media.ui.view_model.FavoriteTracksViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

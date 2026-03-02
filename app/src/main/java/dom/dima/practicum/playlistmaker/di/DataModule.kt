@@ -1,7 +1,9 @@
 package dom.dima.practicum.playlistmaker.di
 
 import androidx.room.Room
+import dom.dima.practicum.playlistmaker.media.data.PlaylistsFilesRepositoryImpl
 import dom.dima.practicum.playlistmaker.media.data.db.AppDatabase
+import dom.dima.practicum.playlistmaker.media.domain.PlaylistsFilesRepository
 import dom.dima.practicum.playlistmaker.search.data.network.NetworkClient
 import dom.dima.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import dom.dima.practicum.playlistmaker.search.data.network.SearchTrackApiService
@@ -26,6 +28,11 @@ val dataModule = module {
     }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
             .build()
+    }
+
+    single<PlaylistsFilesRepository> {
+        PlaylistsFilesRepositoryImpl(get())
     }
 }
