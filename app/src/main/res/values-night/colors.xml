@@ -25,6 +25,6 @@
     <color name="new_playlist_background">#1A1B22</color>
     <color name="rounder">#FFFFFF</color>
     <color name="bottom_sheet">#1A1B22</color>
-    <color name="menu_more_text_color">#1A1B22</color>
+    <color name="menu_more_text_color">#FFFFFF</color>
 
 </resources>

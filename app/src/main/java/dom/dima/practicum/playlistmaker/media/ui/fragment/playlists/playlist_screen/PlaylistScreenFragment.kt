@@ -16,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistScreen1Binding
+import dom.dima.practicum.playlistmaker.databinding.FragmentPlaylistScreenBinding
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.PlaylistEditorFragment
 import dom.dima.practicum.playlistmaker.media.ui.fragment.playlists.state.PlaylistScreenState
@@ -29,7 +29,7 @@ import java.util.Locale
 
 class PlaylistScreenFragment : Fragment() {
 
-    private var _binding: FragmentPlaylistScreen1Binding? = null
+    private var _binding: FragmentPlaylistScreenBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: PlaylistScreenViewModel by viewModel()
@@ -42,7 +42,7 @@ class PlaylistScreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistScreen1Binding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -57,7 +57,7 @@ class PlaylistScreenFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        viewModel.getPlaylistState().observe(viewLifecycleOwner) {state ->
+        viewModel.getPlaylistState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is PlaylistScreenState.LoadData -> {
                     val playlist = state.data
@@ -88,16 +88,17 @@ class PlaylistScreenFragment : Fragment() {
             binding.menuMoreBottomSheet.isVisible = true
             val menuMoreBottomSheetBehavior = BottomSheetBehavior.from(binding.menuMoreBottomSheet)
             menuMoreBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            menuMoreBottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
+            menuMoreBottomSheetBehavior.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    when(newState) {
+                    when (newState) {
                         BottomSheetBehavior.STATE_HIDDEN -> binding.overlay.isVisible = false
                         else -> binding.overlay.isVisible = true
                     }
 
                 }
 
-                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {}
             })
         }
 
@@ -184,12 +185,23 @@ class PlaylistScreenFragment : Fragment() {
 
     private fun setupStandardBottomSheet(playlist: Playlist) {
 
-        setupBottomSheetMargin(binding.standardBottomSheet, binding.buttonMore, 24f, BottomSheetBehavior.STATE_COLLAPSED)
+        setupBottomSheetMargin(
+            binding.standardBottomSheet,
+            binding.buttonMore,
+            24f,
+            BottomSheetBehavior.STATE_COLLAPSED
+        )
         setupRecyclerView(playlist)
     }
+
     private fun setupMenuMoreBottomSheet(playlist: Playlist) {
 
-        setupBottomSheetMargin(binding.menuMoreBottomSheet, binding.playlistTitle, 5f, BottomSheetBehavior.STATE_HIDDEN)
+        setupBottomSheetMargin(
+            binding.menuMoreBottomSheet,
+            binding.playlistTitle,
+            5f,
+            BottomSheetBehavior.STATE_HIDDEN
+        )
         setupPlaylistViews(playlist)
         binding.menuMoreShare.setOnClickListener {
             sharePlaylist(playlist)
@@ -213,7 +225,12 @@ class PlaylistScreenFragment : Fragment() {
         }
     }
 
-    private fun setupBottomSheetMargin(bottomSheet: View, viewFromWhichMargin: View, margin: Float, defaultStartState: Int) {
+    private fun setupBottomSheetMargin(
+        bottomSheet: View,
+        viewFromWhichMargin: View,
+        margin: Float,
+        defaultStartState: Int
+    ) {
         val actionBackLocation = IntArray(2)
         binding.actionBack.getLocationInWindow(actionBackLocation)
         val zeroLine = actionBackLocation[1]
@@ -235,7 +252,8 @@ class PlaylistScreenFragment : Fragment() {
 
         behavior.apply {
             state = defaultStartState
-            peekHeight = absoluteScreenHeight - viewFromWhichMarginY - viewFromWhichMarginHeight - margin24dp
+            peekHeight =
+                absoluteScreenHeight - viewFromWhichMarginY - viewFromWhichMarginHeight - margin24dp
         }
 
     }
@@ -244,10 +262,10 @@ class PlaylistScreenFragment : Fragment() {
         binding.menuMorePlaylistName.text = playlist.title
         binding.menuMoreTracksCount.text = Useful.itemsText(
             playlist.tracks.size,
-            getString(R.string.track_items_count_variant1, playlist.tracks.size) ,
+            getString(R.string.track_items_count_variant1, playlist.tracks.size),
             getString(R.string.track_items_count_variant2, playlist.tracks.size),
             getString(R.string.track_items_count_variant3, playlist.tracks.size),
-            )
+        )
 
         Glide.with(binding.menuMorePlaylistIcon)
             .load(playlist.cover)
