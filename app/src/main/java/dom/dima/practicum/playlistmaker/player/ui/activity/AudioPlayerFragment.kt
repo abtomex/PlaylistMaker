@@ -123,7 +123,7 @@ class AudioPlayerFragment : Fragment() {
 
                 is AudioPlayerState.Playing -> {
                     playerState = state.data.playerState
-                    commonButton.setImageResource(R.drawable.button_pause)
+                    commonButton.setButtonImage(R.drawable.button_pause)
                     isStarted = true
                     binding.progress.text = state.progress
 
@@ -132,7 +132,7 @@ class AudioPlayerFragment : Fragment() {
                 is AudioPlayerState.Pause -> {
                     playerState = state.data.playerState
                     isStarted = false
-                    commonButton.setImageResource(R.drawable.button_play)
+                    commonButton.setButtonImage(R.drawable.button_play)
 
                 }
 
