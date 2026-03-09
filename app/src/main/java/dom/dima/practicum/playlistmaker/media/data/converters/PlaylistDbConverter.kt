@@ -41,4 +41,8 @@ class PlaylistDbConverter (
             gson.fromJson(playlistEntity.trackIds, type)
         )
     }
+
+    fun mapTrackIds(ids: MutableSet<Int>) : String {
+        return gson.toJson(ids)
+    }
 }

@@ -7,7 +7,7 @@ sealed class AudioPlayerState() {
     class Prepared (val data: StateData) : AudioPlayerState()
     class Completion (val data: StateData) : AudioPlayerState()
     class Playing (val data: StateData, val progress: String) : AudioPlayerState()
-    class Pause (val data: StateData, val progress: String) : AudioPlayerState()
+    class Pause (val data: StateData) : AudioPlayerState()
     class Favorite() : AudioPlayerState()
     class NotFavorite() : AudioPlayerState()
     class Playlists(val playlists : List<Playlist>) : AudioPlayerState()

@@ -65,8 +65,7 @@ class AudioPlayerViewModel(
         timerJob?.cancel()
         playerState.postValue(
             AudioPlayerState.Pause(
-                StateData(STATE_PAUSED),
-                getCurrentPlayerPosition()
+                StateData(STATE_PAUSED)
             )
         )
     }
@@ -121,10 +120,9 @@ class AudioPlayerViewModel(
             return
         }
 
-        playlist.trackIds.add(track.trackId)
         viewModelScope.launch {
             playlistsInteractor
-                .updatePlaylist(playlist)
+                .updatePlaylist(playlist, track)
                 .collect {
                     playerState.postValue(AudioPlayerState.CompleteAddToPlaylist(playlist.title))
                 }

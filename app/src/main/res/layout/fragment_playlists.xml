@@ -8,7 +8,7 @@
     android:visibility="visible"
     android:gravity="center_horizontal"
     tools:ignore="UseCompoundDrawables"
-    tools:context=".media.ui.fragment.PlaylistsFragment">
+    tools:context=".media.ui.fragment.playlists.dictionary.PlaylistsFragment">
     <Button
         android:id="@+id/btn_new"
         style="@style/btn_style"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
+        android:paddingBottom="48dp"
         android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"

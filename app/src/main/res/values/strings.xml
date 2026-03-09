@@ -57,5 +57,25 @@
     <string name="track_items_count_variant1">%d трек</string>
     <string name="track_items_count_variant2">%d трека</string>
     <string name="track_items_count_variant3">%d треков</string>
+    <string name="minutes_items_count_variant1">%d минута</string>
+    <string name="minutes_items_count_variant2">%d минуты</string>
+    <string name="minutes_items_count_variant3">%d минут</string>
+    <string name="new_playlist_placeholder">Best songs 2021</string>
+    <string name="year_placeholder">2022</string>
+    <string name="_300min_placeholder">300 минут</string>
+    <string name="_98tracks_placeholder">98 треков</string>
+    <string name="share">Поделиться</string>
+    <string name="more_options">Больше опций</string>
+    <string name="ask_to_delete_track_message">Хотите удалить трек?</string>
+    <string name="message_no">Нет</string>
+    <string name="message_yes">Да</string>
+    <string name="playlist_has_nothing_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="message_playlist_title">Плейлист: %s\n%s</string>
+    <string name="message_playlist_tracks_count">количество треков: %d</string>
+    <string name="edit_playlist_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="ask_to_delete_playlist">Хотите удалить плейлист \"%s\"</string>
+    <string name="save">Сохранить</string>
+    <string name="edit_playlist">Редактировать</string>
 
 </resources>

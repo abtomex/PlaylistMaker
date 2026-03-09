@@ -133,7 +133,6 @@ class AudioPlayerFragment : Fragment() {
                     playerState = state.data.playerState
                     isStarted = false
                     commonButton.setImageResource(R.drawable.button_play)
-                    binding.progress.text = state.progress
 
                 }
 
@@ -172,15 +171,15 @@ class AudioPlayerFragment : Fragment() {
         }
         binding.buttonAddToPlaylist.setOnClickListener {
 
-            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_COLLAPSED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                viewModel.getPlaylists()
             }
-            viewModel.getPlaylists()
         }
 
         binding.btnNew.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_editPlaylistFragment)
         }
 
 
@@ -194,14 +193,17 @@ class AudioPlayerFragment : Fragment() {
         bottomSheetBehavior.apply {
             isHideable = true
             state = BottomSheetBehavior.STATE_HIDDEN
-            skipCollapsed = true
 
             addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
-                        BottomSheetBehavior.STATE_HIDDEN -> {}
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            binding.overlay.isVisible = true
+                        }
 
-                        BottomSheetBehavior.STATE_EXPANDED -> {}
+                        else -> {
+                            binding.overlay.isVisible = false
+                        }
                     }
                 }
 
@@ -219,7 +221,7 @@ class AudioPlayerFragment : Fragment() {
                 viewModel.addTrackToPlaylist(playlist, track)
 
             },
-            tracksCountDescriptor = { tracksCount -> Useful.trackItemsText (
+            tracksCountDescriptor = { tracksCount -> Useful.itemsText (
                 tracksCount,
                 getString(R.string.track_items_count_variant1, tracksCount),
                 getString(R.string.track_items_count_variant2, tracksCount),
