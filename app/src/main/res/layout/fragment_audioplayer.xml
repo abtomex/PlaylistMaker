@@ -79,7 +79,7 @@
                 app:layout_constraintStart_toStartOf="@id/leftBorder"
                 app:layout_constraintTop_toBottomOf="@id/track_name" />
 
-            <dom.dima.practicum.playlistmaker.player.ui.activity.common_button.CommonButtonView
+            <dom.dima.practicum.playlistmaker.player.ui.activity.common_button.PlaybackButtonView
                 android:id="@+id/common_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,7 +88,8 @@
                 android:focusable="true"
                 app:layout_constraintEnd_toStartOf="@id/rightBorder"
                 app:layout_constraintStart_toEndOf="@id/leftBorder"
-                app:layout_constraintTop_toBottomOf="@id/artist_name" />
+                app:layout_constraintTop_toBottomOf="@id/artist_name"
+                />
 
             <ImageButton
                 android:id="@+id/button_add_to_playlist"
