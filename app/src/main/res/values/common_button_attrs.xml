@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CommonButtonView">
+        <attr name="state" format="enum">
+            <enum name="to_play" value="0" />
+            <enum name="to_pause" value="1" />
+        </attr>
+        <attr name="toPlayCommandView" format="reference"/>
+        <attr name="toPauseCommandView" format="reference"/>
+    </declare-styleable>
+
+    <style name="DefaultCommonButtonStyle">
+        <item name="toPlayCommandView">@drawable/button_play</item>
+        <item name="toPauseCommandView">@drawable/button_pause</item>
+        <item name="state">to_play</item>
+    </style>
+
+</resources>
