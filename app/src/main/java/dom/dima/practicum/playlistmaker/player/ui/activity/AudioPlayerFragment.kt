@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
+import dom.dima.practicum.playlistmaker.player.ui.service.PlayerService
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
@@ -31,7 +32,7 @@ class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
 
-    private var playerState = AudioPlayerViewModel.STATE_DEFAULT
+    private var playerState = PlayerService.STATE_DEFAULT
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     private lateinit var playlistsAdapter: AudioplayerPlaylistsAdapter
@@ -95,7 +96,7 @@ class AudioPlayerFragment : Fragment() {
             )
         }
 
-        viewModel.preparePlayer(track.previewUrl)
+        viewModel.bindAudioPlayer(track.previewUrl)
 
         commonButton.commonButtonListener = {
             playbackControl()
@@ -109,6 +110,7 @@ class AudioPlayerFragment : Fragment() {
 
         viewModel.getPlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
+                is AudioPlayerState.Default,
                 is AudioPlayerState.Prepared -> {
                     playerState = state.data.playerState
                     commonButton.isEnabled = true
@@ -244,26 +246,30 @@ class AudioPlayerFragment : Fragment() {
 
     private fun playbackControl() {
         when (playerState) {
-            AudioPlayerViewModel.STATE_PLAYING -> {
+            PlayerService.STATE_PLAYING -> {
                 viewModel.pausePlayer()
             }
 
-            AudioPlayerViewModel.STATE_PREPARED, AudioPlayerViewModel.STATE_PAUSED -> {
+            PlayerService.STATE_PREPARED, PlayerService.STATE_PAUSED -> {
                 viewModel.startPlayer()
             }
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.pausePlayer()
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        viewModel.pausePlayer()
+//    }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.pausePlayer()
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        viewModel.pausePlayer()
+//    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.unbindAudioPlayer()
+    }
 
     companion object {
         const val CLICKED_TRACK_CONTENT = "track"
