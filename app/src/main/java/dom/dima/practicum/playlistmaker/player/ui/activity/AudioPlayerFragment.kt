@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -57,7 +58,17 @@ class AudioPlayerFragment : Fragment() {
         val commonButton = binding.commonButton
         val buttonLike = binding.buttonLikeSwitch
 
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    viewModel.pausePlayer()
+                    findNavController().popBackStack()
+                }
+            }
+        )
         binding.actionBack.setOnClickListener {
+            viewModel.pausePlayer()
             findNavController().popBackStack()
         }
 

@@ -50,7 +50,11 @@ class AudioPlayerViewModel(
     }
 
     fun unbindAudioPlayer() {
-
+        try {
+            context.unbindService(serviceConnection)
+        } catch (_: IllegalArgumentException) {
+            // Сервис уже отвязан
+        }
     }
 
     fun bindAudioPlayer(previewUrl: String?) {
