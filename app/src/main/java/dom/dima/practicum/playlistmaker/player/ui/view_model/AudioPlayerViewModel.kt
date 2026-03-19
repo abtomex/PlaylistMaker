@@ -10,11 +10,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.media.domain.db.FavoritesInteractor
 import dom.dima.practicum.playlistmaker.media.domain.db.PlaylistsInteractor
 import dom.dima.practicum.playlistmaker.media.domain.models.Playlist
 import dom.dima.practicum.playlistmaker.media.domain.state.AddFavoriteState
 import dom.dima.practicum.playlistmaker.player.ui.service.PlayerService
+import dom.dima.practicum.playlistmaker.player.ui.service.PlayerServiceImpl
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.launch
@@ -34,11 +36,11 @@ class AudioPlayerViewModel(
     private val serviceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as PlayerService.PlayerServiceBinder
+            val binder = service as PlayerServiceImpl.PlayerServiceBinder
             musicService = binder.getService()
 
             viewModelScope.launch {
-                musicService?.playerState?.collect {
+                musicService?.getPlayerState()?.collect {
                     playerState.postValue(it)
                 }
             }
@@ -58,7 +60,7 @@ class AudioPlayerViewModel(
     }
 
     fun bindAudioPlayer(previewUrl: String?) {
-        val intent = Intent(context, PlayerService::class.java).apply {
+        val intent = Intent(context, PlayerServiceImpl::class.java).apply {
             putExtra("track_url", previewUrl)
         }
 
@@ -126,6 +128,11 @@ class AudioPlayerViewModel(
 
     fun startPlayer() {
         musicService?.startPlayer()
+    }
+
+    fun foregroundNotification(track: Track) {
+        val appName = context.getString(R.string.app_name)
+        musicService?.foregroundNotification(appName, track)
     }
 
 }

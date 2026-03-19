@@ -1,5 +1,7 @@
 package dom.dima.practicum.playlistmaker.player.ui.activity
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -17,7 +20,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
-import dom.dima.practicum.playlistmaker.player.ui.service.PlayerService
+import dom.dima.practicum.playlistmaker.player.ui.service.PlayerServiceImpl
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
@@ -33,12 +36,24 @@ class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
 
-    private var playerState = PlayerService.STATE_DEFAULT
+    private var playerState = PlayerServiceImpl.STATE_DEFAULT
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     private lateinit var playlistsAdapter: AudioplayerPlaylistsAdapter
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private lateinit var track : Track
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            viewModel.bindAudioPlayer(track.previewUrl)
+        } else {
+            Toast.makeText(requireContext(), "Can't start foreground service!", Toast.LENGTH_LONG).show()
+        }
+    }
 
 
     override fun onCreateView(
@@ -51,8 +66,16 @@ class AudioPlayerFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            viewModel.bindAudioPlayer(track.previewUrl)
+        }
+
+
         val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
-        val track = viewModel.fromJson(trackJson, Track::class.java)
+        track = viewModel.fromJson(trackJson, Track::class.java)
         val trackIcon = binding.cover
         val durability = binding.durabilityVal
         val commonButton = binding.commonButton
@@ -107,7 +130,7 @@ class AudioPlayerFragment : Fragment() {
             )
         }
 
-        viewModel.bindAudioPlayer(track.previewUrl)
+//        viewModel.bindAudioPlayer(track.previewUrl)
 
         commonButton.commonButtonListener = {
             playbackControl()
@@ -257,25 +280,29 @@ class AudioPlayerFragment : Fragment() {
 
     private fun playbackControl() {
         when (playerState) {
-            PlayerService.STATE_PLAYING -> {
+            PlayerServiceImpl.STATE_PLAYING -> {
                 viewModel.pausePlayer()
             }
 
-            PlayerService.STATE_PREPARED, PlayerService.STATE_PAUSED -> {
+            PlayerServiceImpl.STATE_PREPARED, PlayerServiceImpl.STATE_PAUSED -> {
                 viewModel.startPlayer()
             }
         }
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        viewModel.pausePlayer()
-//    }
+    override fun onPause() {
+        super.onPause()
+        if (playerState != PlayerServiceImpl.STATE_PAUSED) {
+            viewModel.foregroundNotification(track)
+        }
+    }
 
-//    override fun onStop() {
-//        super.onStop()
-//        viewModel.pausePlayer()
-//    }
+    override fun onStop() {
+        super.onStop()
+        if (playerState != PlayerServiceImpl.STATE_PAUSED) {
+            viewModel.foregroundNotification(track)
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
