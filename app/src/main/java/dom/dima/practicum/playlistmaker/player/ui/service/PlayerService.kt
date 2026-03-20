@@ -9,4 +9,5 @@ interface PlayerService {
     fun startPlayer()
     suspend fun getPlayerState(): StateFlow<AudioPlayerState>
     fun foregroundNotification(header: String, track: Track)
+    fun removeForegroundNotification()
 }

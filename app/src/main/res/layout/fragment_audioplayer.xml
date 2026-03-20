@@ -228,7 +228,7 @@
         app:behavior_hideable="true"
         android:gravity="center_horizontal"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <View

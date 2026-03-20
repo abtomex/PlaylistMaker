@@ -135,4 +135,13 @@ class AudioPlayerViewModel(
         musicService?.foregroundNotification(appName, track)
     }
 
+    fun removeForegroundNotification() {
+        musicService?.removeForegroundNotification()
+    }
+    fun stopService() {
+        val intent = Intent(context, PlayerServiceImpl::class.java)
+        context.stopService(intent)
+        musicService = null
+    }
+
 }

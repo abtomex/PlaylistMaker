@@ -73,7 +73,6 @@ class AudioPlayerFragment : Fragment() {
             viewModel.bindAudioPlayer(track.previewUrl)
         }
 
-
         val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
         track = viewModel.fromJson(trackJson, Track::class.java)
         val trackIcon = binding.cover
@@ -85,13 +84,11 @@ class AudioPlayerFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    viewModel.pausePlayer()
                     findNavController().popBackStack()
                 }
             }
         )
         binding.actionBack.setOnClickListener {
-            viewModel.pausePlayer()
             findNavController().popBackStack()
         }
 
@@ -130,8 +127,6 @@ class AudioPlayerFragment : Fragment() {
             )
         }
 
-//        viewModel.bindAudioPlayer(track.previewUrl)
-
         commonButton.commonButtonListener = {
             playbackControl()
         }
@@ -153,8 +148,8 @@ class AudioPlayerFragment : Fragment() {
                 is AudioPlayerState.Completion -> {
                     playerState = state.data.playerState
                     isStarted = false
-                    viewModel.pausePlayer()
                     binding.progress.text = getString(R.string.zero_timer)
+                    commonButton.setPaused()
                 }
 
                 is AudioPlayerState.Playing -> {
@@ -162,14 +157,12 @@ class AudioPlayerFragment : Fragment() {
                     commonButton.setPlaying()
                     isStarted = true
                     binding.progress.text = state.progress
-
                 }
 
                 is AudioPlayerState.Pause -> {
                     playerState = state.data.playerState
                     isStarted = false
                     commonButton.setPaused()
-
                 }
 
                 is AudioPlayerState.Favorite -> {
@@ -290,6 +283,13 @@ class AudioPlayerFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.getPlayerState().value is AudioPlayerState.Playing) {
+            viewModel.removeForegroundNotification()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         if (playerState != PlayerServiceImpl.STATE_PAUSED) {
@@ -306,7 +306,14 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.unbindAudioPlayer()
+
+        if (!requireActivity().isChangingConfigurations) {
+            viewModel.pausePlayer()
+            viewModel.unbindAudioPlayer()
+            viewModel.stopService()
+        } else {
+            viewModel.unbindAudioPlayer()
+        }
     }
 
     companion object {

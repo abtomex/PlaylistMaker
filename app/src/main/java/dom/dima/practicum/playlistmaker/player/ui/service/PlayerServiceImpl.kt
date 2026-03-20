@@ -32,8 +32,10 @@ class PlayerServiceImpl : Service(), PlayerService {
 
     private val mediaPlayer: MediaPlayer by inject()
     private val binder = PlayerServiceBinder()
-    private val _playerState = MutableStateFlow<AudioPlayerState>(AudioPlayerState.Default(StateData(STATE_DEFAULT)))
-    override suspend fun getPlayerState() : StateFlow<AudioPlayerState> = _playerState.asStateFlow()
+    private val _playerState =
+        MutableStateFlow<AudioPlayerState>(AudioPlayerState.Default(StateData(STATE_DEFAULT)))
+
+    override suspend fun getPlayerState(): StateFlow<AudioPlayerState> = _playerState.asStateFlow()
     private var trackUrl = ""
 
     private var timerJob: Job? = null
@@ -52,30 +54,28 @@ class PlayerServiceImpl : Service(), PlayerService {
         mediaPlayer.setOnPreparedListener {
             _playerState.value = AudioPlayerState.Prepared(StateData(STATE_PREPARED))
         }
-        mediaPlayer.setOnCompletionListener {
-            _playerState.value = AudioPlayerState.Completion(StateData(STATE_PREPARED))
-        }
-
     }
 
     override fun startPlayer() {
         mediaPlayer.start()
-        _playerState.value =
-            AudioPlayerState.Playing(
-                StateData(STATE_PLAYING),
-                getCurrentPlayerPosition()
-            )
+        _playerState.value = AudioPlayerState.Playing(
+            StateData(STATE_PLAYING),
+            getCurrentPlayerPosition()
+        )
         startTimer()
-
     }
 
     override fun pausePlayer() {
         mediaPlayer.pause()
+        stopTimer()
+        _playerState.value = AudioPlayerState.Pause(
+            StateData(STATE_PAUSED)
+        )
+    }
+
+    private fun stopTimer() {
         timerJob?.cancel()
-        _playerState.value =
-            AudioPlayerState.Pause(
-                StateData(STATE_PAUSED)
-            )
+        timerJob = null
     }
 
 
@@ -85,8 +85,7 @@ class PlayerServiceImpl : Service(), PlayerService {
     }
 
     private fun startTimer() {
-
-        timerJob?.cancel()
+        stopTimer()
         timerJob = CoroutineScope(Dispatchers.Default).launch {
             while (mediaPlayer.isPlaying) {
                 delay(TIMER_DELAY_MS)
@@ -94,10 +93,11 @@ class PlayerServiceImpl : Service(), PlayerService {
                     StateData(STATE_PLAYING),
                     getCurrentPlayerPosition()
                 )
-
             }
-        }
+            _playerState.value = AudioPlayerState.Completion(StateData(STATE_PREPARED))
+            removeForegroundNotification()
 
+        }
     }
 
     override fun onCreate() {
@@ -134,11 +134,15 @@ class PlayerServiceImpl : Service(), PlayerService {
 
     override fun foregroundNotification(header: String, track: Track) {
         ServiceCompat.startForeground(
-            /* service = */ this,
-            /* id = */ SERVICE_NOTIFICATION_ID,
-            /* notification = */ createNotification(header, track),
-            /* foregroundServiceType = */ getForegroundServiceTypeConstant()
+            this,
+            SERVICE_NOTIFICATION_ID,
+            createNotification(header, track),
+            getForegroundServiceTypeConstant()
         )
+    }
+
+    override fun removeForegroundNotification() {
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
     private fun getForegroundServiceTypeConstant(): Int {
@@ -148,21 +152,18 @@ class PlayerServiceImpl : Service(), PlayerService {
             0
         }
     }
+
     inner class PlayerServiceBinder : Binder() {
         fun getService(): PlayerServiceImpl = this@PlayerServiceImpl
-    }
 
+    }
     companion object {
         const val STATE_DEFAULT = 0
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
-
         const val TIMER_DELAY_MS = 300L
-
-//        const val NOTIFICATION_CHANNEL_ID = "music_service_channel"
         const val NOTIFICATION_CHANNEL_ID = "playlist_maker_channel"
-
         const val SERVICE_NOTIFICATION_ID = 100
     }
 
