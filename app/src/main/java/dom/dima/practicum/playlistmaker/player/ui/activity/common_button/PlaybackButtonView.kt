@@ -107,16 +107,13 @@ class PlaybackButtonView @JvmOverloads constructor(
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                state = when(state) {
-                    ButtonState.TO_PAUSE -> ButtonState.TO_PLAY
-                    ButtonState.TO_PLAY -> ButtonState.TO_PAUSE
-                }
                 commonButtonListener.invoke()
                 return true
             }
         }
         return super.onTouchEvent(event)
     }
+
 
 
 

@@ -1,5 +1,7 @@
 package dom.dima.practicum.playlistmaker.player.ui.activity
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -16,6 +20,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentAudioplayerBinding
+import dom.dima.practicum.playlistmaker.player.ui.service.PlayerServiceImpl
 import dom.dima.practicum.playlistmaker.player.ui.state.AudioPlayerState
 import dom.dima.practicum.playlistmaker.player.ui.view_model.AudioPlayerViewModel
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
@@ -31,12 +36,24 @@ class AudioPlayerFragment : Fragment() {
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
 
-    private var playerState = AudioPlayerViewModel.STATE_DEFAULT
+    private var playerState = PlayerServiceImpl.STATE_DEFAULT
     private val viewModel by viewModel<AudioPlayerViewModel>()
 
     private lateinit var playlistsAdapter: AudioplayerPlaylistsAdapter
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private lateinit var track : Track
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            viewModel.bindAudioPlayer(track.previewUrl)
+        } else {
+            Toast.makeText(requireContext(), "Can't start foreground service!", Toast.LENGTH_LONG).show()
+        }
+    }
 
 
     override fun onCreateView(
@@ -49,13 +66,28 @@ class AudioPlayerFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            viewModel.bindAudioPlayer(track.previewUrl)
+        }
+
         val trackJson = requireArguments().getString(CLICKED_TRACK_CONTENT) ?: ""
-        val track = viewModel.fromJson(trackJson, Track::class.java)
+        track = viewModel.fromJson(trackJson, Track::class.java)
         val trackIcon = binding.cover
         val durability = binding.durabilityVal
         val commonButton = binding.commonButton
         val buttonLike = binding.buttonLikeSwitch
 
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().popBackStack()
+                }
+            }
+        )
         binding.actionBack.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -95,8 +127,6 @@ class AudioPlayerFragment : Fragment() {
             )
         }
 
-        viewModel.preparePlayer(track.previewUrl)
-
         commonButton.commonButtonListener = {
             playbackControl()
         }
@@ -109,6 +139,7 @@ class AudioPlayerFragment : Fragment() {
 
         viewModel.getPlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
+                is AudioPlayerState.Default,
                 is AudioPlayerState.Prepared -> {
                     playerState = state.data.playerState
                     commonButton.isEnabled = true
@@ -117,8 +148,8 @@ class AudioPlayerFragment : Fragment() {
                 is AudioPlayerState.Completion -> {
                     playerState = state.data.playerState
                     isStarted = false
-                    viewModel.pausePlayer()
                     binding.progress.text = getString(R.string.zero_timer)
+                    commonButton.setPaused()
                 }
 
                 is AudioPlayerState.Playing -> {
@@ -126,14 +157,12 @@ class AudioPlayerFragment : Fragment() {
                     commonButton.setPlaying()
                     isStarted = true
                     binding.progress.text = state.progress
-
                 }
 
                 is AudioPlayerState.Pause -> {
                     playerState = state.data.playerState
                     isStarted = false
                     commonButton.setPaused()
-
                 }
 
                 is AudioPlayerState.Favorite -> {
@@ -244,26 +273,48 @@ class AudioPlayerFragment : Fragment() {
 
     private fun playbackControl() {
         when (playerState) {
-            AudioPlayerViewModel.STATE_PLAYING -> {
+            PlayerServiceImpl.STATE_PLAYING -> {
                 viewModel.pausePlayer()
             }
 
-            AudioPlayerViewModel.STATE_PREPARED, AudioPlayerViewModel.STATE_PAUSED -> {
+            PlayerServiceImpl.STATE_PREPARED, PlayerServiceImpl.STATE_PAUSED -> {
                 viewModel.startPlayer()
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (viewModel.getPlayerState().value is AudioPlayerState.Playing) {
+            viewModel.removeForegroundNotification()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
-        viewModel.pausePlayer()
+        if (playerState != PlayerServiceImpl.STATE_PAUSED) {
+            viewModel.foregroundNotification(track)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        viewModel.pausePlayer()
+        if (playerState != PlayerServiceImpl.STATE_PAUSED) {
+            viewModel.foregroundNotification(track)
+        }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        if (!requireActivity().isChangingConfigurations) {
+            viewModel.pausePlayer()
+            viewModel.unbindAudioPlayer()
+            viewModel.stopService()
+        } else {
+            viewModel.unbindAudioPlayer()
+        }
+    }
 
     companion object {
         const val CLICKED_TRACK_CONTENT = "track"
