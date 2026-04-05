@@ -28,12 +28,12 @@ android {
     }
 
     namespace = "dom.dima.practicum.playlistmaker"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "dom.dima.practicum.playlistmaker"
-        minSdk = 29
-        targetSdk = 34
+        minSdk = 33
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -87,4 +87,6 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }
