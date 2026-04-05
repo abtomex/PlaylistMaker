@@ -1,21 +1,23 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import dom.dima.practicum.playlistmaker.ApplicationConstants
+import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentSearchBinding
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
-import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
 import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,18 +43,24 @@ class SearchFragment : Fragment(), ApplicationConstants {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                SearchToolbar()
+            }
+        }
+//        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+//        return binding.root
     }
 
+/*
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hideAllViews()
-        initializeViews()
-        setupRecyclerView()
-        setupSearchEditText()
-        setupObservers()
-        setupClickListeners()
+//        hideAllViews()
+//        initializeViews()
+//        setupRecyclerView()
+//        setupSearchEditText()
+//        setupObservers()
+//        setupClickListeners()
     }
 
     private fun initializeViews() {
@@ -236,4 +244,22 @@ class SearchFragment : Fragment(), ApplicationConstants {
         super.onDestroyView()
         _binding = null
     }
+*/
+}
+
+@Composable
+fun SearchToolbar() {
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.search),
+                color = colorResource(R.color.text_color),
+//                color = Color(0xFF6200EE),
+                fontSize = 22.sp
+            )
+        },
+        backgroundColor = colorResource(R.color.bkg_window_color_),
+//        backgroundColor = Color(0xFF6200EE),
+        elevation = 0.dp
+    )
 }
