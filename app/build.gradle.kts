@@ -18,13 +18,10 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
-
-    buildFeatures {
-        viewBinding = true
+        kotlinCompilerExtensionVersion = "1.7.0"
     }
 
     namespace = "dom.dima.practicum.playlistmaker"
@@ -52,6 +49,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
