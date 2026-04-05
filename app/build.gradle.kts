@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.kotlin.corutines)
     implementation(libs.kotlin.corutines)
+    implementation(libs.volley)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,4 +89,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.io.coil.coil3.coilcompose)
+
 }

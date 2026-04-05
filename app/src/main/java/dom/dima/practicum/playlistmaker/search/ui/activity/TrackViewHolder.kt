@@ -56,7 +56,7 @@ open class TrackViewHolder(
     private fun showPlayer(clickedItem: Track) {
         navController.navigate(
             R.id.action_searchFragment_to_audioPlayerFragment,
-            AudioPlayerFragment.createArgs(viewModel.gson().toJson(clickedItem))
+            AudioPlayerFragment.createArgs(viewModel.gson()?.toJson(clickedItem))
         )
     }
 

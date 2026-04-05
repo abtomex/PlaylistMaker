@@ -24,6 +24,10 @@ composeMaterial = "1.10.6"
 activityCompose = "1.13.0"
 uiToolingPreview = "1.10.6"
 uiTooling = "1.10.6"
+volley = "1.2.1"
+coil = "3.4.0"
+navigationCompose = "2.9.7"
+runtimeLivedata = "1.10.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +57,10 @@ androidx-compose-material = { group = "androidx.compose.material", name = "mater
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose"}
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "uiToolingPreview" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
+io-coil-coil3-coilcompose = {group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil"}
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 
 [plugins]
