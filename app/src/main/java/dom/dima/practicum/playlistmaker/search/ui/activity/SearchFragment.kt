@@ -1,7 +1,6 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
@@ -34,6 +35,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,8 +51,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -63,7 +67,6 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
-import dom.dima.practicum.playlistmaker.databinding.FragmentSearchBinding
 import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
@@ -76,20 +79,7 @@ import java.util.Locale
 
 class SearchFragment : Fragment(), ApplicationConstants {
 
-    private var _binding: FragmentSearchBinding? = null
-    private val binding get() = _binding!!
-
     private val viewModel by viewModel<SearchViewModel>()
-
-    private val tracks = mutableListOf<Track>()
-    private lateinit var trackAdapter: TrackAdapter
-
-    private var inputSearchText: String = DEFAULT_STR
-    private var searchTrack: String = ""
-
-    companion object {
-        private const val DEFAULT_STR = ""
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -113,7 +103,7 @@ fun SearchScreen(
     val state by viewModel.getState().observeAsState(initial = SearchState.History(emptyList()))
 
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    var firstLoaded by remember { mutableStateOf(0) }
+    var firstLoaded by remember { mutableIntStateOf(0) }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -192,7 +182,9 @@ fun SearchScreen(
                         tracks = currentState.data,
                         viewModel = viewModel,
                         navController = navController,
-                        onClearHistory = { viewModel.clearHistory() }
+                        onClearHistory = {
+                            viewModel.clearHistory()
+                        }
                     )
                 } else if (currentState.data.isEmpty() && searchText.text.isEmpty()) {
                     Spacer(modifier = Modifier.fillMaxSize())
@@ -225,6 +217,7 @@ fun SearchField(
     onSearch: () -> Unit,
     onTapSearch: () -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier
@@ -244,6 +237,15 @@ fun SearchField(
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .onFocusEvent { onTapSearch.invoke() },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    onSearch()
+                }
+            ),
             decorationBox = { innerTextField ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -389,10 +391,13 @@ fun SearchHistoryContent(
     navController: NavController,
     onClearHistory: () -> Unit
 ) {
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Text(
             text = stringResource(R.string.search_history),
             fontSize = 18.sp,
+            color = colorResource(R.color.infos_text_color),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -400,7 +405,9 @@ fun SearchHistoryContent(
         )
 
         LazyColumn(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(2f), // 2 части из 3
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             items(tracks, key = { it.trackId }) { track ->
@@ -412,16 +419,41 @@ fun SearchHistoryContent(
             }
         }
 
+        ClearHistoryButton(Modifier
+            .fillMaxWidth()
+            .weight(1f),
+            onClearHistory)
+    }
+}
+
+@Preview
+@Composable
+fun PrevClearHistoryButton() {
+    ClearHistoryButton(Modifier
+        .fillMaxWidth()
+    ) {}
+}
+@Composable
+fun ClearHistoryButton(modifier: Modifier, onClearHistory: () -> Unit) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.TopCenter
+    ) {
         Button(
             onClick = onClearHistory,
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(24.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF6200EE))
+                .padding(top = 16.dp)
+            ,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = colorResource(R.color.btn_activity_search_color),
+                contentColor = colorResource(R.color.btn_reload_text)
+                ),
+            shape = RoundedCornerShape(54.dp)
         ) {
             Text(stringResource(R.string.clear_history))
         }
     }
+
 }
 
 @Composable
@@ -469,8 +501,6 @@ fun TrackItem(
                         R.id.action_searchFragment_to_audioPlayerFragment,
                         AudioPlayerFragment.createArgs(viewModel.gson()?.toJson(track))
                     )
-//                     Возвращаем возможность клика после дебаунса
-//                    androidx.compose.runtime.snapshots.SnapshotStateList<Long>()
                 }
             }
             .padding(horizontal = 16.dp, vertical = 8.dp),

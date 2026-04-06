@@ -105,6 +105,8 @@ open class SearchViewModel(
 
     open fun clearHistory() {
         tracksInteractor?.clearHistory()
+        loadHistoryTracks()
+
     }
 
     open fun clickDebounce() {

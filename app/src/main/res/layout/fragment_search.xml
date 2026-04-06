@@ -65,7 +65,7 @@
         android:layout_marginBottom="0dp"
         android:paddingBottom="0dp"
         android:text="@string/search_history"
-        android:visibility="gone"
+        android:visibility="visible"
         />
 
     <ProgressBar android:id="@+id/progress_bar"
