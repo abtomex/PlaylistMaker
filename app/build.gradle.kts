@@ -91,5 +91,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.io.coil.coil3.coilcompose)
     implementation(libs.glide.compose)
+//    implementation(libs.com.google.accompanist.pager)
+//    implementation(libs.com.google.accompanist.pager.indicators)
+    implementation(libs.androidx.compose.foundation)
 
 }

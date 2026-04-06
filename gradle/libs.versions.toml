@@ -29,6 +29,8 @@ coil = "3.4.0"
 navigationCompose = "2.9.7"
 runtimeLivedata = "1.10.6"
 glideCompose = "1.0.0-beta08"
+accompanist = "0.36.0"
+foundation = "1.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +65,10 @@ volley = { group = "com.android.volley", name = "volley", version.ref = "volley"
 io-coil-coil3-coilcompose = {group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil"}
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+com-google-accompanist-pager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanist" }
+com-google-accompanist-pager-indicators = { group = "com.google.accompanist", name = "accompanist-pager-indicators", version.ref = "accompanist" }
+
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation"}
 
 
 [plugins]
