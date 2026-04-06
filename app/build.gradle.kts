@@ -90,5 +90,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.io.coil.coil3.coilcompose)
+    implementation(libs.glide.compose)
 
 }
