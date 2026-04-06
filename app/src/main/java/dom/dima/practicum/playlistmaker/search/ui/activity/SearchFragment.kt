@@ -1,6 +1,7 @@
 package dom.dima.practicum.playlistmaker.search.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -62,6 +64,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import dom.dima.practicum.playlistmaker.ApplicationConstants
 import dom.dima.practicum.playlistmaker.R
 import dom.dima.practicum.playlistmaker.databinding.FragmentSearchBinding
+import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
 import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
@@ -107,10 +110,10 @@ fun SearchScreen(
     navController: NavController,
     viewModel: SearchViewModel = viewModel()
 ) {
-    // Подписываемся на LiveData из ViewModel с помощью observeAsState()
     val state by viewModel.getState().observeAsState(initial = SearchState.History(emptyList()))
 
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    var firstLoaded by remember { mutableStateOf(0) }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -118,12 +121,8 @@ fun SearchScreen(
             .fillMaxSize()
             .background(colorResource(R.color.bkg_window_color_))
     ) {
-        // Toolbar
         SearchToolbar()
-
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Search Field
         SearchField(
             value = searchText,
             onValueChange = { newText ->
@@ -145,10 +144,17 @@ fun SearchScreen(
                 if (searchText.text.trim().isNotEmpty()) {
                     viewModel.doSearch(searchText.text.trim())
                 }
+            },
+            onTapSearch = {
+                if (firstLoaded == 0) {
+                    firstLoaded++
+                } else if (firstLoaded == 1) {
+                    viewModel.loadHistoryTracks()
+                    firstLoaded++
+                }
             }
         )
 
-        // Content based on state
         when (val currentState = state) {
             is SearchState.Loading -> LoadingContent()
             is SearchState.Error -> ErrorContent(
@@ -159,6 +165,7 @@ fun SearchScreen(
                     }
                 }
             )
+
             is SearchState.NoInternet -> NoInternetContent(
                 onRetry = {
                     if (searchText.text.trim().isNotEmpty()) {
@@ -166,6 +173,7 @@ fun SearchScreen(
                     }
                 }
             )
+
             is SearchState.Content -> {
                 if (currentState.data.isEmpty()) {
                     EmptyContent()
@@ -177,6 +185,7 @@ fun SearchScreen(
                     )
                 }
             }
+
             is SearchState.History -> {
                 if (currentState.data.isNotEmpty() && searchText.text.isEmpty()) {
                     SearchHistoryContent(
@@ -186,7 +195,6 @@ fun SearchScreen(
                         onClearHistory = { viewModel.clearHistory() }
                     )
                 } else if (currentState.data.isEmpty() && searchText.text.isEmpty()) {
-                    // Пустая история - ничего не показываем
                     Spacer(modifier = Modifier.fillMaxSize())
                 }
             }
@@ -214,8 +222,10 @@ fun SearchField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     onClear: () -> Unit,
-    onSearch: () -> Unit
+    onSearch: () -> Unit,
+    onTapSearch: () -> Unit
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -231,7 +241,8 @@ fun SearchField(
                     color = Color(0xFFF0F0F0),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .onFocusEvent { onTapSearch.invoke() },
             singleLine = true,
             decorationBox = { innerTextField ->
                 Row(
@@ -262,7 +273,7 @@ fun SearchField(
                             modifier = Modifier.size(24.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.clear), // ваша иконка clear
+                                painter = painterResource(id = R.drawable.clear),
                                 contentDescription = "Clear",
                                 tint = Color.Gray
                             )
@@ -298,7 +309,7 @@ fun ErrorContent(message: String, onRetry: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_no_connect), // ваша иконка ошибки
+                painter = painterResource(id = R.drawable.ic_no_connect),
                 contentDescription = null,
                 modifier = Modifier.size(120.dp),
                 tint = Color.Unspecified
@@ -338,7 +349,8 @@ fun NoInternetContent(onRetry: () -> Unit) {
             Text(
                 text = stringResource(R.string.no_connect),
                 textAlign = TextAlign.Center,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = colorResource(R.color.infos_text_color)
             )
             Button(
                 onClick = onRetry,
@@ -429,7 +441,8 @@ fun EmptyContent() {
             )
             Text(
                 text = stringResource(R.string.nothing_to_find),
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = colorResource(R.color.infos_text_color)
             )
         }
     }
@@ -452,15 +465,12 @@ fun TrackItem(
                     viewModel.clickDebounce()
                     viewModel.addToHistory(track)
 
-                    // Навигация в плеер
-                    val trackJson = viewModel.gson()?.toJson(track)
                     navController.navigate(
-                        "player/$trackJson"
+                        R.id.action_searchFragment_to_audioPlayerFragment,
+                        AudioPlayerFragment.createArgs(viewModel.gson()?.toJson(track))
                     )
-
-                    // Возвращаем возможность клика после дебаунса
-                    androidx.compose.runtime.snapshots.SnapshotStateList<Long>()
-                    // Лучше использовать корутину с задержкой
+//                     Возвращаем возможность клика после дебаунса
+//                    androidx.compose.runtime.snapshots.SnapshotStateList<Long>()
                 }
             }
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -533,8 +543,3 @@ fun TrackItem(
     )
 }
 
-// Добавьте это расширение для observeAsState если его нет
-//@Composable
-//fun <T> LiveData<T>.observeAsState(initial: T): State<T> {
-//    return androidx.compose.runtime.livedata.observeAsState(initial)
-//}
