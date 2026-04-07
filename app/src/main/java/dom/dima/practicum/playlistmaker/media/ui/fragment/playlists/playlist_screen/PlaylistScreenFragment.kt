@@ -142,7 +142,6 @@ class PlaylistScreenFragment : Fragment() {
                 )
             messageBuilder.append("\n")
         }
-        //SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis)
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             setType("text/plain")
             setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

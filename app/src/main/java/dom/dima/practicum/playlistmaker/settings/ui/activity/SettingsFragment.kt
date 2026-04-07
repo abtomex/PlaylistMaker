@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Icon
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
@@ -38,8 +39,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
-    //    private var _binding: FragmentSettingsBinding? = null
-//    private val binding get() = _binding!!
     private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(
@@ -47,8 +46,6 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-//        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-//        return binding.root
         return ComposeView(requireContext()).apply {
             setContent {
                 SettingsScreen(
@@ -61,39 +58,6 @@ class SettingsFragment : Fragment() {
 
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        val themeSwitcher = binding.themeSwitcher
-//        val buttonShare = binding.shareText
-//        val buttonCheckSupport = binding.helpdeskText
-//        val buttonAgreement = binding.agreementText
-//
-//        themeSwitcher.isChecked = viewModel.isDarkThemeOn()
-//
-//        themeSwitcher.setOnCheckedChangeListener { _, checked ->
-//            viewModel.changeTheme(checked)
-//        }
-//        buttonShare.setOnClickListener {
-//            viewModel.doShare(getString(R.string.android_course_url))
-//        }
-//
-//        buttonCheckSupport.setOnClickListener {
-//            viewModel.doWrightTechSupport(
-//                arrayOf(getString(R.string.my_email)),
-//                getString(R.string.email_subject),
-//                getString(R.string.email_text)
-//            )
-//        }
-//
-//        buttonAgreement.setOnClickListener {
-//            findNavController().navigate(R.id.action_settingsFragment_to_agreementFragment)
-//        }
-//    }
-//
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        _binding = null
-//    }
-//
 }
 
 @Composable
@@ -106,6 +70,7 @@ fun SettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(R.color.bkg_window_color_))
+            .statusBarsPadding()
     ) {
         TopAppBar(
             title = {

@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -110,6 +112,8 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(R.color.bkg_window_color_))
+            .statusBarsPadding()
+            .systemBarsPadding()
     ) {
         SearchToolbar()
         Spacer(modifier = Modifier.height(8.dp))
@@ -407,7 +411,7 @@ fun SearchHistoryContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(2f), // 2 части из 3
+                .weight(4f),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             items(tracks, key = { it.trackId }) { track ->
@@ -442,7 +446,7 @@ fun ClearHistoryButton(modifier: Modifier, onClearHistory: () -> Unit) {
         Button(
             onClick = onClearHistory,
             modifier = Modifier
-                .padding(top = 16.dp)
+                .padding(top = 4.dp)
             ,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = colorResource(R.color.btn_activity_search_color),

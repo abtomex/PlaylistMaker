@@ -54,10 +54,8 @@ fun SearchScreenPreviewWithState(
     @PreviewParameter(SearchStateProvider::class) state: SearchState
 ) {
     MaterialTheme {
-        // Создаем моковый NavController
         val mockNavController = rememberNavController()
 
-        // Создаем моковый ViewModel с нужным состоянием
         SearchScreen(
             navController = mockNavController,
             viewModel = MockSearchViewModel(state)
@@ -65,7 +63,6 @@ fun SearchScreenPreviewWithState(
     }
 }
 
-// Моковый ViewModel
 class MockSearchViewModel(initialState: SearchState) : SearchViewModel(null, null) {
     private val _state = MutableLiveData(initialState)
 

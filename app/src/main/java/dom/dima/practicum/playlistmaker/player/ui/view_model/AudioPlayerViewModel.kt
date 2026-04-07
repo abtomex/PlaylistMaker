@@ -55,7 +55,6 @@ class AudioPlayerViewModel(
         try {
             context.unbindService(serviceConnection)
         } catch (_: IllegalArgumentException) {
-            // Сервис уже отвязан
         }
     }
 
