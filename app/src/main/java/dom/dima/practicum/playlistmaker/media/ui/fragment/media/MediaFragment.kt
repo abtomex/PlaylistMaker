@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -33,7 +31,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -51,6 +48,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,15 +70,25 @@ import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.utils.Useful
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
+val YsDisplayMedium = FontFamily(
+    Font(R.font.ys_display_medium)
+)
+
+val YsDisplayRegular = FontFamily(
+    Font(R.font.ys_display_regular)
+)
 
 class MediaFragment : Fragment() {
 
     private val favoriteTracksViewModel: FavoriteTracksViewModel by viewModel()
     private val playlistsViewModel: PlaylistsViewModel by viewModel()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,38 +99,14 @@ class MediaFragment : Fragment() {
             setContent {
                 MediaScreen(
                     navController = findNavController(),
-                    favoriteTracksViewModel,
-                    playlistsViewModel
+                    favoriteTracksViewModel = favoriteTracksViewModel,
+                    playlistsViewModel = playlistsViewModel
                 )
             }
         }
     }
-
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        binding.mediaViewPager.adapter = MediaViewPagerAdapter(childFragmentManager, lifecycle)
-//
-//        tabsMediator = TabLayoutMediator(binding.mediaTabLayout, binding.mediaViewPager) { tab, position ->
-//            when(position) {
-//                0 -> tab.text = getString(R.string.favorite_tracks)
-//                1 -> tab.text = getString(R.string.playlists)
-//            }
-//        }
-//
-//        tabsMediator.attach()
-//
-//    }
-//
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        tabsMediator.detach()
-//        _binding = null
-//    }
-
 }
 
-//@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MediaScreen(
     navController: NavController,
@@ -136,20 +121,22 @@ fun MediaScreen(
             .fillMaxSize()
             .background(colorResource(R.color.bkg_window_color_))
     ) {
-        // Toolbar
         TopAppBar(
             title = {
                 Text(
                     text = stringResource(R.string.media),
                     color = colorResource(R.color.text_color),
-                    fontSize = 22.sp
+                    fontSize = 22.sp,
+                    fontFamily = YsDisplayMedium
                 )
             },
             backgroundColor = colorResource(R.color.bkg_window_color_),
-            elevation = 0.dp
+            elevation = 0.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
         )
 
-        // TabLayout - используем ScrollableTabRow или TabRow
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             backgroundColor = colorResource(R.color.color_theme),
@@ -179,14 +166,15 @@ fun MediaScreen(
                             color = if (pagerState.currentPage == index)
                                 colorResource(R.color.text_color)
                             else
-                                colorResource(R.color.text_color).copy(alpha = 0.7f)
+                                colorResource(R.color.text_color).copy(alpha = 0.7f),
+                            fontFamily = YsDisplayMedium,
+                            fontSize = 14.sp
                         )
                     }
                 )
             }
         }
 
-        // ViewPager - используем Compose Foundation HorizontalPager
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
@@ -205,7 +193,6 @@ fun MediaScreen(
     }
 }
 
-
 @Composable
 fun FavoriteTracksContent(
     navController: NavController,
@@ -213,11 +200,14 @@ fun FavoriteTracksContent(
 ) {
     val favoriteTracks by viewModel.getFavoriteState().observeAsState(initial = emptyList())
 
+    LaunchedEffect(Unit) {
+        viewModel.loadFavorites()
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         if (favoriteTracks.isEmpty()) {
-            // Пустое состояние
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -236,11 +226,11 @@ fun FavoriteTracksContent(
                     text = stringResource(R.string.no_media),
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center,
-                    color = colorResource(R.color.infos_text_color)
+                    color = colorResource(R.color.infos_text_color),
+                    fontFamily = YsDisplayMedium
                 )
             }
         } else {
-            // Список избранных треков
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 8.dp)
@@ -264,7 +254,6 @@ fun PlaylistsContent(
 ) {
     val playlists by viewModel.getPlaylistsState().observeAsState(initial = emptyList())
 
-    // Загружаем плейлисты при первом запуске
     LaunchedEffect(Unit) {
         viewModel.initPlaylistsList()
     }
@@ -273,7 +262,6 @@ fun PlaylistsContent(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Кнопка создания нового плейлиста
         Button(
             onClick = {
                 navController.navigate(
@@ -290,13 +278,16 @@ fun PlaylistsContent(
             ),
             shape = RoundedCornerShape(54.dp)
         ) {
-            Text(stringResource(R.string.new_playlist))
+            Text(
+                text = stringResource(R.string.new_playlist),
+                fontFamily = YsDisplayMedium,
+                fontSize = 14.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         if (playlists.isEmpty()) {
-            // Пустое состояние
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -315,11 +306,11 @@ fun PlaylistsContent(
                     text = stringResource(R.string.no_any_playlist),
                     fontSize = 18.sp,
                     textAlign = TextAlign.Center,
-                    color = colorResource(R.color.infos_text_color)
+                    color = colorResource(R.color.infos_text_color),
+                    fontFamily = YsDisplayMedium
                 )
             }
         } else {
-            // Список плейлистов в виде сетки
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize(),
@@ -369,7 +360,6 @@ fun FavoriteTrackItem(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Обложка трека
         GlideImage(
             model = track.artworkUrl100,
             contentDescription = track.trackName,
@@ -385,7 +375,6 @@ fun FavoriteTrackItem(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Информация о треке
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -394,7 +383,8 @@ fun FavoriteTrackItem(
                 text = track.trackName,
                 fontSize = 16.sp,
                 maxLines = 1,
-                color = colorResource(R.color.track_text_color)
+                color = colorResource(R.color.track_text_color),
+                fontFamily = YsDisplayRegular
             )
 
             Row(
@@ -406,30 +396,32 @@ fun FavoriteTrackItem(
                     fontSize = 14.sp,
                     color = colorResource(R.color.track_text_artist_color),
                     maxLines = 1,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    fontFamily = YsDisplayRegular
                 )
 
                 Text(
                     text = "•",
                     fontSize = 14.sp,
-                    color = colorResource(R.color.track_text_artist_color)
+                    color = colorResource(R.color.track_text_artist_color),
+                    fontFamily = YsDisplayRegular
                 )
 
                 Text(
                     text = SimpleDateFormat("mm:ss", Locale.getDefault())
                         .format(track.trackTimeMillis),
                     fontSize = 14.sp,
-                    color = colorResource(R.color.track_text_artist_color)
+                    color = colorResource(R.color.track_text_artist_color),
+                    fontFamily = YsDisplayRegular
                 )
             }
         }
 
-        // Иконка перехода
         Icon(
             painter = painterResource(R.drawable.ic_fwd_arrow_14),
             contentDescription = null,
             tint = Color.Gray,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(14.dp)
         )
     }
 
@@ -445,7 +437,7 @@ fun PlaylistGridItem(
     playlist: Playlist,
     onClick: () -> Unit
 ) {
-//    val context = LocalContext.current
+    val context = LocalContext.current
     val tracksCount = playlist.trackIds.size
     val tracksCountText = when {
         tracksCount % 10 == 1 && tracksCount % 100 != 11 -> "$tracksCount трек"
@@ -459,7 +451,6 @@ fun PlaylistGridItem(
             .clickable { onClick() }
             .padding(4.dp)
     ) {
-        // Обложка плейлиста
         GlideImage(
             model = playlist.cover,
             contentDescription = playlist.title,
@@ -474,20 +465,20 @@ fun PlaylistGridItem(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Название плейлиста
         Text(
             text = playlist.title,
             fontSize = 11.sp,
             maxLines = 1,
-            color = colorResource(R.color.track_text_color)
+            color = colorResource(R.color.track_text_color),
+            fontFamily = YsDisplayRegular
         )
 
-        // Количество треков
         Text(
             text = tracksCountText,
             fontSize = 11.sp,
             maxLines = 1,
-            color = colorResource(R.color.track_text_artist_color)
+            color = colorResource(R.color.track_text_artist_color),
+            fontFamily = YsDisplayRegular
         )
     }
 }
