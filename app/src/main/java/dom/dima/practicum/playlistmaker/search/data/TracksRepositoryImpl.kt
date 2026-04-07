@@ -11,6 +11,8 @@ import dom.dima.practicum.playlistmaker.search.data.network.NetworkClient
 import dom.dima.practicum.playlistmaker.search.domain.TracksRepository
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.settings.domain.api.ApiResponse
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.Objects
 
 class TracksRepositoryImpl(
@@ -43,6 +45,8 @@ class TracksRepositoryImpl(
                         it.trackName,
                         it.artistName,
                         it.trackTimeMillis,
+                        SimpleDateFormat("mm:ss", Locale.getDefault())
+                            .format(it.trackTimeMillis),
                         it.artworkUrl100,
                         it.collectionName,
                         it.releaseDate,

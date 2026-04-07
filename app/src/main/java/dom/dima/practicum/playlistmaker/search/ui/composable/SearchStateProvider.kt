@@ -1,4 +1,4 @@
-package dom.dima.practicum.playlistmaker.search.ui.activity
+package dom.dima.practicum.playlistmaker.search.ui.composable
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.search.ui.state.SearchState
 import dom.dima.practicum.playlistmaker.search.ui.view_model.SearchViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class SearchStateProvider : PreviewParameterProvider<SearchState> {
 
@@ -35,6 +37,8 @@ class SearchStateProvider : PreviewParameterProvider<SearchState> {
         trackName = name,
         artistName = artist,
         trackTimeMillis = 180000,
+        trackTimeStr = SimpleDateFormat("mm:ss", Locale.getDefault())
+            .format(180000),
         artworkUrl100 = "https://via.placeholder.com/100",
         isFavorite = false,
         collectionName = "TODO()",
@@ -68,8 +72,8 @@ class MockSearchViewModel(initialState: SearchState) : SearchViewModel(null, nul
 
     override fun getState() = _state
 
-    override fun doSearch(query: String) = Unit
-    override fun scheduleSearch(query: String) = Unit
+    override fun doSearch(searchTrack: String) = Unit
+    override fun scheduleSearch(searchTrack: String) = Unit
     override fun loadHistoryTracks() = Unit
     override fun addToHistory(track: Track) = Unit
     override fun clearHistory() = Unit

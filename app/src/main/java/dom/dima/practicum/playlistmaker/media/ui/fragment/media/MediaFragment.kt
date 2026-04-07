@@ -24,14 +24,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -71,11 +73,6 @@ import dom.dima.practicum.playlistmaker.player.ui.activity.AudioPlayerFragment
 import dom.dima.practicum.playlistmaker.search.domain.models.Track
 import dom.dima.practicum.playlistmaker.utils.Useful
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 val YsDisplayMedium = FontFamily(
@@ -398,7 +395,6 @@ fun FavoriteTrackItem(
                     fontSize = 14.sp,
                     color = colorResource(R.color.track_text_artist_color),
                     maxLines = 1,
-                    modifier = Modifier.weight(1f),
                     fontFamily = YsDisplayRegular
                 )
 
@@ -410,8 +406,7 @@ fun FavoriteTrackItem(
                 )
 
                 Text(
-                    text = SimpleDateFormat("mm:ss", Locale.getDefault())
-                        .format(track.trackTimeMillis),
+                    text = track.trackTimeStr,
                     fontSize = 14.sp,
                     color = colorResource(R.color.track_text_artist_color),
                     fontFamily = YsDisplayRegular
@@ -423,14 +418,10 @@ fun FavoriteTrackItem(
             painter = painterResource(R.drawable.ic_fwd_arrow_14),
             contentDescription = null,
             tint = Color.Gray,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.width(8.dp).height(16.dp)
         )
     }
 
-    Divider(
-        color = Color.LightGray,
-        modifier = Modifier.padding(start = 80.dp)
-    )
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
