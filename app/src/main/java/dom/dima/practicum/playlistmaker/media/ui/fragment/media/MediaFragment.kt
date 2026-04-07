@@ -167,7 +167,7 @@ fun MediaScreen(
                                 colorResource(R.color.text_color)
                             else
                                 colorResource(R.color.text_color).copy(alpha = 0.7f),
-                            fontFamily = YsDisplayMedium,
+                            fontFamily = YsDisplayRegular,
                             fontSize = 14.sp
                         )
                     }
@@ -437,7 +437,6 @@ fun PlaylistGridItem(
     playlist: Playlist,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val tracksCount = playlist.trackIds.size
     val tracksCountText = when {
         tracksCount % 10 == 1 && tracksCount % 100 != 11 -> "$tracksCount трек"
