@@ -25,7 +25,8 @@
         android:text="@string/dark_theme"
         android:thumb="@drawable/custom_thumb"
         app:thumbTint="@color/switch_thumb_color"
-        app:trackTint="@color/switch_track_color" />
+        app:trackTint="@color/switch_track_color"
+        />
 
     <TextView
         android:id="@+id/share_text"

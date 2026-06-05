@@ -14,9 +14,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SearchViewModel(
-    private val tracksInteractor: TracksInteractor,
-    private val gson: Gson
+open class SearchViewModel(
+    private val tracksInteractor: TracksInteractor?,
+    private val gson: Gson?
 ) : ViewModel() {
 
     @Volatile
@@ -42,16 +42,16 @@ class SearchViewModel(
     }
 
     private val state = MutableLiveData<SearchState>()
-    fun getState(): LiveData<SearchState> = state
+    open fun getState(): LiveData<SearchState> = state
 
     fun loadData(searchTrack: String) {
 
         state.value = SearchState.Loading
 
         viewModelScope.launch {
-            tracksInteractor.searchTracks(
+            tracksInteractor?.searchTracks(
                 searchStr = searchTrack
-            ).collect { data -> processData(data) }
+            )?.collect { data -> processData(data) }
 
         }
     }
@@ -81,33 +81,35 @@ class SearchViewModel(
         }
 
     }
-    fun gson(): Gson {
+    fun gson(): Gson? {
         return gson
     }
 
-    fun loadHistoryTracks() {
+    open fun loadHistoryTracks() {
 
         searchJob?.cancel()
         searchJob = null
 
         state.value = SearchState.Loading
         viewModelScope.launch {
-            tracksInteractor.returnHistoryTracks()
-                .collect { data -> processData(data) }
+            tracksInteractor?.returnHistoryTracks()
+                ?.collect { data -> processData(data) }
         }
 
     }
 
-    fun addToHistory(track: Track) {
-        tracksInteractor.addToHistory(track)
+    open fun addToHistory(track: Track) {
+        tracksInteractor?.addToHistory(track)
 
     }
 
-    fun clearHistory() {
-        tracksInteractor.clearHistory()
+    open fun clearHistory() {
+        tracksInteractor?.clearHistory()
+        loadHistoryTracks()
+
     }
 
-    fun clickDebounce() {
+    open fun clickDebounce() {
         viewModelScope.launch {
             delay(CLICK_DEBOUNCE_DELAY)
             clickIsAllowed = true
@@ -115,7 +117,7 @@ class SearchViewModel(
 
     }
 
-    fun scheduleSearch(searchTrack : String) {
+    open fun scheduleSearch(searchTrack : String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_DELAY)
@@ -123,7 +125,7 @@ class SearchViewModel(
         }
     }
 
-    fun doSearch(searchTrack : String) {
+    open fun doSearch(searchTrack : String) {
 
         performedSearchStr = searchTrack
         searchInProgress = true

@@ -77,5 +77,11 @@
     <string name="ask_to_delete_playlist">Хотите удалить плейлист \"%s\"</string>
     <string name="save">Сохранить</string>
     <string name="edit_playlist">Редактировать</string>
+    <plurals name="tracks_count">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
 
 </resources>

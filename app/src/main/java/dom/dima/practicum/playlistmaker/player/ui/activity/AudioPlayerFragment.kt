@@ -319,7 +319,7 @@ class AudioPlayerFragment : Fragment() {
     companion object {
         const val CLICKED_TRACK_CONTENT = "track"
 
-        fun createArgs(track: String): Bundle =
+        fun createArgs(track: String?): Bundle =
             bundleOf(CLICKED_TRACK_CONTENT to track)
     }
 }

@@ -13,6 +13,7 @@
     <color name="switch_thumb_inactive_color">#AEAFB4</color>
     <color name="switch_track_active_color">#9FBBF3</color>
     <color name="switch_track_inactive_color">#E6E8EB</color>
+    <color name="bkg_window_color_">#FFFFFFFF</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
